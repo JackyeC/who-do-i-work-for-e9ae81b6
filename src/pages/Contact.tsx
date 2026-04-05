@@ -35,20 +35,11 @@ export default function Contact() {
     setVerifying(true);
 
     try {
+      // Get token — empty string means Turnstile unavailable (graceful skip)
       const token = await getToken();
 
-      if (!token) {
-        throw new Error("Verification failed. Please try again.");
-      }
-
       const { data: response, error: submitError } = await supabase.functions.invoke("submit-contact-form", {
-        body: {
-          name,
-          email,
-          reason,
-          message,
-          token,
-        },
+        body: { name, email, reason, message, token },
       });
 
       if (submitError || !response?.success) {

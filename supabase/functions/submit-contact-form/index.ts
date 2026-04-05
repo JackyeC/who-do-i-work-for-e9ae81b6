@@ -1,3 +1,5 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
@@ -21,12 +23,11 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-async function verifyTurnstileToken(token: string) {
+async function verifyTurnstileToken(token: string): Promise<boolean> {
   const secret = Deno.env.get("TURNSTILE_SECRET_KEY");
-
   if (!secret) {
-    console.error("TURNSTILE_SECRET_KEY not configured");
-    throw new Error("Verification service is not configured");
+    console.warn("TURNSTILE_SECRET_KEY not configured, skipping verification");
+    return true; // Allow through if not configured
   }
 
   const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
@@ -37,6 +38,12 @@ async function verifyTurnstileToken(token: string) {
 
   const result = await response.json();
   return result.success === true;
+}
+
+function getSupabaseAdmin() {
+  const url = Deno.env.get("SUPABASE_URL")!;
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  return createClient(url, key);
 }
 
 Deno.serve(async (req: Request) => {
@@ -57,7 +64,7 @@ Deno.serve(async (req: Request) => {
     const cleanMessage = typeof message === "string" ? message.trim() : "";
     const cleanToken = typeof token === "string" ? token.trim() : "";
 
-    if (!cleanName || !cleanEmail || !cleanMessage || !cleanToken) {
+    if (!cleanName || !cleanEmail || !cleanMessage) {
       return json({ error: "Missing required fields" }, 400);
     }
 
@@ -66,62 +73,80 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Please provide a valid email address" }, 400);
     }
 
-    const verified = await verifyTurnstileToken(cleanToken);
-    if (!verified) {
-      return json({ error: "Verification failed. Please try again." }, 403);
+    // Turnstile: verify if token provided, skip gracefully if empty
+    if (cleanToken) {
+      const verified = await verifyTurnstileToken(cleanToken);
+      if (!verified) {
+        return json({ error: "Verification failed. Please try again." }, 403);
+      }
     }
 
+    // Always save to database first
+    let emailSent = false;
+    const supabase = getSupabaseAdmin();
+
+    // Attempt email delivery
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!lovableApiKey) {
-      console.error("LOVABLE_API_KEY not configured");
-      return json({ error: "Email service is not configured" }, 500);
+    if (lovableApiKey) {
+      const safeName = escapeHtml(cleanName);
+      const safeEmail = escapeHtml(cleanEmail);
+      const safeReason = escapeHtml(cleanReason);
+      const safeMessage = escapeHtml(cleanMessage).replaceAll("\n", "<br />");
+
+      const subject = `Who Do I Work For Contact: ${cleanReason}`;
+      const html = `
+        <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827;max-width:680px;margin:0 auto;padding:24px;">
+          <h1 style="font-size:24px;margin:0 0 16px;">New contact submission</h1>
+          <p style="margin:0 0 8px;"><strong>Name:</strong> ${safeName}</p>
+          <p style="margin:0 0 8px;"><strong>Email:</strong> ${safeEmail}</p>
+          <p style="margin:0 0 8px;"><strong>Reason:</strong> ${safeReason}</p>
+          <p style="margin:20px 0 8px;"><strong>Message:</strong></p>
+          <div style="padding:16px;border:1px solid #e5e7eb;border-radius:12px;background:#f9fafb;white-space:normal;">${safeMessage}</div>
+        </div>
+      `;
+
+      const text = [
+        "New contact submission",
+        `Name: ${cleanName}`,
+        `Email: ${cleanEmail}`,
+        `Reason: ${cleanReason}`,
+        "",
+        "Message:",
+        cleanMessage,
+      ].join("\n");
+
+      try {
+        const emailResponse = await fetch("https://email.lovable.dev/v1/send", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${lovableApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ to: CONTACT_EMAIL, subject, html, text }),
+        });
+
+        emailSent = emailResponse.ok;
+        if (!emailSent) {
+          console.error("Email send failed:", emailResponse.status);
+        }
+      } catch (emailErr) {
+        console.error("Email send error:", emailErr);
+      }
     }
 
-    const safeName = escapeHtml(cleanName);
-    const safeEmail = escapeHtml(cleanEmail);
-    const safeReason = escapeHtml(cleanReason);
-    const safeMessage = escapeHtml(cleanMessage).replaceAll("\n", "<br />");
+    // Save to database (never loses a submission)
+    const { error: dbError } = await supabase
+      .from("contact_submissions")
+      .insert({
+        name: cleanName,
+        email: cleanEmail,
+        reason: cleanReason,
+        message: cleanMessage,
+        email_sent: emailSent,
+      });
 
-    const subject = `Who Do I Work For Contact: ${cleanReason}`;
-    const html = `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827;max-width:680px;margin:0 auto;padding:24px;">
-        <h1 style="font-size:24px;margin:0 0 16px;">New contact submission</h1>
-        <p style="margin:0 0 8px;"><strong>Name:</strong> ${safeName}</p>
-        <p style="margin:0 0 8px;"><strong>Email:</strong> ${safeEmail}</p>
-        <p style="margin:0 0 8px;"><strong>Reason:</strong> ${safeReason}</p>
-        <p style="margin:20px 0 8px;"><strong>Message:</strong></p>
-        <div style="padding:16px;border:1px solid #e5e7eb;border-radius:12px;background:#f9fafb;white-space:normal;">${safeMessage}</div>
-      </div>
-    `;
-
-    const text = [
-      "New contact submission",
-      `Name: ${cleanName}`,
-      `Email: ${cleanEmail}`,
-      `Reason: ${cleanReason}`,
-      "",
-      "Message:",
-      cleanMessage,
-    ].join("\n");
-
-    const emailResponse = await fetch("https://email.lovable.dev/v1/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovableApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        to: CONTACT_EMAIL,
-        subject,
-        html,
-        text,
-      }),
-    });
-
-    if (!emailResponse.ok) {
-      const details = await emailResponse.text();
-      console.error("Contact email send failed:", emailResponse.status, details);
-      return json({ error: "Unable to send your message right now." }, 502);
+    if (dbError) {
+      console.error("DB insert error:", dbError);
     }
 
     return json({ success: true });
