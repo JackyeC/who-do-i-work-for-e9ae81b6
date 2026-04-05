@@ -119,6 +119,7 @@ export function HeroScanInput() {
       </div>
 
       <form
+        ref={formRef}
         onSubmit={handleSubmit}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleFileDrop}
