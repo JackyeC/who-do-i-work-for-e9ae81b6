@@ -413,19 +413,68 @@ export default function Quiz() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showWelcomeBack, setShowWelcomeBack] = useState(false);
   const [savedProfile, setSavedProfile] = useState<{ primary: PersonaKey; secondary: PersonaKey; meta: MetaFlags } | null>(null);
+  const [checkingProfile, setCheckingProfile] = useState(true);
 
-  // Detect returning visitor — show interstitial instead of auto-jumping
+  // Detect returning visitor — auth-aware: DB profile takes priority over localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("workDnaProfile");
-    if (saved) {
+    let cancelled = false;
+    (async () => {
       try {
-        const parsed = JSON.parse(saved);
-        if (parsed.primary && parsed.secondary && parsed.meta) {
-          setSavedProfile(parsed);
-          setShowWelcomeBack(true);
+        // Wait for auth to settle first
+        const { data: { user } } = await supabase.auth.getUser();
+        if (cancelled) return;
+
+        // If logged in, check DB for quiz results first
+        if (user) {
+          const { data: dbResult } = await (supabase as any)
+            .from("wdiwf_quiz_results")
+            .select("result_profile, result_secondary, meta_flags")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (cancelled) return;
+          if (dbResult?.result_profile && dbResult?.result_secondary && dbResult?.meta_flags) {
+            const dbProfile = {
+              primary: dbResult.result_profile as PersonaKey,
+              secondary: dbResult.result_secondary as PersonaKey,
+              meta: dbResult.meta_flags as MetaFlags,
+            };
+            setSavedProfile(dbProfile);
+            setShowWelcomeBack(true);
+            setCheckingProfile(false);
+            return;
+          }
         }
-      } catch {}
-    }
+
+        // Fallback to localStorage
+        const saved = localStorage.getItem("workDnaProfile");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed.primary && parsed.secondary && parsed.meta) {
+              setSavedProfile(parsed);
+              setShowWelcomeBack(true);
+            }
+          } catch {}
+        }
+      } catch {
+        // Auth check failed — fall back to localStorage silently
+        const saved = localStorage.getItem("workDnaProfile");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed.primary && parsed.secondary && parsed.meta) {
+              setSavedProfile(parsed);
+              setShowWelcomeBack(true);
+            }
+          } catch {}
+        }
+      } finally {
+        if (!cancelled) setCheckingProfile(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const isResults = step === TOTAL_QUESTIONS;
