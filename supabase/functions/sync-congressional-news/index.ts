@@ -125,6 +125,11 @@ function matchByTicker(
 }
 
 /** Strategy 3: Industry-topic match — map article tags to companies by industry */
+/**
+ * Strategy 3: Industry-topic match — only when article is *specifically* about
+ * an industry's concern (≥2 specific keyword hits), not just vaguely tagged.
+ * Also caps to top-lobbying companies to avoid 60+ matches.
+ */
 function matchByIndustryTopic(
   relevanceTags: string[],
   lower: string,
@@ -134,16 +139,14 @@ function matchByIndustryTopic(
   const ids: string[] = [];
 
   for (const mapping of industryMap) {
-    // Check if article has this topic tag
-    const hasTag = relevanceTags.includes(mapping.topic_tag);
-    if (!hasTag) continue;
+    if (!relevanceTags.includes(mapping.topic_tag)) continue;
 
-    // Check if article text contains any of the specific topic keywords
+    // Require ≥2 specific keyword hits to prove real industry relevance
     const keywordHits = mapping.topic_keywords.filter(kw => lower.includes(kw));
-    if (keywordHits.length === 0) continue;
+    if (keywordHits.length < 2) continue;
 
-    // Get companies in this industry
-    const companyIds = companiesByIndustry.get(mapping.industry) || [];
+    // Cap to first 5 companies per industry (sorted by lobbying spend in the query)
+    const companyIds = (companiesByIndustry.get(mapping.industry) || []).slice(0, 5);
     ids.push(...companyIds);
   }
 
