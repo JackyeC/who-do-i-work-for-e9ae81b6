@@ -12,12 +12,12 @@ interface ReceiptCardProps {
   featured?: boolean;
   onPosterClick?: (article: ReceiptArticle) => void;
   onRequestEmailCapture?: () => void;
+  isUnlocked?: boolean;
 }
 
-export function ReceiptCard({ article, featured = false, onPosterClick, onRequestEmailCapture }: ReceiptCardProps) {
+export function ReceiptCard({ article, featured = false, onPosterClick, onRequestEmailCapture, isUnlocked = false }: ReceiptCardProps) {
   const editorialCat = EDITORIAL_CATEGORIES[article.category ?? ""] || "THE DAILY GRIND";
   const isGated = article.spice_level >= 4;
-  const isUnlocked = () => localStorage.getItem("jrc-edit-unlocked") === "true";
   const catColor = EDITORIAL_CAT_COLORS[editorialCat] || "#94A3B8";
   const biasKey = getSourceBiasKey(article.source_name);
   const posterId = `p-${article?.id || "x"}-${featured ? "b" : "s"}`;
@@ -162,7 +162,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
       </div>
 
       {/* ── 9. Use This ── */}
-      {isGated && !isUnlocked() ? (
+      {isGated && !isUnlocked ? (
         <button
           onClick={() => onRequestEmailCapture?.()}
           className="w-full flex items-center justify-between p-5 rounded-lg border-2 border-primary gap-3 hover:bg-primary/10 active:scale-[0.98] transition-all mb-4 cursor-pointer"
