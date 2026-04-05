@@ -652,6 +652,29 @@ export default function Quiz() {
     return () => window.removeEventListener("keydown", handler);
   }, [canAdvance, advance, isResults]);
 
+  // Loading shimmer while checking for existing profile
+  if (checkingProfile) {
+    return (
+      <div
+        className="fixed inset-0 overflow-hidden flex items-center justify-center"
+        style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <div className="flex flex-col items-center gap-4">
+          <div
+            className="w-10 h-10 rounded-full border-2 border-transparent"
+            style={{
+              borderTopColor: "#C9A84C",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
+          <p style={{ color: "rgba(245,240,232,0.4)", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+            Checking your profile…
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Welcome-back interstitial for returning visitors
   if (showWelcomeBack && savedProfile) {
     const profileName = PERSONA_PROFILES[savedProfile.primary]?.name || "Your Profile";
