@@ -53,8 +53,8 @@ function SignalBadge({ badge, state, progress = 0, delay = 0 }: SignalBadgeProps
   const tooltipText = isEarned
     ? badge.meaning
     : isInProgress
-    ? `In progress — ${badge.meaning.toLowerCase()}`
-    : `Locked — ${badge.meaning.toLowerCase()}`;
+    ? `In progress — keep going.`
+    : `Locked — not yet earned.`;
 
   return (
     <TooltipProvider delayDuration={200}>

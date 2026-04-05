@@ -152,24 +152,24 @@ export function YourSignalDashboard() {
   if (highRiskCount > 0) {
     insights.push({
       icon: <AlertTriangle className="w-4 h-4 text-destructive" />,
-      text: `${highRiskCount} tracked ${highRiskCount === 1 ? "company shows" : "companies show"} high-risk signals`,
+      text: `${highRiskCount} ${highRiskCount === 1 ? "company" : "companies"} on your watchlist ${highRiskCount === 1 ? "shows" : "show"} low clarity — review the record before proceeding`,
     });
   }
   const regAlerts = alerts.filter((a: any) => {
     const c = (a.signal_category || "").toLowerCase();
-    return ["regulatory", "enforcement", "sec", "osha", "doj"].some(k => c.includes(k));
+    return ["regulatory", "enforcement", "sec", "osha", "doj", "labor", "nlrb"].some(k => c.includes(k));
   });
   if (regAlerts.length > 0) {
     insights.push({
       icon: <Shield className="w-4 h-4 text-[hsl(35,100%,50%)]" />,
-      text: `${regAlerts.length} regulatory ${regAlerts.length === 1 ? "flag" : "flags"} detected across your watchlist`,
+      text: `${regAlerts.length} enforcement or regulatory ${regAlerts.length === 1 ? "signal" : "signals"} flagged — check the dossier for context`,
     });
   }
   const goodCount = tracked.filter((t: any) => t.score >= 70).length;
   if (goodCount > 0) {
     insights.push({
       icon: <TrendingUp className="w-4 h-4 text-[hsl(142,70%,45%)]" />,
-      text: `${goodCount} ${goodCount === 1 ? "company" : "companies"} in your watchlist ${goodCount === 1 ? "scores" : "score"} above 70 — looking solid`,
+      text: `${goodCount} ${goodCount === 1 ? "company shows" : "companies show"} strong alignment signals — worth a closer look`,
     });
   }
 
@@ -271,7 +271,7 @@ export function YourSignalDashboard() {
                     {t.score > 0 && (
                       <span className="text-[10px] text-muted-foreground/60 pl-0.5">
                         {t.score >= 70
-                          ? `${t.industry || "Company"} · Strong clarity signals`
+                          ? `${t.industry || "Company"} · Strong alignment signals present`
                           : t.score >= 40
                           ? `${t.industry || "Company"} · Mixed signals — review recommended`
                           : `${t.industry || "Company"} · Low clarity — proceed with caution`}
