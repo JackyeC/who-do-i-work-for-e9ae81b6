@@ -56,9 +56,13 @@ export function useOsintParallelScan() {
             description: `${succeeded} source${succeeded !== 1 ? 's' : ''} refreshed in ${(data.totalDuration / 1000).toFixed(1)}s${fresh?.length ? ` · ${fresh.length} already current` : ''}.`,
           });
         } else {
+          const failedNames = (data.results || [])
+            .filter((r: OsintScanResult) => !r.success)
+            .map((r: OsintScanResult) => r.source)
+            .join(', ');
           toast({
             title: 'Partial update',
-            description: `${succeeded} succeeded, ${failed} unavailable. Cached data preserved.`,
+            description: `${succeeded} succeeded, ${failed} unavailable${failedNames ? ` (${failedNames})` : ''}. Cached data preserved.`,
           });
         }
       }
