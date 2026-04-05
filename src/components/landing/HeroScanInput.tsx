@@ -13,6 +13,7 @@ export function HeroScanInput() {
   const [verifying, setVerifying] = useState(false);
   const [mode, setMode] = useState<"search" | "upload">("search");
   const fileRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { hasScansRemaining, scansRemaining, recordScan, FREE_SCAN_LIMIT } = useScanUsage();
