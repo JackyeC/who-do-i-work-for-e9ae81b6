@@ -458,6 +458,9 @@ export default function Newsletter() {
     resetToken();
   };
 
+  /* ── Reset pagination on filter/sort change ── */
+  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [filter, sortBy, searchQuery]);
+
   /* ── Filtering + Sorting ── */
   const filtered = useMemo(() => {
     let list = [...articles];
