@@ -7416,6 +7416,69 @@ export type Database = {
         }
         Relationships: []
       }
+      nonprofit_dark_money: {
+        Row: {
+          city: string | null
+          created_at: string
+          ein: string
+          fetched_at: string
+          filing_year: number | null
+          form_type: string | null
+          id: string
+          ntee_code: string | null
+          org_name: string
+          political_spending: number | null
+          raw_payload: Json | null
+          ruling_date: string | null
+          state: string | null
+          tax_period: string | null
+          total_assets: number | null
+          total_contributions: number | null
+          total_expenses: number | null
+          total_revenue: number | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          ein: string
+          fetched_at?: string
+          filing_year?: number | null
+          form_type?: string | null
+          id?: string
+          ntee_code?: string | null
+          org_name: string
+          political_spending?: number | null
+          raw_payload?: Json | null
+          ruling_date?: string | null
+          state?: string | null
+          tax_period?: string | null
+          total_assets?: number | null
+          total_contributions?: number | null
+          total_expenses?: number | null
+          total_revenue?: number | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          ein?: string
+          fetched_at?: string
+          filing_year?: number | null
+          form_type?: string | null
+          id?: string
+          ntee_code?: string | null
+          org_name?: string
+          political_spending?: number | null
+          raw_payload?: Json | null
+          ruling_date?: string | null
+          state?: string | null
+          tax_period?: string | null
+          total_assets?: number | null
+          total_contributions?: number | null
+          total_expenses?: number | null
+          total_revenue?: number | null
+        }
+        Relationships: []
+      }
       offer_checks: {
         Row: {
           company_id: string

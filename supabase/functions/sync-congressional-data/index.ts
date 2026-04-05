@@ -115,18 +115,62 @@ Deno.serve(async (req) => {
       results.errors.push(`bills: ${(e as Error).message}`);
     }
 
-    // --- 3. RECENT VOTES (Senate) ---
+    // --- 3. HOUSE ROLL CALL VOTES (119th Congress) ---
+    try {
+      const data = await fetchJSON(
+        `${CONGRESS_API}/house-vote/${congress}?limit=50&sort=date+desc`,
+        apiKey
+      );
+      const votes = data.houseVotes || data.votes || [];
+
+      const voteRows = votes.map((v: any) => ({
+        data_type: "vote",
+        congress_number: congress,
+        chamber: "house",
+        vote_number: v.rollCallNumber || v.voteNumber || null,
+        vote_question: v.question || v.description || null,
+        vote_result: v.result || null,
+        vote_date: v.date || null,
+        bill_number: v.bill?.number ? `${v.bill.type || ""}${v.bill.number}` : null,
+        bill_title: v.bill?.title || v.description || null,
+        raw_payload: v,
+      }));
+
+      if (voteRows.length > 0) {
+        const { error } = await supabase
+          .from("wdiwf_congressional_data")
+          .insert(voteRows);
+        if (error) results.errors.push(`house-votes: ${error.message}`);
+        else results.votes += voteRows.length;
+      }
+    } catch (e) {
+      // House vote API is beta — may not be available
+      results.errors.push(`house-votes: ${(e as Error).message}`);
+    }
+
+    // --- 4. SENATE VOTES (via bill summaries as proxy) ---
     try {
       const data = await fetchJSON(
         `${CONGRESS_API}/summaries/${congress}?limit=20&sort=updateDate+desc`,
         apiKey
       );
-      // Note: Congress.gov vote endpoints are newer/beta
-      // Fallback: use bill actions that reference recorded votes
       const summaries = data.summaries || [];
-      results.votes = summaries.length;
+      // These indicate active legislative activity
+      for (const s of summaries) {
+        if (s.bill) {
+          const row = {
+            data_type: "bill_summary",
+            congress_number: congress,
+            chamber: s.bill.originChamber?.toLowerCase() || null,
+            bill_number: `${s.bill.type || ""}${s.bill.number || ""}`,
+            bill_title: s.bill.title || s.text?.substring(0, 200) || null,
+            raw_payload: s,
+          };
+          await supabase.from("wdiwf_congressional_data").insert(row);
+        }
+      }
     } catch (e) {
-      results.errors.push(`votes: ${(e as Error).message}`);
+      results.errors.push(`summaries: ${(e as Error).message}`);
     }
 
     return new Response(
