@@ -81,6 +81,7 @@ export default function Receipts() {
   const [timeFilter, setTimeFilter] = useState("all");
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const { unlocked: receiptUnlocked, markUnlocked: markReceiptUnlocked } = useReceiptUnlock();
 
   const filtered = useMemo(() => {
     if (!articles) return [];
