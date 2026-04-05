@@ -69,7 +69,7 @@ function CategoryBadge({ category }: { category: string | null }) {
   const color = EDITORIAL_CAT_COLORS[editorialCat] || "#94A3B8";
   return (
     <span
-      className="text-[10px] font-black uppercase tracking-[0.18em] font-mono"
+      className="text-xs font-black uppercase tracking-[0.18em] font-mono"
       style={{ color }}
     >
       {editorialCat}
@@ -133,7 +133,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
           {article.spice_level >= 4 && (
             <span className="text-xs font-black uppercase px-2.5 py-1 rounded" style={{ background: "#EF4444", color: "#fff" }}>HOT</span>
           )}
-          <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
+          <span className="ml-auto text-xs text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
         {/* Poster — prominent, clickable */}
@@ -262,7 +262,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
           <CategoryBadge category={article.category} />
           <span className="w-px h-3 bg-border" />
           <SpicePeppers level={article.spice_level} />
-          <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
+          <span className="ml-auto text-xs text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
         {/* Headline */}
@@ -280,7 +280,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
           <div className="rounded-lg border p-4 mb-3" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
             <div className="flex items-center gap-1.5 mb-2">
               <Crown className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
+              <span className="text-[13px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
             </div>
             <p className="text-base text-foreground leading-relaxed italic" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
               "{article.jackye_take}"
@@ -292,7 +292,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
         <div className="rounded-lg bg-muted/20 border border-border/20 p-4 mb-3">
           <div className="flex items-center gap-1.5 mb-2">
             <TrendingUp className="w-3.5 h-3.5 text-primary" />
-            <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
+            <span className="text-[13px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
           </div>
           {article.why_it_matters && article.why_it_matters.length > 0 ? (
             <ul className="space-y-1.5">
@@ -365,7 +365,7 @@ function WireItem({ article }: { article: ReceiptArticle }) {
           </p>
         )}
         <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
-          <span className="text-[10px] text-primary/70 font-mono flex items-center gap-1">
+          <span className="text-xs text-primary/70 font-mono flex items-center gap-1">
             {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
           </span>
         </div>
@@ -523,10 +523,10 @@ export default function Newsletter() {
         <div className="max-w-[820px] mx-auto text-center py-14 lg:py-20 px-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-8">
             <Radio className="w-3.5 h-3.5 text-destructive animate-pulse" />
-            <span className="text-[10px] font-mono tracking-[0.2em] text-destructive uppercase">Live Intelligence · Updated Every 2 Hours</span>
+            <span className="text-xs font-mono tracking-[0.2em] text-destructive uppercase">Live Intelligence · Updated Every 2 Hours</span>
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.55em] text-primary mb-5 font-mono">Jackye Clayton × WDIWF</p>
+          <p className="text-xs uppercase tracking-[0.55em] text-primary mb-5 font-mono">Jackye Clayton × WDIWF</p>
 
           <div className="flex justify-center mb-5">
             <img src={workSignalLogo} alt="The Work Signal" width={56} height={56} className="rounded-lg" />
@@ -619,9 +619,9 @@ export default function Newsletter() {
               <div className="py-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-3.5 h-3.5 text-destructive" />
-                  <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-destructive font-bold">Moving Now</span>
+                  <span className="text-xs font-mono tracking-[0.2em] uppercase text-destructive font-bold">Moving Now</span>
                   <Clock className="w-3 h-3 text-muted-foreground/50 ml-1" />
-                  <span className="text-[10px] text-muted-foreground/50 font-mono">Last 2 hours</span>
+                  <span className="text-xs text-muted-foreground/50 font-mono">Last 2 hours</span>
                 </div>
                 <div className="space-y-2">
                   {movingNow.map((article) => (
@@ -633,7 +633,7 @@ export default function Newsletter() {
                         {article.headline}
                       </p>
                       <SpicePeppers level={article.spice_level} />
-                      <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
+                      <span className="text-xs text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
                     </button>
                   ))}
                 </div>
@@ -650,7 +650,7 @@ export default function Newsletter() {
                     <h2 className="text-xl font-bold text-foreground">
                       {dailyWrap.title}
                     </h2>
-                    <span className="text-[11px] text-muted-foreground font-mono">
+                    <span className="text-[13px] text-muted-foreground font-mono">
                       {format(new Date(dailyWrap.wrap_date), "MMMM d, yyyy")}
                     </span>
                   </div>
@@ -688,7 +688,7 @@ export default function Newsletter() {
 
                 {SORT_OPTIONS.map((opt) => (
                   <button key={opt.value} onClick={() => setSortBy(opt.value)}
-                    className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors whitespace-nowrap ${
+                    className={`text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors whitespace-nowrap ${
                       sortBy === opt.value
                         ? "text-primary font-bold"
                         : "text-muted-foreground hover:text-foreground"
@@ -710,7 +710,7 @@ export default function Newsletter() {
                   />
                 </div>
 
-                <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono whitespace-nowrap">
+                <span className="ml-auto text-xs text-muted-foreground/50 font-mono whitespace-nowrap">
                   {filtered.length} stories
                 </span>
               </div>
@@ -768,7 +768,7 @@ export default function Newsletter() {
                       <Star className="w-4 h-4 text-primary" />
                       <h2 className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Takes</h2>
                       <div className="flex-1 h-px bg-border" />
-                      <span className="text-[10px] text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
+                      <span className="text-xs text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
                     </div>
                     <div className="grid md:grid-cols-2 gap-5">
                       {withTakes.slice(1, visibleCount).map((article) => (
