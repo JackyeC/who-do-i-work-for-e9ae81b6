@@ -74,7 +74,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                     const text = (article as any).jackye_take && (article as any).jackye_take !== "[FILTERED]"
                       ? (article as any).jackye_take
                       : article.headline;
-                    return text.length > 120 ? text.slice(0, 120) + "…" : text;
+                    return text.length > 70 ? text.slice(0, 70) + "…" : text;
                   })()}
                 </span>
                 <span className="text-muted-foreground/50">·</span>
