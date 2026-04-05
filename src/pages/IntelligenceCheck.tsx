@@ -232,7 +232,7 @@ export default function IntelligenceCheck() {
                   />
                 </div>
 
-                <Button type="submit" disabled={submitting} className="w-full gap-2">
+                <Button type="submit" disabled={submitting} className="w-full gap-2 active:scale-[0.97]">
                   {submitting ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</>
                   ) : (
