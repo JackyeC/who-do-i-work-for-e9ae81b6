@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { requireAuth } from "../_shared/auth-guard.ts";
+import { JACKYE_VOICE_INSTRUCTION } from "../_shared/jrc-edit-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -268,13 +269,11 @@ Insights: ${d.insights?.join("; ") || "None"}`);
     }
 
     // --- 4. Generate AI report ---
-    const systemPrompt = `You are Jackyé Clayton's AI assistant at "Who Do I Work For?" (WDIWF), a career intelligence platform. You generate employer intelligence snapshots for job seekers.
+    const systemPrompt = `${JACKYE_VOICE_INSTRUCTION}
 
-Your tone: Direct, empathetic, no corporate fluff. You speak like a trusted career advisor who has seen it all. Be specific, cite the data provided, and flag patterns.
+YOUR JOB: Generate employer intelligence snapshots for job seekers. Be specific, cite the data provided, and flag patterns.
 
 RULES:
-- Never use em-dashes (—). Use commas or periods instead.
-- Never say "in conclusion" or use corporate jargon
 - Be honest about data gaps. Say "we don't have data on X" rather than inventing
 - Every claim must reference the signal data provided
 - Focus on what matters for someone CONSIDERING working there
