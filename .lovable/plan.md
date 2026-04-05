@@ -1,69 +1,39 @@
 
 
-# Jackye Voice System — Full Integration
+# Fix "Your Recent Work" — It's Reading the Wrong Table
 
-## What This Does
-Installs the finalized, merged Jackye Voice System as the single source of truth across every AI-powered edge function and frontend conversation mode. Combines both the operational voice document and the "carrying forward" refinements into one canonical block that every function imports.
+## The Problem
 
-## The Voice DNA Block
+"Your Recent Work" pulls from `tracked_companies`, which is the premium watchlist table. You have to explicitly click "Track" on a company AND have an active subscription for anything to show up there.
 
-A new export `JACKYE_VOICE_INSTRUCTION` gets added to `supabase/functions/_shared/jrc-edit-prompt.ts`. This is the injectable constant every function prepends to its system prompt. It encodes:
+Opening a dossier, running a Check, or browsing a company profile does not write to `tracked_companies`. So unless you manually tracked companies through the slot system, this section stays empty.
 
-- **Identity**: Career intelligence strategist, truth-teller, in the room not on a slide. Building while speaking. Skeptical of the system, on the side of the person inside it. Protective and clarifying, never cynical.
-- **Tone**: Direct, conversational, controlled urgency. Short scannable blocks. Mostly short/medium sentences, fragments for emphasis. No corporate polish, no buzzwords, no LinkedIn filler. If it sounds like marketing, strip it.
-- **Thinking loop** (never labeled): what's happening → what it means → what people miss → what we do next.
-- **Signature moves**: The call, the reframe, the pattern drop, insider translation, decision close.
-- **Vocabulary**: receipts, signals, leverage, audit, risk, pattern, what they're not telling you, follow the money, know before you go.
-- **Hard no**: Em dashes. Thought-leadership voice. Over-polished phrasing. Exclamation points.
-- **Close**: Every response ends with a clear next move.
+The old `useScanTracker` hook writes to `company_scan_events`, but RLS blocks non-admin inserts there. And it only runs on `/company/:id`, not on `/dossier/:id` or `/check`.
 
-## Files Changed
+## What We Build
 
-### 1. `supabase/functions/_shared/jrc-edit-prompt.ts`
-- Add `JACKYE_VOICE_INSTRUCTION` export (the canonical voice block)
-- Update `JRC_MASTER_SYSTEM_PROMPT` to lead with the voice instruction, then layer on the existing editorial rules (politics stance, banned words, aesthetic guidance). Remove any conflicting tone instructions.
-- `JRC_DAILY_NOTE_PROMPT`, `JRC_ENRICHMENT_PROMPT`, `JRC_CONTEXTUAL_TAKE_PROMPT`, `JRC_DAILY_TICK_PROMPT` — prepend voice instruction where not already aligned. Existing structural constraints (word counts, beat structure, spice scoring) stay untouched.
+### 1. New table: `user_recent_company_views`
+A lightweight per-user audit trail. Columns: `id`, `user_id`, `company_id`, `company_name`, `viewed_at`. RLS: users can only read/write their own rows. Upsert on `(user_id, company_id)` so repeated views just update `viewed_at`.
 
-### 2. `supabase/functions/ask-jackye-chat/index.ts`
-- Replace the inline "warm, direct, strategic, no-BS" system prompt with an import of `JACKYE_VOICE_INSTRUCTION` plus chat-specific context (job count, industries, what the board does). This is the most user-facing voice — needs to sound like Jackye mid-conversation.
+### 2. Update `useScanTracker` to write to the new table
+Switch from `company_scan_events` (admin-only) to `user_recent_company_views`. Upsert instead of insert. Invalidate the dashboard query on success so the section refreshes live.
 
-### 3. `supabase/functions/clarity-engine/index.ts`
-- Replace the "Lead Analyst" framing (line 9-31) with voice instruction import + the existing structural format (Verdict, Strategy, Workforce Health, Hard Questions). Same sections, Jackye's actual voice.
+### 3. Wire tracking on all audit routes
+Currently only runs on `CompanyProfile`. Add it to:
+- `CompanyDossier` (the `/dossier/:slug` page)
+- `Check` component (when a company is selected)
 
-### 4. `supabase/functions/negotiation-coach/index.ts`
-- Replace the generic "Tactical Salary Negotiation Coach" system prompt with voice instruction + negotiation-specific rules. Keep the 3-email structure and tool-calling schema.
+### 4. Update the dashboard to read from the new table
+Change `useDashboardBriefing` to query `user_recent_company_views` joined with `companies` (for name, slug, score, industry) instead of relying on `tracked_companies`. Keep tracked companies as a secondary source so both paid tracking AND casual browsing show up.
 
-### 5. `supabase/functions/candidate-prep-pack/index.ts`
-- Replace "Lead Interview Prep Analyst" framing with voice instruction. Keep the structural format (30-Second Reality Check, Top 5 Receipts, Say/Ask/Avoid, Flags, Day 90).
-
-### 6. `supabase/functions/offer-strength-score/index.ts`
-- Replace "Strategic Architect" framing with voice instruction. Keep the 7-category scoring schema and tool-calling structure.
-
-### 7. `supabase/functions/generate-intelligence-report/index.ts`
-- Add voice instruction import to the system prompt construction. Keep all data aggregation and report structure logic.
-
-### 8. `supabase/functions/draft-work-signals/index.ts`
-- Already imports master prompt. Verify headline style rules align (they mostly do). Prepend voice instruction to ensure consistency.
-
-### 9. `supabase/functions/job-questions/index.ts`
-- Replace generic "career intelligence advisor" prompt with voice instruction. Keep the tool-calling schema for 2-3 questions.
-
-### 10. `src/lib/responseTemplates.ts`
-- Update the three `systemPromptTone` strings (Real Talk, Coach Me, Think With Me) to incorporate the voice instruction while preserving each mode's structural differences (opening lines, closing lines, decision frameworks).
-
-### 11. `src/lib/jrcEditPrompt.ts` (client-side reference)
-- Add a `JACKYE_VOICE_SUMMARY` export — a short client-side reference version for any future client-side validation or display needs.
-
-## What Does NOT Change
-- JRC EDIT 9-point forensic schema
-- Daily Note 4-beat structure and 120-word cap
-- Contextual Take 3-sentence constraint
-- Spice scoring system
-- Banned words/phrases lists (they align with the voice system)
-- Tool-calling schemas and response formats
-- Database schema, pipeline logic, auth guards
-- Any non-AI edge functions
+### 5. Keep existing empty state copy
+"Your lens is clear" / "No companies audited yet" stays. It will just actually populate now.
 
 ## Technical Detail
-All AI edge functions either already import from `_shared/jrc-edit-prompt.ts` or have inline prompts. The change is purely prompt engineering — importing and prepending the shared voice block. No architectural changes, no new dependencies, no database migrations. Functions that don't currently import the shared file get one new import line.
+
+- **Migration**: Creates `user_recent_company_views` with RLS policies for authenticated users (SELECT/INSERT/UPDATE own rows only), plus a unique constraint on `(user_id, company_id)` for upsert.
+- **`use-scan-tracker.ts`**: Switches target table, adds `user_id` field, uses upsert, invalidates `dashboard-briefing` query key.
+- **`use-dashboard-briefing.ts`**: Adds a parallel query to `user_recent_company_views` joined with `companies`. Merges with tracked companies, deduplicates by company ID, sorts by most recent view.
+- **Dossier/Check pages**: Import and call `useScanTracker` with the company ID and name.
+- **No backfill**: Past visits won't appear. First time you open any company after this ships, it starts recording.
 
