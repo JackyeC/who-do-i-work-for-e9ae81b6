@@ -113,9 +113,14 @@ export function ValuesQuiz() {
               className="max-w-[500px] mx-auto"
             >
               <div className="bg-card border border-border p-8 text-center">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.2, 1] }}
+                  transition={{ duration: 0.5, times: [0, 0.5, 1], ease: "easeOut" }}
+                  className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4"
+                >
                   <Lock className="w-6 h-6 text-primary" />
-                </div>
+                </motion.div>
                 <h3 className="text-lg font-bold text-foreground mb-2 font-display">
                   Your Career DNA: {selected.size} values loaded
                 </h3>
