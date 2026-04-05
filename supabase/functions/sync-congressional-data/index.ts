@@ -39,55 +39,51 @@ Deno.serve(async (req) => {
     const congress = 119; // current congress
     const results = { members: 0, bills: 0, votes: 0, errors: [] as string[] };
 
-    // --- 1. MEMBERS (House + Senate) ---
-    for (const chamber of ["house", "senate"]) {
-      try {
+    // --- 1. MEMBERS (paginate through all current members) ---
+    try {
+      let offset = 0;
+      const pageSize = 250;
+      let allMembers: any[] = [];
+
+      while (true) {
         const data = await fetchJSON(
-          `${CONGRESS_API}/member?limit=250&currentMember=true`,
+          `${CONGRESS_API}/member?limit=${pageSize}&offset=${offset}&currentMember=true`,
           apiKey
         );
         const members = data.members || [];
-
-        const rows = members
-          .filter((m: any) => {
-            const terms = m.terms?.item || [];
-            const latest = terms[terms.length - 1];
-            return latest?.chamber?.toLowerCase() === chamber;
-          })
-          .map((m: any) => {
-            const terms = m.terms?.item || [];
-            const latest = terms[terms.length - 1];
-            return {
-              data_type: "member",
-              congress_number: congress,
-              chamber,
-              bioguide_id: m.bioguideId,
-              member_name: m.name || `${m.firstName} ${m.lastName}`,
-              party: m.partyName || m.party,
-              state: m.state,
-              district: latest?.district?.toString() || null,
-              raw_payload: m,
-            };
-          });
-
-        if (rows.length > 0) {
-          const { error } = await supabase
-            .from("wdiwf_congressional_data")
-            .upsert(rows, { onConflict: "id", ignoreDuplicates: false });
-          if (error) {
-            // Try insert instead
-            const { error: insertErr } = await supabase
-              .from("wdiwf_congressional_data")
-              .insert(rows);
-            if (insertErr) results.errors.push(`members-${chamber}: ${insertErr.message}`);
-            else results.members += rows.length;
-          } else {
-            results.members += rows.length;
-          }
-        }
-      } catch (e) {
-        results.errors.push(`members-${chamber}: ${(e as Error).message}`);
+        allMembers = allMembers.concat(members);
+        if (members.length < pageSize) break;
+        offset += pageSize;
       }
+
+      const rows = allMembers.map((m: any) => {
+        const terms = m.terms?.item || [];
+        const latest = terms[terms.length - 1];
+        const chamber = latest?.chamber?.toLowerCase() || (m.chamber?.toLowerCase()) || null;
+        return {
+          data_type: "member",
+          congress_number: congress,
+          chamber,
+          bioguide_id: m.bioguideId,
+          member_name: m.name || `${m.firstName} ${m.lastName}`,
+          party: m.partyName || m.party,
+          state: m.state,
+          district: m.district?.toString() || latest?.district?.toString() || null,
+          raw_payload: m,
+        };
+      });
+
+      // Insert in batches of 100
+      for (let i = 0; i < rows.length; i += 100) {
+        const batch = rows.slice(i, i + 100);
+        const { error } = await supabase
+          .from("wdiwf_congressional_data")
+          .insert(batch);
+        if (error) results.errors.push(`members batch ${i}: ${error.message}`);
+        else results.members += batch.length;
+      }
+    } catch (e) {
+      results.errors.push(`members: ${(e as Error).message}`);
     }
 
     // --- 2. RECENT BILLS ---
