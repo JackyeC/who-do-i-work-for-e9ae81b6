@@ -219,8 +219,7 @@ export function HeroScanInput() {
                 e.stopPropagation();
                 setQuery(s);
                 setTimeout(() => {
-                  const form = e.currentTarget.closest("div")?.parentElement?.querySelector("form");
-                  if (form) form.requestSubmit();
+                  formRef.current?.requestSubmit();
                 }, 150);
               }}
               className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors cursor-pointer"
