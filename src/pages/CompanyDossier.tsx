@@ -842,6 +842,15 @@ export default function CompanyDossier() {
         records={evidenceRecords}
         initialCategory={reportCategory}
       />
+
+      {/* SEO: Crawlable structured content for search engines and AI systems */}
+      <DossierSEOContent
+        company={company}
+        eeocCount={eeocCases?.length || 0}
+        executiveCount={(executives?.length || 0) + (dossierBoardMembers?.length || 0)}
+        lobbyingCount={lobbyingLinkages?.length || 0}
+        contractCount={contracts?.length || 0}
+      />
     </section>
     </EvaluationView>
   );
