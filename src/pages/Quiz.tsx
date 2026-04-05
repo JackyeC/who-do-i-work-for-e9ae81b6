@@ -453,6 +453,8 @@ export default function Quiz() {
 
     const { primary, secondary } = resolvePersonas(s, m.nepotism_concern);
 
+    const profileData = { primary, secondary, meta: m };
+    localStorage.setItem("workDnaProfile", JSON.stringify(profileData));
     localStorage.setItem("wdiwf_persona", primary);
     localStorage.setItem("wdiwf_nepotism_flag", m.nepotism_concern);
     localStorage.setItem("wdiwf_trust", m.trust_level);
