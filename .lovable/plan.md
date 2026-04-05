@@ -1,72 +1,75 @@
 
 
-# Emotional Feedback Layer — Every Action Reacts
+# Fix Contact Form: Turnstile + Email Delivery
 
-## The gap
-The app has zero tactile feedback on most interactive elements. The `Button` component has `active:scale-[0.97]` but raw `<button>` elements (quiz tiles, hero CTA, suggestion chips, form submits) have no press/hover response. Submissions complete silently or with minimal acknowledgment.
+## Two Issues Found
 
-## Changes
+### Issue 1: Turnstile — "v.execute is not a function"
+The form shows this error immediately on submit. The Turnstile script loads with a warning "Turnstile already has been loaded" which can corrupt the API object. Additionally, `window.turnstile.render()` in invisible mode may return a non-string value (or the `execute` method may not exist on the API in certain states).
 
-### 1. Quiz tile press feedback
-**File:** `src/pages/Quiz.tsx` — `TileGrid` component
-
-Add `transform: scale(0.97)` on `:active` state to the tile buttons (currently only scale up to 1.02 on select). Also add a brief border-glow pulse when selected — a 300ms box-shadow animation using the gold color.
-
-### 2. Quiz advance — progress bar celebration
-**File:** `src/pages/Quiz.tsx`
-
-When the progress bar reaches 100% (last question answered), flash the bar to full brightness for 400ms before transitioning to the results screen. Add a CSS transition on `box-shadow` for the progress bar element.
-
-### 3. Hero CTA press feedback
-**File:** `src/pages/Index.tsx`
-
-The "Get a free employer intelligence check" button is a raw `<button>` with no press state. Add `active:scale-[0.97]` and `transition-transform` to match the `Button` component behavior.
-
-### 4. Hero suggestion chips — visual fill confirmation
-**File:** `src/components/landing/HeroScanInput.tsx`
-
-When a suggestion chip is clicked, briefly highlight it (background flash to `primary/20` for 150ms) before the auto-submit fires. Add `active:scale-95` to all chips for press feedback.
-
-### 5. "Run My Free Scan" button press state
-**File:** `src/components/landing/HeroScanInput.tsx`
-
-The submit button inside the search bar is a raw `<button>`. Add `active:scale-[0.97]` for tactile press feel, matching the global Button component.
-
-### 6. Intelligence Check — form field focus glow
-**File:** `src/pages/IntelligenceCheck.tsx`
-
-Add a subtle `ring-1 ring-primary/30` focus style to all form inputs, so typing into a field feels acknowledged. The inlined employer_name input in the hero should pulse its border once on mount (auto-focused).
-
-### 7. Intelligence Check — submit button ripple
-**File:** `src/pages/IntelligenceCheck.tsx`
-
-Add `active:scale-[0.97]` to the submit button. After successful submission, the confirmation icon already bounces in — add a subtle confetti-like radial gradient pulse behind it (a single 600ms CSS animation, no library needed).
-
-### 8. Email capture — input focus glow
-**File:** `src/components/landing/EmailCapture.tsx`
-
-Add `focus-within:ring-1 focus-within:ring-primary/30` to the form wrapper so the entire input area glows when the user starts typing.
-
-### 9. Global: file upload drop zone feedback
-**File:** `src/components/landing/HeroScanInput.tsx`
-
-When a file is dragged over the upload zone, add a `border-primary` + `bg-primary/5` state so the drop target lights up. Currently it only has `hover:border-primary/40`.
+### Issue 2: Email Delivery — 404 from email.lovable.dev
+Edge function logs show `submit-contact-form` passes Turnstile verification but then fails when calling `https://email.lovable.dev/v1/send` — it returns a Customer.io 404 page. This means even after fixing Turnstile, emails won't send.
 
 ---
 
-## Technical summary
+## Plan
+
+### Step 1: Harden the Turnstile hook (`src/hooks/useTurnstile.ts`)
+
+- Guard `execute` call: check `typeof window.turnstile.execute === 'function'` before calling. If it's not a function, fall back to returning an empty token (which triggers the graceful skip).
+- Guard `render` return value: check that `widgetIdRef.current` is a string after render. If render returns undefined/null, treat the widget as unavailable.
+- Add a timeout to the `getToken` promise so it doesn't hang forever (5 second timeout, resolves with empty string).
+
+### Step 2: Make the contact form gracefully degrade when Turnstile fails
+
+In `src/pages/Contact.tsx`:
+- When `getToken()` returns an empty string, **still submit the form** but with `token: ""`.
+- This allows the edge function to decide whether to reject (strict mode) or accept (graceful mode).
+
+### Step 3: Update `submit-contact-form` edge function for both issues
+
+**Turnstile graceful fallback:**
+- If token is empty, skip Turnstile verification entirely (accept the form) rather than blocking. This is acceptable for a contact form — bot spam can be filtered later.
+
+**Fix email delivery:**
+- The `email.lovable.dev/v1/send` endpoint is returning 404. Replace it with a direct approach: save the contact submission to a `contact_submissions` database table instead of (or in addition to) trying the email endpoint. This way submissions are never lost.
+- Alternatively, keep the email attempt but add a database fallback: if email fails, store the submission in a table so you can retrieve it.
+
+### Step 4: Create `contact_submissions` table (database migration)
+
+```sql
+CREATE TABLE public.contact_submissions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  email text NOT NULL,
+  reason text DEFAULT 'General',
+  message text NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  email_sent boolean DEFAULT false
+);
+
+ALTER TABLE public.contact_submissions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous inserts"
+  ON public.contact_submissions
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+```
+
+This ensures no message is ever lost, regardless of email delivery status.
+
+### Files Changed
 
 | File | Change |
-|------|--------|
-| `Quiz.tsx` TileGrid | `:active` scale + selected glow pulse |
-| `Quiz.tsx` progress bar | 100% celebration flash |
-| `Index.tsx` hero CTA | `active:scale-[0.97]` |
-| `HeroScanInput.tsx` chips | `active:scale-95` + background flash |
-| `HeroScanInput.tsx` submit | `active:scale-[0.97]` |
-| `HeroScanInput.tsx` drop zone | Drag-over visual state |
-| `IntelligenceCheck.tsx` inputs | Focus ring glow |
-| `IntelligenceCheck.tsx` submit | Press scale + success radial pulse |
-| `EmailCapture.tsx` form | Focus-within glow |
+|---|---|
+| `src/hooks/useTurnstile.ts` | Guard `execute`, guard `render` return, add timeout |
+| `src/pages/Contact.tsx` | Allow form submission when token is empty |
+| `supabase/functions/submit-contact-form/index.ts` | Skip Turnstile when no token; save to DB as fallback when email fails |
+| New migration | Create `contact_submissions` table |
 
-All changes are CSS/inline-style additions. No layout, copy, or routing changes. No new dependencies.
+### Outcome
+- Contact form works immediately even if Turnstile is broken or domain isn't authorized
+- Submissions are always saved to the database
+- Email delivery is attempted but failures don't block the user
 
