@@ -586,19 +586,31 @@ export default function Quiz() {
         <rect width="100%" height="100%" filter="url(#quizGrain)" />
       </svg>
 
-      {/* Progress bar */}
-      <div
-        className="fixed top-0 left-0 right-0"
-        style={{ height: 3, background: "rgba(255,255,255,0.05)", zIndex: 60 }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: `${progressPct}%`,
-            background: "#f0c040",
-            transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
-          }}
-        />
+      {/* Progress indicator */}
+      <div className="fixed top-0 left-0 right-0" style={{ zIndex: 60 }}>
+        {!isResults && (
+          <div style={{
+            textAlign: "center",
+            padding: "10px 0 6px",
+            fontSize: 12,
+            fontWeight: 500,
+            letterSpacing: "0.05em",
+            color: "hsl(var(--muted-foreground))",
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Question {step + 1} of {TOTAL_QUESTIONS}
+          </div>
+        )}
+        <div style={{ height: 3, background: "rgba(255,255,255,0.05)" }}>
+          <div
+            style={{
+              height: "100%",
+              width: `${progressPct}%`,
+              background: "hsl(var(--primary))",
+              transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
+            }}
+          />
+        </div>
       </div>
 
       {/* Slide track */}
