@@ -78,7 +78,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           <p
             className="text-muted-foreground max-w-[52ch] mx-auto leading-relaxed mt-6"
-            style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", animation: "heroFadeIn 0.6s ease 0.6s" }}
+            style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", animation: "heroFadeIn 0.6s ease 0.8s" }}
           >
             Check who you&apos;re really working for in 30 seconds &mdash; the receipts on politics, enforcement, layoffs, and values, pulled from the public record so you&apos;re not guessing about your next move.
           </p>
