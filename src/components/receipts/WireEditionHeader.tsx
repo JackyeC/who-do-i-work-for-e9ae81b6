@@ -22,10 +22,10 @@ export function WireEditionHeader({ storyCount }: { storyCount: number }) {
             The Wire{" "}
             <span className="text-primary">· {edition} Edition</span>
           </h2>
-          <p className="text-[11px] text-muted-foreground font-mono tracking-wider">{today}</p>
+          <p className="text-[13px] text-muted-foreground font-mono tracking-wider">{today}</p>
         </div>
       </div>
-      <span className="text-[10px] text-muted-foreground/60 font-mono tracking-wider">
+      <span className="text-xs text-muted-foreground/60 font-mono tracking-wider">
         {storyCount} signal{storyCount !== 1 ? "s" : ""}
       </span>
     </div>

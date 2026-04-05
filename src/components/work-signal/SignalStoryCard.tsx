@@ -63,7 +63,7 @@ export function SignalStoryCard({ story }: Props) {
 
       {/* ── POSTER HEADER ── */}
       <div className="bg-muted/30 px-5 pt-5 pb-4 text-center border-b border-border/30">
-        <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
+        <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
           Jackye Clayton × WDIWF Presents
         </p>
 
@@ -93,14 +93,14 @@ export function SignalStoryCard({ story }: Props) {
 
         {/* Stamp + brand lockup */}
         <div className="mt-4 flex items-center justify-center gap-3">
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-bold">
+          <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary font-bold">
             {poster.stamp}
           </span>
         </div>
-        <p className="font-mono text-[8px] tracking-[0.15em] uppercase text-muted-foreground/50 mt-2">
+        <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-muted-foreground/50 mt-2">
           WDIWF.JACKYECLAYTON.COM
         </p>
-        <p className="text-[9px] text-muted-foreground/40 mt-1 italic">
+        <p className="text-[11px] text-muted-foreground/40 mt-1 italic">
           Every company runs a check on you. WDIWF runs one on them.
         </p>
       </div>
@@ -108,7 +108,7 @@ export function SignalStoryCard({ story }: Props) {
       {/* ── HEADLINE + SOURCE (movie poster center) ── */}
       <div className="px-5 py-4 text-center border-b border-border/20">
         {sourceDomain && (
-          <p className="text-[10px] text-muted-foreground font-mono mb-1.5">{sourceDomain}</p>
+          <p className="text-xs text-muted-foreground font-mono mb-1.5">{sourceDomain}</p>
         )}
         <h2 className="text-heading-3 font-display font-semibold text-foreground leading-snug">
           {story.headline}
@@ -118,7 +118,7 @@ export function SignalStoryCard({ story }: Props) {
       {/* ── THE RECEIPT ── */}
       {story.receipt && (
         <div className="px-5 py-4 border-b border-border/20">
-          <h4 className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary/80 mb-2 flex items-center gap-1.5">
+          <h4 className="text-xs font-mono uppercase tracking-[0.15em] text-primary/80 mb-2 flex items-center gap-1.5">
             🧾 The Receipt
           </h4>
           <p className="text-body text-foreground/85 leading-relaxed">{story.receipt}</p>
@@ -128,7 +128,7 @@ export function SignalStoryCard({ story }: Props) {
       {/* ── JACKYE'S TAKE ── */}
       {story.jrc_take && (
         <div className="px-5 py-4 border-b border-border/20 bg-secondary/30">
-          <h4 className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary/80 mb-2 flex items-center gap-1.5">
+          <h4 className="text-xs font-mono uppercase tracking-[0.15em] text-primary/80 mb-2 flex items-center gap-1.5">
             💬 Jackye's Take
           </h4>
           <p className="text-body text-foreground/80 leading-relaxed italic">
@@ -140,7 +140,7 @@ export function SignalStoryCard({ story }: Props) {
       {/* ── WHY IT MATTERS ── */}
       {whyItMatters.length > 0 && (
         <div className="px-5 py-4 border-b border-border/20">
-          <h4 className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground mb-2">
+          <h4 className="text-xs font-mono uppercase tracking-[0.15em] text-muted-foreground mb-2">
             Why It Matters
           </h4>
           <ul className="space-y-2">
@@ -157,7 +157,7 @@ export function SignalStoryCard({ story }: Props) {
       {/* ── BEFORE YOU SAY YES ── */}
       {story.before_you_say_yes && (
         <div className="px-5 py-3 border-b border-border/20 bg-muted/20">
-          <h4 className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary mb-1.5">
+          <h4 className="text-xs font-mono uppercase tracking-[0.15em] text-primary mb-1.5">
             ✋ Use This
           </h4>
           <p className="text-caption text-foreground/75 leading-relaxed whitespace-pre-line">
@@ -171,11 +171,11 @@ export function SignalStoryCard({ story }: Props) {
         {/* Stars + drama label */}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
-            <span key={i} className="text-xs" style={{ opacity: i < starInfo.stars ? 1 : 0.2 }}>⭐</span>
+            <span key={i} className="text-sm" style={{ opacity: i < starInfo.stars ? 1 : 0.2 }}>⭐</span>
           ))}
-          <span className="ml-2 text-[11px] text-muted-foreground italic">{starInfo.label}</span>
+          <span className="ml-2 text-[13px] text-muted-foreground italic">{starInfo.label}</span>
           {story.heat_level === "high" && (
-            <span className="ml-2 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+            <span className="ml-2 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
               style={{ color: heat.color, background: heat.bg }}>
               HOT
             </span>
@@ -189,21 +189,21 @@ export function SignalStoryCard({ story }: Props) {
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <button
             onClick={() => navigate(story.category === "fine_print" ? "/offer-check" : "/search")}
-            className="text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors"
+            className="text-[13px] font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             🔧 {actionLabel}
           </button>
           {story.source_url && (
             <a href={story.source_url} target="_blank" rel="noopener noreferrer"
-              className="text-[11px] text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
+              className="text-[13px] text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
               See the receipts → {sourceDomain}
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
         </div>
 
         {/* Share row */}
-        <div className="flex items-center gap-3 flex-wrap text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
           <button className="hover:text-foreground transition-colors">Save Poster</button>
           <span className="text-border">|</span>
           <button className="hover:text-foreground transition-colors">LinkedIn</button>
@@ -212,13 +212,13 @@ export function SignalStoryCard({ story }: Props) {
         </div>
 
         {/* Rabbit hole links */}
-        <div className="flex flex-col gap-2 text-[10px]">
+        <div className="flex flex-col gap-2 text-xs">
           {companySlug && (
             <Link
               to={`/dossier/${companySlug}`}
               className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 no-underline"
             >
-              <Search className="w-3 h-3" />
+              <Search className="w-3.5 h-3.5" />
               Is your company doing this? Look up employer →
             </Link>
           )}
@@ -227,7 +227,7 @@ export function SignalStoryCard({ story }: Props) {
               onClick={() => navigate("/search")}
               className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 text-left"
             >
-              <Search className="w-3 h-3" />
+              <Search className="w-3.5 h-3.5" />
               Is your company doing this? Look up employer →
             </button>
           )}
@@ -243,7 +243,7 @@ export function SignalStoryCard({ story }: Props) {
             to="/receipts"
             className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 no-underline"
           >
-            <Newspaper className="w-3 h-3" />
+            <Newspaper className="w-3.5 h-3.5" />
             Want the full gallery? The Receipts →
           </Link>
         </div>
