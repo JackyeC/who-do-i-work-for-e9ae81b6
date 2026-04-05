@@ -686,6 +686,8 @@ export default function Quiz() {
                 {qIdx > 0 && (
                   <button
                     onClick={goBack}
+                    aria-label="Go to previous question"
+                    className="quiz-focus-ring"
                     style={{
                       background: "transparent",
                       border: "1px solid rgba(255,255,255,0.07)",
@@ -713,6 +715,8 @@ export default function Quiz() {
                 <button
                   onClick={advance}
                   disabled={!canAdvance}
+                  aria-label={qIdx === TOTAL_QUESTIONS - 1 ? "See my profile" : "Go to next question"}
+                  className="quiz-focus-ring"
                   style={{
                     background: canAdvance ? "#f0c040" : "rgba(240,192,64,0.25)",
                     color: "#0a0a0e",
