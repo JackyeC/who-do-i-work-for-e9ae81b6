@@ -12,7 +12,7 @@ import { NotesTab } from "@/components/founder/NotesTab";
 import { DuplicateDetectionTab } from "@/components/founder/DuplicateDetectionTab";
 import { DeskTab } from "@/components/founder/DeskTab";
 import {
-  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink, Copy,
+  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink, Copy, FileEdit,
 } from "lucide-react";
 
 const TABS = [
