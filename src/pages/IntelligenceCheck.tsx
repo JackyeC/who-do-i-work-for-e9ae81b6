@@ -168,6 +168,7 @@ export default function IntelligenceCheck() {
                     onChange={update("employer_name")}
                     placeholder="e.g. Acme Corp"
                     required
+                    className="bg-primary/5 border-primary/20"
                   />
                 </div>
 
