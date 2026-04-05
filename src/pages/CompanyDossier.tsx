@@ -577,6 +577,7 @@ export default function CompanyDossier() {
       </div>
 
       {/* ── POWER & INFLUENCE ── */}
+      <div id="political-giving">
       <PowerInfluenceView
         companyName={company.name}
         companyId={companyId!}
