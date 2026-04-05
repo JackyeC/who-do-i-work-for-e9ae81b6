@@ -1195,8 +1195,8 @@ document.getElementById('drive-cards').addEventListener('click',function(e){
   card.classList.add('selected');
   playerDrive=card.getAttribute('data-drive');
 
-  // Advance to name input step after brief delay
-  setTimeout(function(){ showNameStep() },600);
+  // Skip name step — go straight to auto-combine for faster first discovery
+  setTimeout(function(){ showOnboardScreen2() },300);
 });
 
 // Screen 1.5: Name input
