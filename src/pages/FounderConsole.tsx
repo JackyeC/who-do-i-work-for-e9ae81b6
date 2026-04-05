@@ -22,6 +22,7 @@ const TABS = [
   { id: "users", label: "Users & Feedback", icon: Users },
   { id: "notes", label: "Notes", icon: StickyNote },
   { id: "duplicates", label: "Duplicates", icon: Copy },
+  { id: "desk", label: "Desk", icon: FileEdit },
 ] as const;
 
 export default function FounderConsole() {
