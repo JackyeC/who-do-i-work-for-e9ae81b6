@@ -1269,23 +1269,20 @@ function showOnboardScreen2(){
   document.getElementById('ac-result-name').textContent=combo.n;
   document.getElementById('onboard-2-desc').textContent='Let\'s see what happens when you combine '+infoA.name+' and '+infoB.name+'...';
 
-  // Animate: slide together after 800ms
+  // Compressed animation: merge at 500ms, result at 1000ms, splash at 1500ms
   setTimeout(function(){
     document.getElementById('ac-left').classList.add('merge-left');
     document.getElementById('ac-right').classList.add('merge-right');
-  },800);
+  },500);
 
-  // Show result after merge
   setTimeout(function(){
     document.getElementById('ac-left').style.opacity='0';
     document.getElementById('ac-right').style.opacity='0';
     document.getElementById('ac-result').classList.add('visible');
     SND.ok();
-  },1600);
+  },1000);
 
-  // Register discovery + show splash after 2.4s
   setTimeout(function(){
-    // Register the discovery in state
     if(state.discovered.indexOf(combo.r)===-1){
       state.discovered.push(combo.r);
       state.order.push(combo.r);
@@ -1293,12 +1290,9 @@ function showOnboardScreen2(){
       if(state.inventory.indexOf(combo.r)===-1) state.inventory.push(combo.r);
       state.newlyDiscovered++;
     }
-    // Hide the intro so splash is visible above it
     document.getElementById('intro').style.display='none';
-    // Show the discovery splash
     showSplash(combo);
 
-    // When splash is dismissed, start the game (screen 3)
     var splashEl=document.getElementById('splash');
     var startGameOnDismiss=function handler(e){
       if(e.target.closest('.splash-wdiwf')||e.target.closest('.splash-bridge')) return;
@@ -1306,7 +1300,7 @@ function showOnboardScreen2(){
       startGameFromOnboarding();
     };
     splashEl.addEventListener('click',startGameOnDismiss);
-  },2400);
+  },1500);
 }
 
 function startGameFromOnboarding(){
