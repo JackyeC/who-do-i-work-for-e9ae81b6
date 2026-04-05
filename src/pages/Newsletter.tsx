@@ -205,7 +205,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
           )}
         </div>
 
-        {/* Source + Bias footer */}
+        {/* Source + Bias + Share footer */}
         <div className="flex items-center justify-between pt-4 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
@@ -213,12 +213,15 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
             )}
             <BiasBar bias={biasKey} />
           </div>
-          {article.source_url && (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
-              See the receipts <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          )}
+          <div className="flex items-center gap-3">
+            <SharePastiche headline={article.headline} articleId={article.id} />
+            {article.source_url && (
+              <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
+                See the receipts <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
@@ -305,7 +308,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
           ) : null}
         </div>
 
-        {/* Source + Bias footer */}
+        {/* Source + Bias + Share footer */}
         <div className="flex items-center justify-between pt-3 border-t border-border/20">
           <div className="flex items-center gap-2">
             {article.source_name && (
@@ -313,12 +316,15 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
             )}
             <BiasBar bias={biasKey} />
           </div>
-          {article.source_url && (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
-              Receipts <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          )}
+          <div className="flex items-center gap-3">
+            <SharePastiche headline={article.headline} articleId={article.id} />
+            {article.source_url && (
+              <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
+                Receipts <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
