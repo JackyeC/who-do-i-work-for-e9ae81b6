@@ -60,6 +60,7 @@ import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCar
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
 import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
+import { CongressionalContextCard } from "@/components/dossier/CongressionalContextCard";
 import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
 import { CodeWordScanner } from "@/components/dossier/CodeWordScanner";
 import { MissionIntegrityCard } from "@/components/dossier/MissionIntegrityCard";
