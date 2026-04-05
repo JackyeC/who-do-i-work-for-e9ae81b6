@@ -270,7 +270,7 @@ Deno.serve(async (req) => {
 
       const { error } = await supabase
         .from("congressional_news")
-        .upsert(row, { onConflict: "source_url", ignoreDuplicates: true });
+        .upsert(row, { onConflict: "source_url" });
 
       if (error) {
         results.skipped++;
