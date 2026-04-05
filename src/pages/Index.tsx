@@ -98,7 +98,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               onClick={() => navigate("/intelligence-check")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-all rounded-xl shadow-elevated"
             >
-              Get a free employer intelligence check
+              Run My Free Scan
             </button>
             <HeroScanInput />
           </div>
@@ -118,8 +118,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             </button>
           </p>
 
-          <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ animation: "heroFadeIn 0.4s ease 1.0s" }}>
-            Facts over feelings, built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
+          <p className="font-mono text-xs text-muted-foreground/60 mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ animation: "heroFadeIn 0.4s ease 1.0s" }}>
+            Built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
           </p>
         </div>
       </section>
@@ -219,19 +219,25 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <section className="px-6 lg:px-16 py-24 lg:py-32 text-center relative overflow-hidden border-t border-border bg-muted/30">
         <div className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse, hsl(var(--primary) / 0.04) 0%, transparent 70%)" }} />
         <div className="relative z-[1] max-w-[600px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Know who you work for.</p>
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Know before you go.</p>
           <h2 className="text-h1 text-foreground mb-4">
-            Facts over feelings.
+            Your next move deserves receipts.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-[46ch] mx-auto mb-8">
-            Every company you're considering has a public record. Now you know where to read it.
+            Every company you&apos;re considering has a public record. Now you know where to read it.
           </p>
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
             <button
               onClick={() => navigate("/intelligence-check")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all rounded-xl"
             >
-              Get a free employer intelligence check
+              Run My Free Scan
+            </button>
+            <button
+              onClick={() => navigate("/ask-jackye")}
+              className="border border-border text-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:bg-muted/50 transition-all rounded-xl"
+            >
+              Ask Jackye
             </button>
           </div>
           <p className="font-sans text-xs text-muted-foreground/40 mt-5">
