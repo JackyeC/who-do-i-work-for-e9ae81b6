@@ -1132,7 +1132,91 @@ function SliderInput({
   );
 }
 
-// ─── RESULTS SCREEN ──────────────────────────────────────
+// ─── DOSSIER MODULE SHIMMER ──────────────────────────────
+function DossierShimmer({ label, delay = 0 }: { label: string; delay?: number }) {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 1800 + delay * 600);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  if (loaded) return null;
+  return (
+    <div style={{
+      position: "absolute", inset: 0, zIndex: 5,
+      background: "linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.06) 50%, transparent 100%)",
+      backgroundSize: "200% 100%",
+      animation: "dossierShimmer 1.5s ease infinite",
+      borderRadius: 12, pointerEvents: "none",
+    }}>
+      <div style={{
+        position: "absolute", bottom: 8, right: 12,
+        display: "flex", alignItems: "center", gap: 4,
+        fontSize: 10, color: "rgba(201,168,76,0.5)",
+        fontFamily: "'DM Sans', sans-serif",
+      }}>
+        <Scan size={10} /> Scanning…
+      </div>
+    </div>
+  );
+}
+
+// ─── SOURCE BADGE ────────────────────────────────────────
+function SourceBadge({ source }: { source: string }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 4,
+      fontSize: 9, fontWeight: 600, letterSpacing: "0.08em",
+      textTransform: "uppercase", color: "rgba(201,168,76,0.55)",
+      fontFamily: "'DM Sans', sans-serif",
+      background: "rgba(201,168,76,0.06)",
+      border: "1px solid rgba(201,168,76,0.12)",
+      borderRadius: 4, padding: "2px 8px",
+    }}>
+      <Eye size={8} /> Source: {source}
+    </span>
+  );
+}
+
+// ─── BLURRED SECTION ─────────────────────────────────────
+function BlurredSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{
+      position: "relative", borderRadius: 12,
+      background: "#161514",
+      border: "1px solid rgba(255,255,255,0.06)",
+      padding: "20px 22px", overflow: "hidden",
+    }}>
+      <div style={{ filter: "blur(6px)", pointerEvents: "none", userSelect: "none" }}>
+        {children}
+      </div>
+      <div style={{
+        position: "absolute", inset: 0,
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        background: "rgba(10,10,14,0.6)",
+        backdropFilter: "blur(2px)",
+        borderRadius: 12,
+      }}>
+        <Lock size={24} style={{ color: "#C9A84C", marginBottom: 8 }} />
+        <span style={{
+          fontSize: 13, fontWeight: 600, color: "#f0ebe0",
+          fontFamily: "'DM Sans', sans-serif",
+        }}>
+          {title}
+        </span>
+        <span style={{
+          fontSize: 11, color: "hsl(var(--muted-foreground))",
+          fontFamily: "'DM Sans', sans-serif", marginTop: 2,
+        }}>
+          Requires Intelligence Dossier access
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── RESULTS SCREEN (Intelligence Dossier) ───────────────
 function ResultsScreen({
   result,
   onReset,
@@ -1147,237 +1231,370 @@ function ResultsScreen({
   onCopy: () => void;
 }) {
   const [showShareModal, setShowShareModal] = useState(false);
+  const { user } = useAuth();
   const profile = PERSONA_PROFILES[result.primary];
   const secondaryProfile = PERSONA_PROFILES[result.secondary];
   const showNepotism = result.meta.nepotism_concern === "high";
+  const userName = user?.user_metadata?.full_name?.split(" ")[0]
+    || user?.user_metadata?.name?.split(" ")[0]
+    || user?.email?.split("@")[0]
+    || null;
+
+  // Alignment summary based on meta
+  const alignmentVerdict = useMemo(() => {
+    if (result.meta.trust_level === "skeptic") return "You question everything — and that's your edge.";
+    if (result.meta.data_orientation === "data") return "You follow the receipts, not the branding.";
+    if (result.meta.nepotism_concern === "high") return "You see the hidden networks others miss.";
+    return "You know what matters — now you need the data to prove it.";
+  }, [result.meta]);
 
   return (
-    <div
-      className="w-full flex flex-col items-center"
-      style={{ maxWidth: 560 }}
-    >
-      {/* Badge */}
-      <span
+    <div className="w-full flex flex-col items-center" style={{ maxWidth: 620 }}>
+      {/* Personalized greeting */}
+      {userName && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            fontSize: 13, color: "hsl(var(--muted-foreground))",
+            fontFamily: "'DM Sans', sans-serif",
+            marginBottom: 20, letterSpacing: "0.02em",
+          }}
+        >
+          {userName}, here is what we found.
+        </motion.p>
+      )}
+
+      {/* ── 1. PRIMARY CAREER SIGNAL (Hero Insight) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
         style={{
-          display: "inline-block",
-          background: "rgba(240,192,64,0.12)",
-          border: "1px solid rgba(240,192,64,0.3)",
-          color: "#f0c040",
-          borderRadius: 20,
-          padding: "6px 16px",
-          fontSize: 12,
-          fontWeight: 500,
-          letterSpacing: 2,
-          textTransform: "uppercase",
-          fontFamily: "'DM Sans', sans-serif",
+          width: "100%",
+          background: "linear-gradient(135deg, #161514 0%, #1a1917 100%)",
+          border: "1px solid #C9A84C",
+          borderRadius: 14,
+          padding: "28px 24px",
           marginBottom: 24,
-          animation: "quizFadeUp 0.6s ease both",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        Your Workplace DNA
-      </span>
+        {/* Gold glow effect */}
+        <div style={{
+          position: "absolute", top: -40, right: -40,
+          width: 120, height: 120,
+          background: "radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
 
-      {/* Primary persona name */}
-      <h1
-        style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontWeight: 700,
-          fontSize: "clamp(32px, 5vw, 56px)",
-          letterSpacing: "-1.5px",
-          color: "#f0ebe0",
-          textAlign: "center",
-          lineHeight: 1.1,
-          marginBottom: 16,
-          animation: "quizFadeUp 0.6s ease 0.1s both",
-        }}
-      >
-        {profile.name}
-      </h1>
-
-      {/* Subtitle */}
-      <p
-        style={{
-          fontSize: 16,
-          color: "hsl(var(--muted-foreground))",
-          lineHeight: 1.7,
-          maxWidth: 420,
-          textAlign: "center",
-          marginBottom: 12,
-          fontFamily: "'DM Sans', sans-serif",
-          animation: "quizFadeUp 0.6s ease 0.25s both",
-        }}
-      >
-        {profile.subtitle}
-      </p>
-
-      {/* Secondary */}
-      <p
-        style={{
-          fontSize: 13,
-          color: "hsl(var(--muted-foreground))",
-          textAlign: "center",
-          marginBottom: 36,
-          fontFamily: "'DM Sans', sans-serif",
-          animation: "quizFadeUp 0.6s ease 0.35s both",
-        }}
-      >
-        You also think like{" "}
-        <span style={{ color: "#f0ebe0" }}>{secondaryProfile.name}</span>
-      </p>
-
-      {/* Signals header */}
-      <p
-        style={{
-          fontSize: 12,
-          textTransform: "uppercase",
-          letterSpacing: 2,
-          color: "hsl(var(--muted-foreground))",
-          marginBottom: 14,
-          fontFamily: "'DM Sans', sans-serif",
-          animation: "quizFadeUp 0.6s ease 0.35s both",
-        }}
-      >
-        Your signals to watch
-      </p>
-
-      {/* Signal chips */}
-      <div className="w-full flex flex-col gap-3" style={{ maxWidth: 560 }}>
-        {profile.signals.map((sig, i) => (
-          <SignalChip key={i} signal={sig} delay={0.4 + i * 0.15} />
-        ))}
-        {showNepotism && (
-          <SignalChip
-            signal={{
-              label: "Connected Dots",
-              text: "You flagged hidden networks as a priority. Every company audit will surface this signal first.",
-            }}
-            delay={0.85}
-            dotColor="#ff6b35"
-          />
-        )}
-      </div>
-
-      {/* CTA buttons */}
-      <div
-        className="flex flex-col items-center justify-center gap-4 mt-10 w-full sm:w-auto"
-        style={{ animation: "quizFadeUp 0.6s ease 0.95s both", paddingBottom: 48 }}
-      >
-        {/* Framing text */}
-        <p style={{
-          fontSize: 14,
-          color: "hsl(var(--muted-foreground))",
-          fontFamily: "'DM Sans', sans-serif",
-          textAlign: "center",
-          maxWidth: 400,
-          lineHeight: 1.5,
-          marginBottom: 4,
-        }}>
-          Create a free account to save your results and unlock your personalized dashboard.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <a
-            href="/login"
-            className="quiz-focus-ring"
-            aria-label="Create free account"
-            style={{
-              background: "#f0c040",
-              color: "#0a0a0e",
-              borderRadius: 50,
-              padding: "14px 36px",
-              fontSize: 14,
-              fontWeight: 600,
-              textDecoration: "none",
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 16, position: "relative", zIndex: 1 }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: 12,
+            background: "rgba(201,168,76,0.12)",
+            border: "1px solid rgba(201,168,76,0.25)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0,
+          }}>
+            <Shield size={24} style={{ color: "#C9A84C" }} />
+          </div>
+          <div>
+            <span style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+              textTransform: "uppercase", color: "#C9A84C",
               fontFamily: "'DM Sans', sans-serif",
-              transition: "opacity 0.2s",
-              display: "inline-block",
-            }}
-          >
-            Create free account →
-          </a>
-          <button
-            onClick={() => setShowShareModal(true)}
-            className="quiz-focus-ring"
-            aria-label="Share your Workplace DNA"
-            style={{
-              background: "#221f30",
-              border: "1px solid rgba(240,192,64,0.3)",
-              color: "#f0c040",
-              borderRadius: 50,
-              padding: "12px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: "pointer",
+              display: "block", marginBottom: 6,
+            }}>
+              Primary Career Signal
+            </span>
+            <h2 style={{
               fontFamily: "'DM Sans', sans-serif",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.5)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.3)")
-            }
-          >
-            Share your DNA →
-          </button>
-          <button
-            onClick={onCopy}
-            className="quiz-focus-ring"
-            aria-label="Copy profile text to clipboard"
-            style={{
-              background: "#221f30",
-              border: "1px solid rgba(255,255,255,0.07)",
-              color: "#f0ebe0",
-              borderRadius: 50,
-              padding: "12px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.3)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")
-            }
-          >
-            Share my profile
-          </button>
+              fontWeight: 700, fontSize: 28,
+              color: "#f0ebe0", lineHeight: 1.15,
+              marginBottom: 8,
+            }}>
+              {profile.name}
+            </h2>
+            <p style={{
+              fontSize: 14, color: "hsl(var(--muted-foreground))",
+              fontFamily: "'DM Sans', sans-serif", lineHeight: 1.6,
+            }}>
+              {alignmentVerdict}
+            </p>
+          </div>
         </div>
 
-        {/* Browse without account */}
+        <div style={{
+          marginTop: 16, paddingTop: 16,
+          borderTop: "1px solid rgba(201,168,76,0.15)",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <span style={{
+            fontSize: 12, color: "hsl(var(--muted-foreground))",
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Secondary signal: <span style={{ color: "#f0ebe0" }}>{secondaryProfile.name}</span>
+          </span>
+          <SourceBadge source="Work DNA Analysis" />
+        </div>
+      </motion.div>
+
+      {/* ── 2. SIGNALS TO WATCH (with shimmer) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        style={{ width: "100%", marginBottom: 24 }}
+      >
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          marginBottom: 12,
+        }}>
+          <span style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.1em",
+            textTransform: "uppercase", color: "hsl(var(--muted-foreground))",
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Your Intelligence Signals
+          </span>
+          <SourceBadge source="Behavioral Model" />
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {profile.signals.map((sig, i) => (
+            <div key={i} style={{ position: "relative" }}>
+              <DossierShimmer label={sig.label} delay={i} />
+              <SignalChip signal={sig} delay={0.4 + i * 0.12} />
+            </div>
+          ))}
+          {showNepotism && (
+            <div style={{ position: "relative" }}>
+              <DossierShimmer label="Connected Dots" delay={3} />
+              <SignalChip
+                signal={{
+                  label: "Connected Dots",
+                  text: "You flagged hidden networks as a priority. Every company audit will surface this signal first.",
+                }}
+                delay={0.85}
+                dotColor="#ff6b35"
+              />
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* ── 3. POLITICAL DNA (partially visible) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        style={{
+          width: "100%",
+          background: "#161514",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: 12,
+          padding: "20px 22px",
+          marginBottom: 16,
+          position: "relative",
+        }}
+      >
+        <DossierShimmer label="Political DNA" delay={4} />
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          marginBottom: 14,
+        }}>
+          <span style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.1em",
+            textTransform: "uppercase", color: "#C9A84C",
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Political DNA Preview
+          </span>
+          <SourceBadge source="FEC Filings" />
+        </div>
+
+        <div style={{
+          display: "flex", alignItems: "center", gap: 12,
+          padding: "12px 16px", borderRadius: 8,
+          background: "rgba(201,168,76,0.06)",
+          border: "1px solid rgba(201,168,76,0.12)",
+        }}>
+          <AlertTriangle size={18} style={{ color: "#C9A84C", flexShrink: 0 }} />
+          <div>
+            <span style={{
+              fontSize: 13, fontWeight: 600, color: "#f0ebe0",
+              fontFamily: "'DM Sans', sans-serif", display: "block",
+            }}>
+              {result.meta.trust_level === "skeptic"
+                ? "TRUST LEVEL: SKEPTIC"
+                : result.meta.trust_level === "balanced"
+                ? "TRUST LEVEL: BALANCED"
+                : "TRUST LEVEL: BELIEVER"}
+            </span>
+            <span style={{
+              fontSize: 12, color: "hsl(var(--muted-foreground))",
+              fontFamily: "'DM Sans', sans-serif",
+            }}>
+              {result.meta.data_orientation === "data"
+                ? "You'll want receipts for every claim."
+                : result.meta.data_orientation === "instinct"
+                ? "You read between the lines — we'll give you the lines."
+                : "A blend of instinct and evidence shapes your decisions."}
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── 4. BLURRED PAYWALL SECTIONS ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.65 }}
+        className="w-full flex flex-col gap-3"
+        style={{ marginBottom: 24 }}
+      >
+        <BlurredSection title="Leadership Network">
+          <div style={{ padding: 8 }}>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>Board Connections: 12 detected</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>Political Network Ties: 4 flagged</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0" }}>Revolving Door Signals: 2 active</p>
+          </div>
+        </BlurredSection>
+
+        <BlurredSection title="Executive Pay Gap Analysis">
+          <div style={{ padding: 8 }}>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>CEO-to-Median Ratio: 287:1</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>Industry Benchmark: 198:1</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0" }}>Pay Equity Grade: C+</p>
+          </div>
+        </BlurredSection>
+      </motion.div>
+
+      {/* ── 5. UNLOCK CTA ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="w-full flex flex-col items-center"
+        style={{ marginBottom: 32 }}
+      >
         <a
-          href="/browse"
+          href="/login"
           className="quiz-focus-ring"
-          aria-label="Browse companies without creating an account"
+          aria-label="Unlock the full intelligence dossier"
           style={{
-            fontSize: 13,
-            color: "hsl(var(--muted-foreground))",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            width: "100%", maxWidth: 420,
+            background: "#C9A84C",
+            color: "#0a0a0e",
+            borderRadius: 50,
+            padding: "16px 36px",
+            fontSize: 15,
+            fontWeight: 700,
             textDecoration: "none",
             fontFamily: "'DM Sans', sans-serif",
+            transition: "box-shadow 0.3s ease, transform 0.15s ease",
+            boxShadow: "0 0 20px 4px rgba(201,168,76,0.2)",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
-          onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 30px 8px rgba(201,168,76,0.35)";
+            e.currentTarget.style.transform = "scale(1.02)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 20px 4px rgba(201,168,76,0.2)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
         >
-          Or browse companies first →
+          Unlock the Full Intelligence Dossier
+          <ChevronRight size={18} />
         </a>
-      </div>
 
-      {/* Reset */}
+        <p style={{
+          fontSize: 11, color: "hsl(var(--muted-foreground))",
+          fontFamily: "'DM Sans', sans-serif",
+          marginTop: 10, textAlign: "center",
+        }}>
+          Create a free account to save results and access full company scans.
+        </p>
+      </motion.div>
+
+      {/* ── 6. SECONDARY ACTIONS ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.95 }}
+        className="flex flex-col sm:flex-row items-center gap-3"
+        style={{ marginBottom: 16 }}
+      >
+        <button
+          onClick={() => setShowShareModal(true)}
+          className="quiz-focus-ring"
+          aria-label="Share your Workplace DNA"
+          style={{
+            background: "#221f30",
+            border: "1px solid rgba(201,168,76,0.3)",
+            color: "#C9A84C",
+            borderRadius: 50,
+            padding: "12px 24px",
+            fontSize: 14,
+            fontWeight: 500,
+            cursor: "pointer",
+            fontFamily: "'DM Sans', sans-serif",
+            transition: "border-color 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)")}
+        >
+          Share your DNA →
+        </button>
+        <button
+          onClick={onCopy}
+          className="quiz-focus-ring"
+          aria-label="Copy profile text to clipboard"
+          style={{
+            background: "#221f30",
+            border: "1px solid rgba(255,255,255,0.07)",
+            color: "#f0ebe0",
+            borderRadius: 50,
+            padding: "12px 24px",
+            fontSize: 14,
+            fontWeight: 500,
+            cursor: "pointer",
+            fontFamily: "'DM Sans', sans-serif",
+            transition: "border-color 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
+        >
+          Copy my profile
+        </button>
+      </motion.div>
+
+      {/* Browse / retake */}
+      <a
+        href="/browse"
+        className="quiz-focus-ring"
+        aria-label="Browse companies"
+        style={{
+          fontSize: 13, color: "hsl(var(--muted-foreground))",
+          textDecoration: "none", fontFamily: "'DM Sans', sans-serif",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+      >
+        Or browse companies first →
+      </a>
+
       <button
         onClick={onReset}
         className="quiz-focus-ring"
         aria-label="Retake the quiz"
         style={{
-          marginTop: 24,
-          background: "none",
-          border: "none",
-          color: "rgba(245,240,232,0.4)",
-          fontSize: 12,
-          cursor: "pointer",
-          fontFamily: "'DM Sans', sans-serif",
+          marginTop: 16, background: "none", border: "none",
+          color: "rgba(245,240,232,0.4)", fontSize: 12,
+          cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
           transition: "color 0.2s ease",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.color = "#C9A84C")}
@@ -1386,8 +1603,7 @@ function ResultsScreen({
         ← Retake the quiz
       </button>
 
-
-      {/* Workplace DNA Share Modal */}
+      {/* Share Modal */}
       {showShareModal && result && (
         <WorkplaceDNAShareCard
           archetypeName={PERSONA_PROFILES[result.primary].name}
