@@ -100,7 +100,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Live Data Feed */}
           <div
             className="mt-6 w-full max-w-[560px]"
-            style={{ animation: "heroFadeIn 0.4s ease 1.2s" }}
+            style={{ animation: "heroFadeIn 0.4s ease 0.7s" }}
           >
             <LiveDataFeed />
           </div>
