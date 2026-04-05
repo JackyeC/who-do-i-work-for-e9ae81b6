@@ -899,8 +899,11 @@ function TileGrid({
               cursor: "pointer",
               fontFamily: "'DM Sans', sans-serif",
               transition:
-                "border-color 0.2s, background 0.2s, transform 0.2s, color 0.2s",
+                "border-color 0.2s, background 0.2s, transform 0.15s, color 0.2s, box-shadow 0.3s",
               transform: isSelected ? "scale(1.02)" : "scale(1)",
+              boxShadow: isSelected
+                ? "0 0 12px 2px rgba(240,192,64,0.15)"
+                : "none",
             }}
             onMouseEnter={(e) => {
               if (!isSelected) {
