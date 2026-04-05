@@ -78,7 +78,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           <p
             className="text-muted-foreground max-w-[52ch] mx-auto leading-relaxed mt-6"
-            style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", animation: "heroFadeIn 0.6s ease 0.6s" }}
+            style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", animation: "heroFadeIn 0.6s ease 0.8s" }}
           >
             Check who you&apos;re really working for in 30 seconds &mdash; the receipts on politics, enforcement, layoffs, and values, pulled from the public record so you&apos;re not guessing about your next move.
           </p>
@@ -86,7 +86,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Primary CTA */}
           <div
             className="mt-9 w-full flex flex-col items-center gap-4"
-            style={{ animation: "heroFadeIn 0.5s ease 0.9s" }}
+            style={{ animation: "heroFadeIn 0.5s ease 0.5s" }}
           >
             <button
               onClick={() => navigate("/intelligence-check")}
@@ -100,12 +100,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Live Data Feed */}
           <div
             className="mt-6 w-full max-w-[560px]"
-            style={{ animation: "heroFadeIn 0.4s ease 1.2s" }}
+            style={{ animation: "heroFadeIn 0.4s ease 0.7s" }}
           >
             <LiveDataFeed />
           </div>
 
-          <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ animation: "heroFadeIn 0.4s ease 1.4s" }}>
+          <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ animation: "heroFadeIn 0.4s ease 1.0s" }}>
             Facts over feelings, built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
           </p>
         </div>

@@ -211,13 +211,13 @@ export default function Dashboard() {
         {!hasTakenQuiz && tab === "overview" && <PersonaQuizBanner />}
         {tab === "overview" && <TodayReflection />}
         {showUpsell && <PostPurchaseUpsell onDismiss={dismissUpsell} />}
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={tab}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
           >
             {renderContent()}
           </motion.div>

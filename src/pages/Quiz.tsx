@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { WorkplaceDNAShareCard } from "@/components/quiz/WorkplaceDNAShareCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -438,6 +438,8 @@ export default function Quiz() {
     return answers[step] !== null;
   }, [step, answers, isResults]);
 
+  const autoAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const selectAnswer = useCallback(
     (idx: number) => {
       setAnswers((prev) => {
@@ -445,9 +447,24 @@ export default function Quiz() {
         next[step] = idx;
         return next;
       });
+      // Auto-advance after 400ms for tile questions (not the last question)
+      const q = QUESTIONS[step];
+      if (q.type === "tiles" && step < TOTAL_QUESTIONS - 1) {
+        if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current);
+        autoAdvanceRef.current = setTimeout(() => {
+          setDirection("left");
+          setStep((s) => s + 1);
+        }, 400);
+      }
     },
     [step]
   );
+
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current);
+    };
+  }, []);
 
   const computeResults = useCallback(() => {
     const s: Scores = {
@@ -707,7 +724,7 @@ export default function Quiz() {
         style={{
           width: `${(TOTAL_QUESTIONS + 1) * 100}vw`,
           transform: `translateX(-${step * 100}vw)`,
-          transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
+          transition: "transform 0.35s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
         {/* Question screens */}

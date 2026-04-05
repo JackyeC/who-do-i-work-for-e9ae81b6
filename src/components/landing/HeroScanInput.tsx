@@ -13,6 +13,7 @@ export function HeroScanInput() {
   const [verifying, setVerifying] = useState(false);
   const [mode, setMode] = useState<"search" | "upload">("search");
   const fileRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { hasScansRemaining, scansRemaining, recordScan, FREE_SCAN_LIMIT } = useScanUsage();
@@ -118,6 +119,7 @@ export function HeroScanInput() {
       </div>
 
       <form
+        ref={formRef}
         onSubmit={handleSubmit}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleFileDrop}
@@ -212,7 +214,14 @@ export function HeroScanInput() {
             <button
               key={s}
               type="button"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuery(s); }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setQuery(s);
+                setTimeout(() => {
+                  formRef.current?.requestSubmit();
+                }, 150);
+              }}
               className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors cursor-pointer"
             >
               {s}
