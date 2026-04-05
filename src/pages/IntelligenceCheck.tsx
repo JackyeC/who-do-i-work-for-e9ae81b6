@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,19 +74,34 @@ export default function IntelligenceCheck() {
         </Helmet>
         <MarketingNav />
         <main className="flex-1 px-6 lg:px-16 py-16 lg:py-24">
-          <div className="max-w-[520px] mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-[520px] mx-auto text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.15, 1] }}
+              transition={{ duration: 0.6, times: [0, 0.5, 1], ease: "easeOut" }}
+              className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6"
+            >
               <Mail className="w-8 h-8 text-primary" />
-            </div>
+            </motion.div>
             <h1 className="text-foreground font-sans text-2xl font-bold mb-4">Your snapshot is on the way.</h1>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               We're generating your employer intelligence snapshot now. Check your inbox at{" "}
               <span className="font-medium text-foreground">{form.email}</span> — it should arrive within a few minutes.
             </p>
-            <p className="text-xs text-muted-foreground/70">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="text-xs text-muted-foreground/70"
+            >
               Jackyé also gets a copy and may follow up with additional insights.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
         </main>
         <SiteFooter />
       </div>
