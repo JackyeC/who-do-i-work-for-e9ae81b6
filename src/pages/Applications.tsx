@@ -61,11 +61,11 @@ export default function Applications() {
               Nothing in your pipeline yet. Track roles from matched jobs or add applications manually — submitted roles get an in-dashboard dossier receipt.
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center mt-6">
-              <Button size="sm" variant="default" onClick={() => navigate("/dashboard?tab=matches")}>
-                Matched jobs
+              <Button size="sm" variant="default" onClick={() => navigate("/browse")}>
+                Scan a company
               </Button>
-              <Button size="sm" variant="outline" onClick={() => navigate("/jobs-feed")}>
-                Jobs feed
+              <Button size="sm" variant="outline" onClick={() => navigate("/ask-jackye")}>
+                Ask Jackye
               </Button>
             </div>
           </CardContent>

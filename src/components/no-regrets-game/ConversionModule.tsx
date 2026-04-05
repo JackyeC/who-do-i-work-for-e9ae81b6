@@ -32,7 +32,7 @@ export function ConversionModule() {
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="flex-1">
-            <Link to="/offer-check">
+            <Link to="/check">
               Calculate my walk-away number
             </Link>
           </Button>
