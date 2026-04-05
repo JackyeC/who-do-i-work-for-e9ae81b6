@@ -84,6 +84,7 @@ export function useWorkNewsTicker() {
           isLikelyEnglish(item.headline) &&
           isUSOrEmployerRelevant(item.headline, item.source_name, true)
         )
+        .filter((item, idx, arr) => arr.findIndex(a => a.headline === item.headline) === idx)
         .slice(0, 20);
     },
     staleTime: 1000 * 60 * 10,
