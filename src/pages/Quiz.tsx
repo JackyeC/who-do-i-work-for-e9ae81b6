@@ -589,28 +589,46 @@ export default function Quiz() {
       {/* Progress indicator */}
       <div className="fixed top-0 left-0 right-0" style={{ zIndex: 60 }}>
         {!isResults && (
-          <div style={{
-            textAlign: "center",
-            padding: "10px 0 6px",
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: "0.05em",
-            color: "hsl(var(--muted-foreground))",
-            fontFamily: "'DM Sans', sans-serif",
-          }}>
-            Question {step + 1} of {TOTAL_QUESTIONS}
+          <>
+            <div
+              aria-live="polite"
+              aria-atomic="true"
+              style={{
+                textAlign: "center",
+                padding: "10px 0 6px",
+                fontSize: 12,
+                fontWeight: 500,
+                letterSpacing: "0.05em",
+                color: "hsl(var(--muted-foreground))",
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              Question {step + 1} of {TOTAL_QUESTIONS}
+            </div>
+            <div
+              role="progressbar"
+              aria-valuenow={step + 1}
+              aria-valuemin={1}
+              aria-valuemax={TOTAL_QUESTIONS}
+              aria-label={`Quiz progress: question ${step + 1} of ${TOTAL_QUESTIONS}`}
+              style={{ height: 3, background: "rgba(255,255,255,0.05)" }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${progressPct}%`,
+                  background: "hsl(var(--primary))",
+                  transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
+                }}
+              />
+            </div>
+          </>
+        )}
+        {isResults && (
+          <div style={{ height: 3, background: "rgba(255,255,255,0.05)" }}>
+            <div style={{ height: "100%", width: "100%", background: "hsl(var(--primary))" }} />
           </div>
         )}
-        <div style={{ height: 3, background: "rgba(255,255,255,0.05)" }}>
-          <div
-            style={{
-              height: "100%",
-              width: `${progressPct}%`,
-              background: "hsl(var(--primary))",
-              transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          />
-        </div>
       </div>
 
       {/* Slide track */}
