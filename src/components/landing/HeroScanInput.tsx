@@ -122,8 +122,9 @@ export function HeroScanInput() {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleFileDrop}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => { setDragOver(false); handleFileDrop(e); }}
         className="relative group"
       >
         <div ref={containerRef} />
