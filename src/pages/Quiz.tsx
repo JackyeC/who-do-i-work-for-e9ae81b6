@@ -411,6 +411,20 @@ export default function Quiz() {
   } | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // Restore previous result from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("workDnaProfile");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.primary && parsed.secondary && parsed.meta) {
+          setResult(parsed);
+          setStep(TOTAL_QUESTIONS);
+        }
+      } catch {}
+    }
+  }, []);
+
   const isResults = step === TOTAL_QUESTIONS;
   const progressPct = isResults ? 100 : (step / TOTAL_QUESTIONS) * 100;
 
@@ -453,6 +467,8 @@ export default function Quiz() {
 
     const { primary, secondary } = resolvePersonas(s, m.nepotism_concern);
 
+    const profileData = { primary, secondary, meta: m };
+    localStorage.setItem("workDnaProfile", JSON.stringify(profileData));
     localStorage.setItem("wdiwf_persona", primary);
     localStorage.setItem("wdiwf_nepotism_flag", m.nepotism_concern);
     localStorage.setItem("wdiwf_trust", m.trust_level);
@@ -486,6 +502,10 @@ export default function Quiz() {
   }, [step]);
 
   const reset = useCallback(() => {
+    localStorage.removeItem("workDnaProfile");
+    localStorage.removeItem("wdiwf_persona");
+    localStorage.removeItem("wdiwf_nepotism_flag");
+    localStorage.removeItem("wdiwf_trust");
     setDirection("right");
     setStep(0);
     setAnswers([null, null, null, null, null, null, null]);
@@ -1048,7 +1068,7 @@ function ResultsScreen({
           fontFamily: "'DM Sans', sans-serif",
         }}
       >
-        ← Start over
+        ← Retake the quiz
       </button>
 
 
