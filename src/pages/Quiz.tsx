@@ -1107,6 +1107,8 @@ function ResultsScreen({
         {/* Browse without account */}
         <a
           href="/browse"
+          className="quiz-focus-ring"
+          aria-label="Browse companies without creating an account"
           style={{
             fontSize: 13,
             color: "hsl(var(--muted-foreground))",
@@ -1123,6 +1125,8 @@ function ResultsScreen({
       {/* Reset */}
       <button
         onClick={onReset}
+        className="quiz-focus-ring"
+        aria-label="Retake the quiz"
         style={{
           marginTop: 24,
           background: "none",
