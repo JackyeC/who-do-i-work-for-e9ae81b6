@@ -589,28 +589,46 @@ export default function Quiz() {
       {/* Progress indicator */}
       <div className="fixed top-0 left-0 right-0" style={{ zIndex: 60 }}>
         {!isResults && (
-          <div style={{
-            textAlign: "center",
-            padding: "10px 0 6px",
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: "0.05em",
-            color: "hsl(var(--muted-foreground))",
-            fontFamily: "'DM Sans', sans-serif",
-          }}>
-            Question {step + 1} of {TOTAL_QUESTIONS}
+          <>
+            <div
+              aria-live="polite"
+              aria-atomic="true"
+              style={{
+                textAlign: "center",
+                padding: "10px 0 6px",
+                fontSize: 12,
+                fontWeight: 500,
+                letterSpacing: "0.05em",
+                color: "hsl(var(--muted-foreground))",
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              Question {step + 1} of {TOTAL_QUESTIONS}
+            </div>
+            <div
+              role="progressbar"
+              aria-valuenow={step + 1}
+              aria-valuemin={1}
+              aria-valuemax={TOTAL_QUESTIONS}
+              aria-label={`Quiz progress: question ${step + 1} of ${TOTAL_QUESTIONS}`}
+              style={{ height: 3, background: "rgba(255,255,255,0.05)" }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${progressPct}%`,
+                  background: "hsl(var(--primary))",
+                  transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
+                }}
+              />
+            </div>
+          </>
+        )}
+        {isResults && (
+          <div style={{ height: 3, background: "rgba(255,255,255,0.05)" }}>
+            <div style={{ height: "100%", width: "100%", background: "hsl(var(--primary))" }} />
           </div>
         )}
-        <div style={{ height: 3, background: "rgba(255,255,255,0.05)" }}>
-          <div
-            style={{
-              height: "100%",
-              width: `${progressPct}%`,
-              background: "hsl(var(--primary))",
-              transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          />
-        </div>
       </div>
 
       {/* Slide track */}
@@ -668,6 +686,8 @@ export default function Quiz() {
                 {qIdx > 0 && (
                   <button
                     onClick={goBack}
+                    aria-label="Go to previous question"
+                    className="quiz-focus-ring"
                     style={{
                       background: "transparent",
                       border: "1px solid rgba(255,255,255,0.07)",
@@ -695,6 +715,8 @@ export default function Quiz() {
                 <button
                   onClick={advance}
                   disabled={!canAdvance}
+                  aria-label={qIdx === TOTAL_QUESTIONS - 1 ? "See my profile" : "Go to next question"}
+                  className="quiz-focus-ring"
                   style={{
                     background: canAdvance ? "#f0c040" : "rgba(240,192,64,0.25)",
                     color: "#0a0a0e",
@@ -738,9 +760,28 @@ function TileGrid({
   selected: number | null;
   onSelect: (idx: number) => void;
 }) {
+  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    let next = idx;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      next = (idx + 1) % answers.length;
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      next = (idx - 1 + answers.length) % answers.length;
+    } else {
+      return;
+    }
+    onSelect(next);
+    const container = e.currentTarget.parentElement;
+    const buttons = container?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+    buttons?.[next]?.focus();
+  };
+
   return (
     <div
       className="grid gap-4"
+      role="radiogroup"
+      aria-label="Choose one answer"
       style={{ gridTemplateColumns: "repeat(2, 1fr)" }}
     >
       {answers.map((text, idx) => {
@@ -748,8 +789,12 @@ function TileGrid({
         return (
           <button
             key={idx}
+            role="radio"
+            aria-checked={isSelected}
+            tabIndex={isSelected || (selected === null && idx === 0) ? 0 : -1}
             onClick={() => onSelect(idx)}
-            className="text-left"
+            onKeyDown={(e) => handleKeyDown(e, idx)}
+            className="text-left quiz-focus-ring"
             style={{
               background: isSelected
                 ? "rgba(240,192,64,0.12)"
@@ -809,7 +854,9 @@ function SliderInput({
         max={100}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="quiz-slider w-full"
+        aria-label={`Trust level: ${getSliderLabel(value)}`}
+        aria-valuetext={getSliderLabel(value)}
+        className="quiz-slider quiz-focus-ring w-full"
         style={{
           WebkitAppearance: "none",
           appearance: "none",
@@ -988,6 +1035,8 @@ function ResultsScreen({
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <a
             href="/login"
+            className="quiz-focus-ring"
+            aria-label="Create free account"
             style={{
               background: "#f0c040",
               color: "#0a0a0e",
@@ -1005,6 +1054,8 @@ function ResultsScreen({
           </a>
           <button
             onClick={() => setShowShareModal(true)}
+            className="quiz-focus-ring"
+            aria-label="Share your Workplace DNA"
             style={{
               background: "#221f30",
               border: "1px solid rgba(240,192,64,0.3)",
@@ -1028,6 +1079,8 @@ function ResultsScreen({
           </button>
           <button
             onClick={onCopy}
+            className="quiz-focus-ring"
+            aria-label="Copy profile text to clipboard"
             style={{
               background: "#221f30",
               border: "1px solid rgba(255,255,255,0.07)",
@@ -1054,6 +1107,8 @@ function ResultsScreen({
         {/* Browse without account */}
         <a
           href="/browse"
+          className="quiz-focus-ring"
+          aria-label="Browse companies without creating an account"
           style={{
             fontSize: 13,
             color: "hsl(var(--muted-foreground))",
@@ -1070,6 +1125,8 @@ function ResultsScreen({
       {/* Reset */}
       <button
         onClick={onReset}
+        className="quiz-focus-ring"
+        aria-label="Retake the quiz"
         style={{
           marginTop: 24,
           background: "none",

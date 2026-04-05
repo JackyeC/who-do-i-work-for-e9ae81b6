@@ -565,6 +565,16 @@ body > div:last-child > a[href*="lovable"] {
   }
 }
 
+/* ── Quiz focus ring (accessibility) ── */
+.quiz-focus-ring:focus-visible {
+  outline: 2px solid #f0c040;
+  outline-offset: 2px;
+}
+input.quiz-focus-ring:focus-visible {
+  outline: 2px solid #f0c040;
+  outline-offset: 4px;
+}
+
 /* ── Quiz slider thumb styles ── */
 input.quiz-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
