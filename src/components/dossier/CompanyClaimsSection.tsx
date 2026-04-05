@@ -86,8 +86,8 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
     enabled: !!companyId,
   });
 
-  // ENFORCEMENT: suppress unattributed claims from UI
-  const claims = (rawClaims ?? []).filter(isAttributed);
+  // ENFORCEMENT: suppress unattributed + junk news claims from UI
+  const claims = (rawClaims ?? []).filter((c: any) => isAttributed(c) && passesQualityGate(c, companyName));
 
   if (isLoading) {
     return (
