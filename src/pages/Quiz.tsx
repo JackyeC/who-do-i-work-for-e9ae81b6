@@ -438,6 +438,8 @@ export default function Quiz() {
     return answers[step] !== null;
   }, [step, answers, isResults]);
 
+  const autoAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const selectAnswer = useCallback(
     (idx: number) => {
       setAnswers((prev) => {
@@ -445,9 +447,24 @@ export default function Quiz() {
         next[step] = idx;
         return next;
       });
+      // Auto-advance after 400ms for tile questions (not the last question)
+      const q = QUESTIONS[step];
+      if (q.type === "tiles" && step < TOTAL_QUESTIONS - 1) {
+        if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current);
+        autoAdvanceRef.current = setTimeout(() => {
+          setDirection("left");
+          setStep((s) => s + 1);
+        }, 400);
+      }
     },
     [step]
   );
+
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current);
+    };
+  }, []);
 
   const computeResults = useCallback(() => {
     const s: Scores = {

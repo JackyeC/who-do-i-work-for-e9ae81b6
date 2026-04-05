@@ -326,6 +326,9 @@ export default function OfferCheckEntry() {
                   <Skeleton className="h-24 rounded-2xl" />
                   <Skeleton className="h-40 rounded-2xl" />
                   <Skeleton className="h-20 rounded-2xl" />
+                  <p className="text-sm text-muted-foreground text-center animate-pulse mt-2">
+                    Pulling public records for {searchTerm}…
+                  </p>
                 </div>
               ) : showDiscoveryMode ? (
                 <DiscoveryMode companyName={searchTerm!} onResolved={setResolvedCompanyId} />

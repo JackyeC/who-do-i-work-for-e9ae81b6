@@ -118,20 +118,32 @@ export default function IntelligenceCheck() {
 
       <main className="flex-1 px-6 lg:px-16 py-16 lg:py-24">
         <div className="max-w-[620px] mx-auto">
-          {/* Intro */}
-          <div className="text-center mb-10">
+          {/* Intro + inline first input */}
+          <div className="text-center mb-8">
             <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-4">
               Free Employer Intelligence Check
             </p>
             <h1
-              className="text-foreground font-sans mb-4"
+              className="text-foreground font-sans mb-3"
               style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", fontWeight: 800, letterSpacing: "-1px", lineHeight: 1.1 }}
             >
               Would you work here?
             </h1>
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-[50ch] mx-auto">
-              Share a role or offer you're considering. We'll scan public information about the company — layoffs, lawsuits, political contributions, CEO pay, and other signals — and send you a brief intelligence snapshot.
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-[50ch] mx-auto mb-6">
+              We'll scan layoffs, lawsuits, political spending, and more from the public record.
             </p>
+            <div className="max-w-[400px] mx-auto">
+              <div className="relative">
+                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Employer name *"
+                  value={form.employer_name}
+                  onChange={update("employer_name")}
+                  className="pl-9 h-11"
+                  autoFocus
+                />
+              </div>
+            </div>
           </div>
 
           {/* Beta badge */}

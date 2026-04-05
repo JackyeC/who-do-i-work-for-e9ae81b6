@@ -212,7 +212,15 @@ export function HeroScanInput() {
             <button
               key={s}
               type="button"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuery(s); }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setQuery(s);
+                setTimeout(() => {
+                  const form = e.currentTarget.closest("div")?.parentElement?.querySelector("form");
+                  if (form) form.requestSubmit();
+                }, 150);
+              }}
               className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors cursor-pointer"
             >
               {s}
