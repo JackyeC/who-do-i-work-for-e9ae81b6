@@ -16,6 +16,7 @@ import {
   MapPin, Globe, Clock,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useScanTracker } from "@/hooks/use-scan-tracker";
 import { SituationSelector } from "@/components/policy-intelligence/SituationSelector";
 import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
 import { PolicyIntelligenceSummary } from "@/components/policy-intelligence/PolicyIntelligenceSummary";
@@ -361,6 +362,9 @@ export default function Check() {
     if (!policyData) return null;
     return computePolicyScore(policyData, situations);
   }, [policyData, situations]);
+
+  // Track selected company for "Your Recent Work"
+  useScanTracker(selectedCompanyId || undefined, selectedCompanyName || undefined);
 
   const selectCompany = (id: string, name: string, slug: string) => {
     setSelectedCompanyId(id);

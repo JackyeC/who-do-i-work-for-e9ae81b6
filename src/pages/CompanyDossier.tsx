@@ -65,6 +65,7 @@ import { CongressionalContextCard } from "@/components/dossier/CongressionalCont
 import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
 import { CodeWordScanner } from "@/components/dossier/CodeWordScanner";
 import { MissionIntegrityCard } from "@/components/dossier/MissionIntegrityCard";
+import { useScanTracker } from "@/hooks/use-scan-tracker";
 
 export default function CompanyDossier() {
   const { id } = useParams();
@@ -103,6 +104,9 @@ export default function CompanyDossier() {
 
   const companyId = company?.id;
   const isTracked = companyId ? isCompanyTracked(companyId) : false;
+
+  // Track this view for "Your Recent Work"
+  useScanTracker(companyId, company?.name);
 
   // Set evaluation context when company loads
   useEffect(() => {
