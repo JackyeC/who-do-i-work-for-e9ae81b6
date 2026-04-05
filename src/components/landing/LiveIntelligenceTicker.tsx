@@ -136,8 +136,8 @@ export function LiveIntelligenceTicker() {
       ? item.jackye_take
       : item.headline;
     const headlineText =
-      displayText.length > 120
-        ? displayText.slice(0, 120) + "\u2026"
+      displayText.length > 70
+        ? displayText.slice(0, 70) + "\u2026"
         : displayText;
 
     return (
