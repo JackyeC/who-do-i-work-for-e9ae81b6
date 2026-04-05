@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
 import { WorkplaceDNAShareCard } from "@/components/quiz/WorkplaceDNAShareCard";
 import { supabase } from "@/integrations/supabase/client";
 import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
