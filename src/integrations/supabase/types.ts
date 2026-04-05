@@ -12045,6 +12045,75 @@ export type Database = {
         }
         Relationships: []
       }
+      wdiwf_congressional_data: {
+        Row: {
+          bill_number: string | null
+          bill_title: string | null
+          bill_type: string | null
+          bioguide_id: string | null
+          chamber: string | null
+          congress_number: number
+          created_at: string
+          data_type: string
+          district: string | null
+          fetched_at: string
+          id: string
+          member_name: string | null
+          party: string | null
+          raw_payload: Json | null
+          sponsor_bioguide_id: string | null
+          state: string | null
+          vote_date: string | null
+          vote_number: number | null
+          vote_question: string | null
+          vote_result: string | null
+        }
+        Insert: {
+          bill_number?: string | null
+          bill_title?: string | null
+          bill_type?: string | null
+          bioguide_id?: string | null
+          chamber?: string | null
+          congress_number?: number
+          created_at?: string
+          data_type: string
+          district?: string | null
+          fetched_at?: string
+          id?: string
+          member_name?: string | null
+          party?: string | null
+          raw_payload?: Json | null
+          sponsor_bioguide_id?: string | null
+          state?: string | null
+          vote_date?: string | null
+          vote_number?: number | null
+          vote_question?: string | null
+          vote_result?: string | null
+        }
+        Update: {
+          bill_number?: string | null
+          bill_title?: string | null
+          bill_type?: string | null
+          bioguide_id?: string | null
+          chamber?: string | null
+          congress_number?: number
+          created_at?: string
+          data_type?: string
+          district?: string | null
+          fetched_at?: string
+          id?: string
+          member_name?: string | null
+          party?: string | null
+          raw_payload?: Json | null
+          sponsor_bioguide_id?: string | null
+          state?: string | null
+          vote_date?: string | null
+          vote_number?: number | null
+          vote_question?: string | null
+          vote_result?: string | null
+        }
+        Relationships: []
+      }
       wdiwf_quiz_results: {
         Row: {
           answers: Json
