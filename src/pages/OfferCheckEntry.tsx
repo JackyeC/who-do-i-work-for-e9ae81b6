@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, ShieldCheck, AlertTriangle, XCircle, Lock,
   ExternalLink, ArrowRight, CheckCircle, Loader2,
+  Upload, FileText, Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -150,6 +151,71 @@ function buildSummary(company: CompanyResult, signals: Signal[]): string {
   return `${company.name} shows positive transparency signals. A full report would confirm whether this extends across all categories.`;
 }
 
+/* ─── Offer Upload Card (coming soon) ─── */
+function OfferUploadCard() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    try {
+      await supabase.from("career_waitlist").insert({ email: email.trim(), reason: "offer_analysis" });
+    } catch {}
+    setSubmitted(true);
+  };
+
+  return (
+    <div className="mt-auto space-y-3">
+      <div
+        className="border border-dashed border-border/60 rounded-lg p-5 text-center cursor-pointer hover:border-primary/40 transition-colors"
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+      >
+        <Upload className="w-5 h-5 text-muted-foreground mx-auto mb-2" />
+        <p className="text-xs text-muted-foreground">
+          Drag & drop or <span className="text-primary font-medium">click to upload</span>
+        </p>
+        <p className="text-[10px] text-muted-foreground/60 mt-1">.pdf, .docx, .txt</p>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.docx,.txt"
+          className="hidden"
+          onChange={() => {}}
+        />
+      </div>
+
+      {!submitted ? (
+        <form onSubmit={handleEmailSubmit} className="space-y-2">
+          <p className="text-[10px] text-muted-foreground text-center">
+            Offer analysis coming soon — drop your email to be first.
+          </p>
+          <div className="flex gap-2">
+            <Input
+              type="email"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-9 text-xs bg-background border-border flex-1"
+              required
+            />
+            <Button type="submit" size="sm" className="h-9 text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90 shrink-0">
+              <Mail className="w-3 h-3" /> Notify Me
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <div className="flex items-center justify-center gap-2 py-2">
+          <CheckCircle className="w-4 h-4 text-primary" />
+          <p className="text-xs text-foreground font-medium">You're on the list. We'll reach out.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ════════════════════════════════════════════ */
 /*                  PAGE                       */
 /* ════════════════════════════════════════════ */
@@ -272,9 +338,9 @@ export default function OfferCheckEntry() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-4 py-12 md:py-20">
+      <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
 
-        {/* ═══ SECTION 1: HERO ═══ */}
+        {/* ═══ HERO HEADLINE ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -291,32 +357,70 @@ export default function OfferCheckEntry() {
           </p>
         </motion.div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 mb-12">
-          <Input
-            placeholder="Company name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            className="h-12 text-base bg-card border-border"
-            required
-          />
-          <Input
-            placeholder="Role (optional)"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="h-12 text-base bg-card border-border"
-          />
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full h-12 text-base gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
-            disabled={!companyName.trim() || isLoading}
+        {/* ═══ TWO-CARD ENTRY ═══ */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+
+          {/* PATH A — Search */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
+            className="bg-card border border-border rounded-xl p-6 flex flex-col"
           >
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            Check this company
-          </Button>
-        </form>
+            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-2">
+              Know before you apply
+            </p>
+            <h2 className="text-lg font-bold text-foreground mb-1">Search any employer</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-5">
+              See what the public record says before you waste time interviewing.
+            </p>
+            <form onSubmit={handleSubmit} className="mt-auto space-y-3">
+              <Input
+                placeholder="Company name..."
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                className="h-11 text-sm bg-background border-border"
+                required
+              />
+              <Button
+                type="submit"
+                className="w-full h-10 text-sm gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={!companyName.trim() || isLoading}
+              >
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                Run My Scan
+              </Button>
+            </form>
+          </motion.div>
+
+          {/* PATH B — Upload offer */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.4 }}
+            className="bg-card border border-primary/30 rounded-xl p-6 flex flex-col relative overflow-hidden"
+          >
+            <Badge
+              variant="outline"
+              className="absolute top-3 right-3 text-[9px] font-mono uppercase tracking-wider border-primary/40 text-primary bg-primary/5"
+            >
+              Most valuable step candidates skip
+            </Badge>
+
+            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-2">
+              Know before you sign
+            </p>
+            <h2 className="text-lg font-bold text-foreground mb-1">Upload your offer letter</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-5">
+              We'll tell you exactly what's missing, what's red-flagged, and what to negotiate.
+            </p>
+
+            <OfferUploadCard />
+          </motion.div>
+        </div>
 
         {/* ═══ RESULTS ═══ */}
+        <div className="max-w-2xl mx-auto">
         <AnimatePresence mode="wait">
           {showResult && (
             <motion.div
@@ -530,6 +634,7 @@ export default function OfferCheckEntry() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
     </div>
   );
