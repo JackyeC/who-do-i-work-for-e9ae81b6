@@ -1,7 +1,8 @@
-import { ExternalLink, Search, Newspaper, MessageCircle } from "lucide-react";
+import { ExternalLink, Search, Newspaper } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import type { SignalStory, SignalCategory, HeatLevel } from "@/lib/work-signal-schema";
 import { HEAT_DISPLAY } from "@/lib/work-signal-schema";
+import { CoverageBiasBar } from "./CoverageBiasBar";
 
 /* ── Category → poster theme ── */
 const CATEGORY_POSTER: Record<SignalCategory, { emoji: string; stamp: string }> = {
@@ -31,7 +32,14 @@ function toSlug(name: string) {
 }
 
 interface Props {
-  story: SignalStory;
+  story: SignalStory & {
+    poster_url?: string | null;
+    poster_pool_url?: string | null;
+    source_count_left?: number;
+    source_count_center?: number;
+    source_count_right?: number;
+    source_total?: number;
+  };
 }
 
 export function SignalStoryCard({ story }: Props) {
@@ -45,7 +53,7 @@ export function SignalStoryCard({ story }: Props) {
   const companySlug = story.company_name ? toSlug(story.company_name) : null;
 
   const sourceDomain = story.source_url
-    ? new URL(story.source_url).hostname.replace("www.", "")
+    ? (() => { try { return new URL(story.source_url).hostname.replace("www.", ""); } catch { return story.source_name || ""; } })()
     : story.source_name || "";
 
   const whyItMatters = [
@@ -53,66 +61,86 @@ export function SignalStoryCard({ story }: Props) {
     story.why_it_matters_employees,
   ].filter(Boolean);
 
-  // Tagline from receipt or headline
   const tagline = story.receipt
     ? story.receipt.slice(0, 80) + (story.receipt.length > 80 ? "…" : "")
     : "";
 
+  // Poster image: custom > pool > fallback
+  const posterImageUrl = story.poster_url || story.poster_pool_url || null;
+
   return (
-    <article className="group rounded-2xl border border-border/60 bg-card overflow-hidden transition-all hover:border-primary/30 hover:shadow-[0_4px_32px_-8px_hsl(var(--primary)/0.15)]">
-
+    <article
+      id={`story-${story.id}`}
+      className="group rounded-2xl border border-border/60 bg-card overflow-hidden transition-all hover:border-primary/30 hover:shadow-[0_4px_32px_-8px_hsl(var(--primary)/0.15)]"
+    >
       {/* ── POSTER HEADER ── */}
-      <div className="bg-muted/30 px-5 pt-5 pb-4 text-center border-b border-border/30">
-        <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
-          Jackye Clayton × WDIWF Presents
-        </p>
-
-        {/* Big emoji + theme title + tagline */}
-        <div className="flex flex-col items-center gap-1 mb-3">
-          <span className="text-4xl leading-none">{poster.emoji}</span>
-          {companySlug ? (
-            <Link
-              to={`/dossier/${companySlug}`}
-              className="text-heading-3 font-display font-bold text-foreground leading-tight mt-1 hover:text-primary transition-colors no-underline"
+      {posterImageUrl ? (
+        <div
+          className="relative w-full aspect-[4/3] bg-cover bg-center flex flex-col items-center justify-end p-5"
+          style={{ backgroundImage: `url(${posterImageUrl})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+          <div className="relative z-10 text-center">
+            <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/60 mb-2">
+              {poster.stamp}
+            </p>
+            <h3
+              className="text-xl md:text-2xl font-bold text-white leading-tight"
+              style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}
             >
-              {themeTitle}
-            </Link>
-          ) : (
-            <h3 className="text-heading-3 font-display font-bold text-foreground leading-tight mt-1">
-              {themeTitle}
+              {story.headline}
             </h3>
-          )}
+          </div>
         </div>
-
-        {/* Tagline */}
-        {tagline && (
-          <p className="text-caption text-foreground/60 max-w-sm mx-auto leading-relaxed line-clamp-2 italic">
-            {tagline}
+      ) : (
+        /* Fallback: tobacco brown poster */
+        <div
+          className="relative w-full aspect-[4/3] flex flex-col items-center justify-center p-6"
+          style={{ background: "#2c1a00" }}
+        >
+          <span className="text-4xl mb-3 opacity-60">👑</span>
+          <h3
+            className="text-xl md:text-2xl font-bold text-center leading-tight max-w-[90%]"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 900,
+              color: "#F0C040",
+            }}
+          >
+            {story.headline}
+          </h3>
+          <p
+            className="text-sm mt-2 italic text-center max-w-[80%]"
+            style={{ fontFamily: "'DM Sans', sans-serif", color: "#F0C040", opacity: 0.7 }}
+          >
+            {tagline || poster.stamp}
           </p>
-        )}
-
-        {/* Stamp + brand lockup */}
-        <div className="mt-4 flex items-center justify-center gap-3">
-          <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary font-bold">
-            {poster.stamp}
-          </span>
+          <p className="font-mono text-[9px] tracking-[0.2em] uppercase mt-4" style={{ color: "#F0C04060" }}>
+            WDIWF.JACKYECLAYTON.COM
+          </p>
         </div>
-        <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-muted-foreground/50 mt-2">
-          WDIWF.JACKYECLAYTON.COM
-        </p>
-        <p className="text-[11px] text-muted-foreground/40 mt-1 italic">
-          Every company runs a check on you. WDIWF runs one on them.
-        </p>
+      )}
+
+      {/* ── BIAS BAR ── */}
+      <div className="px-5 pt-3 pb-2 border-b border-border/20">
+        <CoverageBiasBar
+          left={story.source_count_left ?? 0}
+          center={story.source_count_center ?? 0}
+          right={story.source_count_right ?? 0}
+          total={story.source_total ?? 0}
+        />
       </div>
 
-      {/* ── HEADLINE + SOURCE (movie poster center) ── */}
+      {/* ── HEADLINE + SOURCE ── */}
       <div className="px-5 py-4 text-center border-b border-border/20">
         {sourceDomain && (
           <p className="text-xs text-muted-foreground font-mono mb-1.5">{sourceDomain}</p>
         )}
-        <h2 className="text-heading-3 font-display font-semibold text-foreground leading-snug">
-          {story.headline}
-        </h2>
+        {posterImageUrl && (
+          <h2 className="text-heading-3 font-display font-semibold text-foreground leading-snug">
+            {story.headline}
+          </h2>
+        )}
       </div>
 
       {/* ── THE RECEIPT ── */}
@@ -166,17 +194,18 @@ export function SignalStoryCard({ story }: Props) {
         </div>
       )}
 
-      {/* ── FOOTER STRIP: Stars + Drama + Actions ── */}
+      {/* ── FOOTER STRIP ── */}
       <div className="px-5 py-3 flex items-center justify-between border-b border-border/20 bg-muted/10">
-        {/* Stars + drama label */}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
             <span key={i} className="text-sm" style={{ opacity: i < starInfo.stars ? 1 : 0.2 }}>⭐</span>
           ))}
           <span className="ml-2 text-[13px] text-muted-foreground italic">{starInfo.label}</span>
           {story.heat_level === "high" && (
-            <span className="ml-2 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-              style={{ color: heat.color, background: heat.bg }}>
+            <span
+              className="ml-2 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+              style={{ color: heat.color, background: heat.bg }}
+            >
               HOT
             </span>
           )}
@@ -185,7 +214,6 @@ export function SignalStoryCard({ story }: Props) {
 
       {/* ── ACTION ROW ── */}
       <div className="px-5 py-4 space-y-3">
-        {/* Use This + Source */}
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <button
             onClick={() => navigate(story.category === "fine_print" ? "/offer-check" : "/search")}
@@ -202,7 +230,6 @@ export function SignalStoryCard({ story }: Props) {
           )}
         </div>
 
-        {/* Share row */}
         <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
           <button className="hover:text-foreground transition-colors">Save Poster</button>
           <span className="text-border">|</span>
@@ -211,9 +238,8 @@ export function SignalStoryCard({ story }: Props) {
           <button className="hover:text-foreground transition-colors">Facebook</button>
         </div>
 
-        {/* Rabbit hole links */}
         <div className="flex flex-col gap-2 text-xs">
-          {companySlug && (
+          {companySlug ? (
             <Link
               to={`/dossier/${companySlug}`}
               className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 no-underline"
@@ -221,8 +247,7 @@ export function SignalStoryCard({ story }: Props) {
               <Search className="w-3.5 h-3.5" />
               Is your company doing this? Look up employer →
             </Link>
-          )}
-          {!companySlug && (
+          ) : (
             <button
               onClick={() => navigate("/search")}
               className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 text-left"

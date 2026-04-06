@@ -17,6 +17,21 @@ export interface WorkNewsArticle {
   jackye_take: string | null;
   jackye_take_approved: boolean;
   created_at: string;
+  poster_url: string | null;
+  source_count_left: number;
+  source_count_center: number;
+  source_count_right: number;
+  source_total: number;
+  drama_rating: number;
+}
+
+export interface PosterPoolItem {
+  id: string;
+  category: string;
+  poster_url: string;
+  headline_text: string | null;
+  subhead_text: string | null;
+  archetype: string | null;
 }
 
 export function useWorkNews(limit = 50) {
@@ -28,7 +43,7 @@ export function useWorkNews(limit = 50) {
         .select("*")
         .eq("language", "en")
         .order("published_at", { ascending: false })
-        .limit(limit * 2); // over-fetch to compensate for filtering
+        .limit(limit * 2);
       if (error) throw error;
       return ((data as WorkNewsArticle[]) ?? [])
         .map(item => ({
@@ -41,9 +56,10 @@ export function useWorkNews(limit = 50) {
           isUSOrEmployerRelevant(item.headline, item.source_name, true) &&
           item.jackye_take !== "[FILTERED]"
         )
+        .filter((item, idx, arr) => arr.findIndex(a => a.headline === item.headline) === idx)
         .slice(0, limit);
     },
-    staleTime: 1000 * 60 * 15, // 15 min
+    staleTime: 1000 * 60 * 15,
   });
 }
 
@@ -88,5 +104,19 @@ export function useWorkNewsTicker() {
         .slice(0, 20);
     },
     staleTime: 1000 * 60 * 10,
+  });
+}
+
+export function usePosterPool() {
+  return useQuery({
+    queryKey: ["poster-pool"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("poster_pool")
+        .select("*");
+      if (error) throw error;
+      return (data ?? []) as PosterPoolItem[];
+    },
+    staleTime: 1000 * 60 * 60,
   });
 }
