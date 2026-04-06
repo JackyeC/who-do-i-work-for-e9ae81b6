@@ -337,7 +337,7 @@ export default function EmployerReceipt() {
             onClick={() => navigate("/check")}
             className="border border-border text-muted-foreground px-6 py-3 font-mono text-[0.7rem] tracking-wider uppercase hover:border-primary hover:text-primary transition-all"
           >
-            Upload an Offer
+            Check an Offer
           </button>
           <button
             onClick={() => navigate("/ask-jackye")}

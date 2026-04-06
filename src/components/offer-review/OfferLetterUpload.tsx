@@ -26,7 +26,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
   const { user } = useAuth();
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
-  const [mode, setMode] = useState<"file" | "paste">("file");
+  const [mode, setMode] = useState<"file" | "paste">("paste");
   const [pastedText, setPastedText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
@@ -103,7 +103,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
       }
 
       onReviewCreated(reviewId);
-      toast({ title: "Upload complete", description: "Your offer letter is being analyzed privately." });
+      toast({ title: "Analysis complete", description: "Your offer terms have been analyzed. Nothing was stored." });
     } catch (e: any) {
       console.error("[OfferLetterUpload] Upload error:", e, JSON.stringify(e));
       toast({ title: "Upload failed", description: e.message, variant: "destructive" });
@@ -115,33 +115,37 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
   return (
     <Card className="border-primary/20">
       <CardContent className="p-5 space-y-4">
-        <div className="flex items-center gap-2 mb-1">
+         <div className="flex items-center gap-2 mb-1">
           <ShieldCheck className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold text-foreground">Private Offer Review</h3>
-          <Badge variant="outline" className="text-xs">Private</Badge>
+          <h3 className="font-semibold text-foreground">Check Your Offer Privately</h3>
+          <Badge variant="outline" className="text-xs">Nothing Saved</Badge>
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Got an offer from <span className="font-medium text-foreground">{companyName}</span>? That's your moment — do what you need to do, but keep the receipts. Upload it here and we'll pull the terms apart so you know exactly what you're signing.
+          Got an offer from <span className="font-medium text-foreground">{companyName}</span>? Paste only the terms you want reviewed. Do not include personal information such as name, address, or signature.
         </p>
 
-        {/* Mode toggle */}
+        <p className="text-[10px] text-primary/80 font-medium">
+          Your input is processed in-session and not stored.
+        </p>
+
+        {/* Mode toggle — paste is primary */}
         <div className="flex gap-2">
-          <Button
-            variant={mode === "file" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setMode("file")}
-            className="gap-1.5"
-          >
-            <Upload className="w-3.5 h-3.5" /> Upload File
-          </Button>
           <Button
             variant={mode === "paste" ? "default" : "outline"}
             size="sm"
             onClick={() => setMode("paste")}
             className="gap-1.5"
           >
-            <ClipboardPaste className="w-3.5 h-3.5" /> Paste Text
+            <ClipboardPaste className="w-3.5 h-3.5" /> Paste Terms
+          </Button>
+          <Button
+            variant={mode === "file" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setMode("file")}
+            className="gap-1.5 text-muted-foreground"
+          >
+            <Upload className="w-3.5 h-3.5" /> Upload Redacted Doc
           </Button>
         </div>
 
@@ -173,8 +177,8 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
               ) : (
                 <>
                   <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Click to upload PDF, DOCX, or TXT</p>
-                  <p className="text-xs text-muted-foreground mt-1">Max 10MB</p>
+                   <p className="text-sm text-muted-foreground">Click to upload a redacted document</p>
+                   <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, or TXT — max 10MB. Remove personal info first.</p>
                 </>
               )}
             </div>
@@ -191,7 +195,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
           </div>
         ) : (
           <Textarea
-            placeholder="Paste the text from your offer letter here..."
+            placeholder="Paste the offer terms you want reviewed here. Do not include your name, address, or signature."
             value={pastedText}
             onChange={(e) => setPastedText(e.target.value)}
             rows={8}
@@ -201,7 +205,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
 
         {/* Disclaimer */}
         <div className="bg-muted/50 rounded-lg p-3 text-xs text-muted-foreground">
-          Your offer letter stays private — only you can see it. We extract terms, flag clauses, and compare against public company signals so you can negotiate from a position of knowledge. This is not legal advice — it's your receipts, organized.
+          Your input is processed in-session and not stored. We extract terms, flag clauses, and compare against public company signals so you can negotiate from a position of knowledge. This is not legal advice.
         </div>
 
         {/* Consent */}

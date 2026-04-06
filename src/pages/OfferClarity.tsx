@@ -25,7 +25,7 @@ export default function OfferClarity() {
             Answer a few quick questions. The system evaluates five areas that determine whether an offer is strong, risky, or misaligned — and produces an <span className="font-semibold text-foreground">Offer Clarity Score (0–100)</span>.
           </p>
         </div>
-        <PremiumGate feature="Offer Clarity" description="Upload and analyze offer letters with AI-powered intelligence. See exactly where an offer is strong, risky, or misaligned." requiredTier="candidate">
+        <PremiumGate feature="Offer Clarity" description="Check your offer terms privately. Step-by-step guided analysis — nothing is stored." requiredTier="candidate">
           <OfferClarityWizard />
         </PremiumGate>
       </main>

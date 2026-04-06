@@ -50,7 +50,7 @@ export function DontSignBlindBanner({ lingerMs = 15000 }: DontSignBlindBannerPro
                 Don't sign blind.
               </p>
               <p className="font-sans text-xs text-muted-foreground mt-1 leading-relaxed">
-                Upload your offer letter and get a leverage analysis before you accept. Compensation benchmarks, red-flag clauses, and negotiation angles, all in 30 seconds.
+                Check your offer privately — paste only the terms you want reviewed. Nothing is saved. Red-flag clauses, compensation benchmarks, and negotiation angles in 30 seconds.
               </p>
             </div>
             <button

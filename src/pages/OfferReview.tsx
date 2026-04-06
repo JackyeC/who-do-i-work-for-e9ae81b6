@@ -127,10 +127,10 @@ export default function OfferReview() {
           <Badge variant="outline" className="text-xs">Private</Badge>
         </div>
         <p className="text-sm text-muted-foreground mb-6">
-          You got an offer from {company.name}? Congratulations — now let's make sure it's as good as it looks. Keep the receipts.
+          You got an offer from {company.name}? Congratulations — paste the terms you want reviewed. Nothing is saved.
         </p>
 
-        <PremiumGate feature="Private Offer Review" description="Upload and analyze employment offer letters privately. Compare detected terms against public company signals.">
+        <PremiumGate feature="Private Offer Review" description="Check your offer terms privately. Paste only what you want reviewed — nothing is stored.">
           <div className="space-y-6">
             {/* Upload section - always show for new uploads */}
             <OfferLetterUpload
