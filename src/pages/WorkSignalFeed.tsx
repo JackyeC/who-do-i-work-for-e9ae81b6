@@ -1,90 +1,219 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { useWorkNews, usePosterPool, type WorkNewsArticle, type PosterPoolItem } from "@/hooks/use-work-news";
 import { useSignalStories, useDailyWrap } from "@/hooks/use-signal-stories";
 import { SignalStoryCard } from "@/components/work-signal/SignalStoryCard";
 import { EnforcementReceiptsTicker } from "@/components/work-signal/EnforcementReceiptsTicker";
+import { SourceBiasKey } from "@/components/work-signal/SourceBiasKey";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format, subHours, subDays } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 import workSignalLogo from "@/assets/work-signal-logo.png";
 import type { SignalStory, SignalCategory, HeatLevel } from "@/lib/work-signal-schema";
 
-/* ── Filter constants ── */
-const TOPIC_CHIPS = [
-  { key: "all", label: "All" },
-  { key: "tech_stack", label: "AI" },
-  { key: "daily_grind", label: "Work" },
-  { key: "c_suite", label: "C-Suite" },
-  { key: "paycheck", label: "Money" },
-  { key: "fine_print", label: "Policy" },
+/* ── Constants ── */
+const PAGE_SIZE = 12;
+
+const CATEGORY_CHIPS = [
+  { key: "all", label: "All Stories" },
+  { key: "regulation", label: "Regulation" },
+  { key: "future_of_work", label: "Future of Work" },
+  { key: "worker_rights", label: "Worker Rights" },
+  { key: "ai_workplace", label: "AI & Work" },
+  { key: "legislation", label: "Legislation" },
+  { key: "layoffs", label: "Layoffs" },
+  { key: "pay_equity", label: "Pay Equity" },
+  { key: "labor_organizing", label: "Labor" },
+  { key: "general", label: "General" },
 ] as const;
 
 const SORT_OPTIONS = [
-  { key: "newest", label: "Newest" },
-  { key: "hottest", label: "⭐ Hottest" },
-  { key: "drama", label: "Drama" },
-] as const;
-
-const TIME_OPTIONS = [
-  { key: "all", label: "All Time" },
-  { key: "24h", label: "24h" },
-  { key: "7d", label: "7 Days" },
-  { key: "30d", label: "30 Days" },
+  { key: "latest", label: "Latest" },
+  { key: "most_covered", label: "Most Covered" },
+  { key: "hottest", label: "🔥 Highest Heat" },
 ] as const;
 
 type SortKey = (typeof SORT_OPTIONS)[number]["key"];
-type TimeKey = (typeof TIME_OPTIONS)[number]["key"];
 
-const HEAT_ORDER: Record<HeatLevel, number> = { high: 3, medium: 2, low: 1 };
+const HEAT_ORDER: Record<string, number> = { high: 3, medium: 2, low: 1 };
+
+/* ── Adapt WorkNewsArticle → SignalStory ── */
+function toSignalStory(
+  a: WorkNewsArticle,
+  posterPool: PosterPoolItem[],
+  usedPoolIds: Set<string>
+): SignalStory & {
+  poster_url: string | null;
+  poster_pool_url: string | null;
+  source_count_left: number;
+  source_count_center: number;
+  source_count_right: number;
+  source_total: number;
+} {
+  const catMap: Record<string, SignalCategory> = {
+    layoffs: "c_suite",
+    worker_rights: "fine_print",
+    ai_workplace: "tech_stack",
+    regulation: "fine_print",
+    pay_equity: "paycheck",
+    future_of_work: "daily_grind",
+    legislation: "fine_print",
+    labor_organizing: "daily_grind",
+    general: "daily_grind",
+  };
+
+  const sentimentToHeat = (s: number | null): HeatLevel => {
+    if (s === null) return "medium";
+    const abs = Math.abs(s);
+    return abs >= 8 ? "high" : abs >= 4 ? "medium" : "low";
+  };
+
+  // Pick poster from pool (round-robin by category, avoid repeats)
+  let poolUrl: string | null = null;
+  if (!a.poster_url) {
+    const candidates = posterPool.filter(
+      p => p.category === a.category && !usedPoolIds.has(p.id)
+    );
+    if (candidates.length > 0) {
+      const pick = candidates[0];
+      poolUrl = pick.poster_url;
+      usedPoolIds.add(pick.id);
+    } else {
+      // Allow reuse if exhausted
+      const allCat = posterPool.filter(p => p.category === a.category);
+      if (allCat.length > 0) {
+        poolUrl = allCat[Math.floor(Math.random() * allCat.length)].poster_url;
+      }
+    }
+  }
+
+  return {
+    id: a.id,
+    company_name: null,
+    category: catMap[a.category] || "daily_grind",
+    signal_type: a.is_controversy ? "breaking" : "developing",
+    headline: a.headline,
+    heat_level: sentimentToHeat(a.sentiment_score),
+    source_name: a.source_name,
+    source_url: a.source_url,
+    receipt: null,
+    jrc_take: a.jackye_take_approved ? a.jackye_take : null,
+    why_it_matters_applicants: null,
+    why_it_matters_employees: null,
+    why_it_matters_execs: null,
+    before_you_say_yes: null,
+    published_at: a.published_at ?? new Date().toISOString(),
+    status: "live",
+    created_at: a.created_at ?? new Date().toISOString(),
+    updated_at: a.created_at ?? new Date().toISOString(),
+    poster_url: a.poster_url ?? null,
+    poster_pool_url: poolUrl,
+    source_count_left: a.source_count_left ?? 0,
+    source_count_center: a.source_count_center ?? 0,
+    source_count_right: a.source_count_right ?? 0,
+    source_total: a.source_total ?? 0,
+  };
+}
 
 export default function WorkSignalFeed() {
-  const { data: stories, isLoading } = useSignalStories(50);
+  const { data: workNewsRaw, isLoading: workNewsLoading } = useWorkNews(100);
+  const { data: signalStories, isLoading: signalLoading } = useSignalStories(50);
   const { data: dailyWrap } = useDailyWrap();
+  const { data: posterPool } = usePosterPool();
 
-  const [topicFilter, setTopicFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<SortKey>("newest");
-  const [timeRange, setTimeRange] = useState<TimeKey>("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [sortBy, setSortBy] = useState<SortKey>("latest");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  const isLoading = workNewsLoading && signalLoading;
+
+  // Merge work_news + signal_stories into unified list
+  const allStories = useMemo(() => {
+    const pool = posterPool ?? [];
+    const usedPoolIds = new Set<string>();
+
+    const fromWorkNews = (workNewsRaw ?? []).map(a => toSignalStory(a, pool, usedPoolIds));
+
+    // Signal stories already in the right shape, add bias fields
+    const fromSignals = (signalStories ?? []).map(s => ({
+      ...s,
+      poster_url: null as string | null,
+      poster_pool_url: null as string | null,
+      source_count_left: 0,
+      source_count_center: 0,
+      source_count_right: 0,
+      source_total: 0,
+    }));
+
+    // Merge & dedup by headline
+    const seen = new Set<string>();
+    const merged: typeof fromWorkNews = [];
+    for (const s of [...fromWorkNews, ...fromSignals]) {
+      const key = s.headline.toLowerCase().trim();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      merged.push(s);
+    }
+    return merged;
+  }, [workNewsRaw, signalStories, posterPool]);
+
+  // Filter
   const filtered = useMemo(() => {
-    if (!stories) return [];
-    let list = [...stories];
+    let list = allStories;
 
-    // Topic filter
-    if (topicFilter !== "all") {
-      list = list.filter((s) => s.category === topicFilter);
+    // Category filter (maps newsletter categories → work_news categories)
+    if (categoryFilter !== "all") {
+      // The category chips use work_news categories, but stories are mapped to SignalCategory
+      // Filter on original category from work_news
+      const catMapReverse: Record<string, string[]> = {
+        regulation: ["fine_print"],
+        future_of_work: ["daily_grind"],
+        worker_rights: ["fine_print"],
+        ai_workplace: ["tech_stack"],
+        legislation: ["fine_print"],
+        layoffs: ["c_suite"],
+        pay_equity: ["paycheck"],
+        labor_organizing: ["daily_grind"],
+        general: ["daily_grind"],
+      };
+      // We need to match by checking the original work_news article's category
+      // Since we adapted it, let's use a simple approach: filter from workNewsRaw
+      const matchingHeadlines = new Set(
+        (workNewsRaw ?? [])
+          .filter(a => a.category === categoryFilter)
+          .map(a => a.headline.toLowerCase().trim())
+      );
+      list = list.filter(s => matchingHeadlines.has(s.headline.toLowerCase().trim()));
     }
 
-    // Time filter
-    const now = new Date();
-    if (timeRange === "24h") list = list.filter((s) => new Date(s.published_at) > subHours(now, 24));
-    else if (timeRange === "7d") list = list.filter((s) => new Date(s.published_at) > subDays(now, 7));
-    else if (timeRange === "30d") list = list.filter((s) => new Date(s.published_at) > subDays(now, 30));
-
     // Sort
-    if (sortBy === "hottest") {
-      list.sort((a, b) => HEAT_ORDER[b.heat_level] - HEAT_ORDER[a.heat_level]);
-    } else if (sortBy === "drama") {
-      list.sort((a, b) => HEAT_ORDER[b.heat_level] - HEAT_ORDER[a.heat_level] || b.headline.length - a.headline.length);
+    if (sortBy === "most_covered") {
+      list = [...list].sort((a, b) => (b.source_total ?? 0) - (a.source_total ?? 0));
+    } else if (sortBy === "hottest") {
+      list = [...list].sort((a, b) => {
+        const heatDiff = (HEAT_ORDER[b.heat_level] ?? 0) - (HEAT_ORDER[a.heat_level] ?? 0);
+        if (heatDiff !== 0) return heatDiff;
+        return 0;
+      });
     } else {
-      list.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+      list = [...list].sort((a, b) =>
+        new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+      );
     }
 
     return list;
-  }, [stories, topicFilter, sortBy, timeRange]);
+  }, [allStories, categoryFilter, sortBy, workNewsRaw]);
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Enforcement Receipts Ticker */}
       <EnforcementReceiptsTicker />
 
       {/* Masthead */}
       <header className="border-b border-border bg-card">
         <div className="max-w-3xl mx-auto px-4 py-10 text-center">
-          <img
-            src={workSignalLogo}
-            alt="The Work Signal"
-            width={64}
-            height={64}
-            className="mx-auto mb-4"
-          />
+          <img src={workSignalLogo} alt="The Work Signal" width={64} height={64} className="mx-auto mb-4" />
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3">
             Live Employer Intelligence
           </p>
@@ -101,59 +230,48 @@ export default function WorkSignalFeed() {
         </div>
       </header>
 
+      {/* FIX 2: Source Bias Key */}
+      <SourceBiasKey />
+
       {/* ── FILTER BAR ── */}
       <div className="sticky top-0 z-30 bg-card/95 backdrop-blur border-b border-border/40">
         <div className="max-w-3xl mx-auto px-4 py-3 space-y-3">
-          {/* Topic chips */}
+          {/* Category chips */}
           <div className="flex items-center gap-2 flex-wrap">
-            {TOPIC_CHIPS.map((chip) => (
-              <button
-                key={chip.key}
-                onClick={() => setTopicFilter(chip.key)}
-                className={`px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide transition-all border ${
-                  topicFilter === chip.key
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-transparent text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground"
-                }`}
-              >
-                {chip.label}
-              </button>
-            ))}
+            {CATEGORY_CHIPS.map(chip => {
+              const isActive = categoryFilter === chip.key;
+              return (
+                <button
+                  key={chip.key}
+                  onClick={() => { setCategoryFilter(chip.key); setVisibleCount(PAGE_SIZE); }}
+                  className={`px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide transition-all border ${
+                    isActive
+                      ? "border-transparent"
+                      : "bg-transparent text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground"
+                  }`}
+                  style={isActive ? { background: "#F0C040", color: "#2c1a00" } : undefined}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
           </div>
 
-          {/* Sort + Time */}
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              {SORT_OPTIONS.map((opt) => (
-                <button
-                  key={opt.key}
-                  onClick={() => setSortBy(opt.key)}
-                  className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors ${
-                    sortBy === opt.key
-                      ? "text-primary font-bold"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-            <div className="h-3 w-px bg-border/50" />
-            <div className="flex items-center gap-1.5">
-              {TIME_OPTIONS.map((opt) => (
-                <button
-                  key={opt.key}
-                  onClick={() => setTimeRange(opt.key)}
-                  className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors ${
-                    timeRange === opt.key
-                      ? "text-primary font-bold"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
+          {/* Sort */}
+          <div className="flex items-center gap-1.5">
+            {SORT_OPTIONS.map(opt => (
+              <button
+                key={opt.key}
+                onClick={() => setSortBy(opt.key)}
+                className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors ${
+                  sortBy === opt.key
+                    ? "text-primary font-bold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -205,12 +323,27 @@ export default function WorkSignalFeed() {
                 <Skeleton key={i} className="h-[480px] rounded-2xl" />
               ))}
             </div>
-          ) : filtered.length > 0 ? (
-            <div className="grid gap-8 md:grid-cols-2">
-              {filtered.map((story) => (
-                <SignalStoryCard key={story.id} story={story} />
-              ))}
-            </div>
+          ) : visible.length > 0 ? (
+            <>
+              <div className="grid gap-8 md:grid-cols-2">
+                {visible.map(story => (
+                  <SignalStoryCard key={story.id} story={story} />
+                ))}
+              </div>
+
+              {/* Load More */}
+              {hasMore && (
+                <div className="text-center pt-8">
+                  <Button
+                    variant="outline"
+                    onClick={() => setVisibleCount(prev => prev + PAGE_SIZE)}
+                    className="px-8"
+                  >
+                    Load more stories ({filtered.length - visibleCount} remaining)
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-20 text-muted-foreground">
               <p className="text-body italic">No receipts match your filters. Try widening your search.</p>

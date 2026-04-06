@@ -30,7 +30,7 @@ const CATEGORY_CONFIG: Record<string, { label: string }> = {
 };
 
 /* ── Adapt WorkNewsArticle → SignalStory for poster cards ── */
-function toSignalStory(a: WorkNewsArticle): SignalStory {
+function toSignalStory(a: WorkNewsArticle): SignalStory & { poster_url: string | null; poster_pool_url: string | null; source_count_left: number; source_count_center: number; source_count_right: number; source_total: number } {
   const catMap: Record<string, SignalCategory> = {
     layoffs: "c_suite",
     worker_rights: "fine_print",
@@ -68,6 +68,12 @@ function toSignalStory(a: WorkNewsArticle): SignalStory {
     status: "live",
     created_at: a.created_at ?? new Date().toISOString(),
     updated_at: a.created_at ?? new Date().toISOString(),
+    poster_url: a.poster_url ?? null,
+    poster_pool_url: null,
+    source_count_left: a.source_count_left ?? 0,
+    source_count_center: a.source_count_center ?? 0,
+    source_count_right: a.source_count_right ?? 0,
+    source_total: a.source_total ?? 0,
   };
 }
 
