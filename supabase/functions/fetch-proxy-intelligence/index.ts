@@ -141,10 +141,30 @@ Deno.serve(async (req) => {
 
     console.log(`[proxy] Document fetched, ${docText.length} chars, truncated to ${truncated.length}`);
 
-    // Use Lovable AI (Gemini) to parse the proxy filing
+    // Use Perplexity to parse the proxy filing (reliable from edge functions)
+    const perplexityKey = Deno.env.get("PERPLEXITY_API_KEY");
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!lovableKey) {
-      throw new Error("LOVABLE_API_KEY not configured");
+
+    let aiContent = "";
+
+    // Try Lovable AI first, fall back to Perplexity
+    const aiProviders = [
+      lovableKey ? {
+        url: "https://ai.lovable.dev/api/generate",
+        headers: { Authorization: `Bearer ${lovableKey}`, "Content-Type": "application/json" },
+        body: { model: "google/gemini-2.5-flash", messages: [{ role: "user", content: "" }], max_tokens: 4096 },
+        name: "lovable-gemini",
+      } : null,
+      perplexityKey ? {
+        url: "https://api.perplexity.ai/chat/completions",
+        headers: { Authorization: `Bearer ${perplexityKey}`, "Content-Type": "application/json" },
+        body: { model: "sonar", messages: [{ role: "user", content: "" }], max_tokens: 4096 },
+        name: "perplexity",
+      } : null,
+    ].filter(Boolean);
+
+    if (aiProviders.length === 0) {
+      throw new Error("No AI provider configured (LOVABLE_API_KEY or PERPLEXITY_API_KEY)");
     }
 
     const aiPrompt = `You are analyzing an SEC Schedule 14A (proxy statement) filing for ${company.name} (${company.ticker}).
@@ -160,8 +180,8 @@ Extract the following information and return ONLY valid JSON (no markdown, no ex
   "ceo_other": number_in_dollars_or_null,
   "ceo_median_pay_ratio": "string like '186:1' or null",
   "comp_interpretation": "One sentence interpreting the CEO pay structure",
-  "board_members": [{"name":"string","title":"string","independent":boolean,"tenure_years":number_or_null}],
-  "ceo_is_chair": boolean,
+  "board_members": [{"name":"string","title":"string","independent":true_or_false,"tenure_years":number_or_null}],
+  "ceo_is_chair": true_or_false,
   "power_concentration": "concentrated" or "distributed",
   "shareholder_proposals": [{"proposal":"plain English description","tag":"Routine" or "Potentially controversial"}],
   "governance_rating": "Strong oversight" or "Moderate" or "Weak",
@@ -179,26 +199,35 @@ Rules:
 Here is the proxy filing text:
 ${truncated}`;
 
-    const aiRes = await fetch("https://ai.lovable.dev/api/generate", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovableKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [{ role: "user", content: aiPrompt }],
-        max_tokens: 4096,
-      }),
-    });
-
-    if (!aiRes.ok) {
-      const errText = await aiRes.text();
-      throw new Error(`AI API error: ${aiRes.status} - ${errText}`);
+    let providerUsed = "unknown";
+    for (const provider of aiProviders) {
+      if (!provider) continue;
+      try {
+        provider.body.messages = [{ role: "user", content: aiPrompt }];
+        console.log(`[proxy] Trying AI provider: ${provider.name}`);
+        const aiRes = await fetch(provider.url, {
+          method: "POST",
+          headers: provider.headers,
+          body: JSON.stringify(provider.body),
+        });
+        if (!aiRes.ok) {
+          console.warn(`[proxy] ${provider.name} returned ${aiRes.status}`);
+          continue;
+        }
+        const aiData = await aiRes.json();
+        aiContent = aiData.choices?.[0]?.message?.content || "";
+        if (aiContent) {
+          providerUsed = provider.name;
+          break;
+        }
+      } catch (providerErr) {
+        console.warn(`[proxy] ${provider.name} failed:`, providerErr);
+      }
     }
 
-    const aiData = await aiRes.json();
-    const aiContent = aiData.choices?.[0]?.message?.content || "";
+    if (!aiContent) {
+      throw new Error("All AI providers failed to generate a response");
+    }
 
     // Extract JSON from response
     let parsed: ProxyParsed;
