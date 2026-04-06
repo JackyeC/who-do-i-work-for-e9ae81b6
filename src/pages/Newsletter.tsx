@@ -9,6 +9,7 @@ import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { EnforcementReceiptsTicker } from "@/components/work-signal/EnforcementReceiptsTicker";
+import { SourceBiasKey } from "@/components/work-signal/SourceBiasKey";
 import { ReceiptPoster } from "@/components/receipts/ReceiptPoster";
 import { getSourceBiasKey } from "@/components/receipts/BiasBar";
 import { CoverageBiasBar, BlindspotBadge } from "@/components/receipts/CoverageBiasBar";
@@ -65,6 +66,30 @@ const SORT_OPTIONS = [
   { value: "drama", label: "Highest Heat" },
 ];
 
+/* ── Poster pool: vintage 1950s ad posters per category ── */
+const POSTER_POOL: Record<string, string[]> = {
+  ai_workplace: ["/posters/poster-fewer-humans.png"],
+  future_of_work: ["/posters/poster-smile-more.png"],
+  worker_rights: ["/posters/poster-dei-rollback.png"],
+  regulation: ["/posters/poster-regulation.png"],
+  pay_equity: ["/posters/poster-pay-ratio.png"],
+  layoffs: ["/posters/poster-ghost-postings.png"],
+  legislation: ["/posters/poster-legislation.png"],
+  labor_organizing: ["/posters/poster-labor.png"],
+  general: ["/posters/poster-follow-money.png", "/posters/poster-right-friends.png"],
+};
+
+function getPosterForArticle(article: ReceiptArticle): string | null {
+  const pool = POSTER_POOL[article.category ?? ""] || Object.values(POSTER_POOL).flat();
+  if (pool.length === 0) return null;
+  let h = 0;
+  const s = article.headline || "";
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  }
+  return pool[Math.abs(h) % pool.length];
+}
+
 /* ── Deep Investigations ── */
 const DEEP_INVESTIGATIONS = [
   { slug: "meta", name: "Meta", sector: "Big Tech", headline: "DEI team dissolved + massive WARN filings", date: "March 2026", spice: 5 },
@@ -92,7 +117,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
       >
         <ReceiptPoster
           poster={article.poster_data}
-          posterUrl={article.poster_url}
+          posterUrl={article.poster_url || getPosterForArticle(article)}
           category={article.category}
           headline={article.headline}
           id={`poster-gn-${article.id}`}
@@ -187,9 +212,9 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
         >
           <ReceiptPoster
             poster={article.poster_data}
-            posterUrl={article.poster_url}
-            category={article.category}
-            big
+          posterUrl={article.poster_url || getPosterForArticle(article)}
+          category={article.category}
+          big
             headline={article.headline}
             id={`poster-lead-${article.id}`}
           />
@@ -428,6 +453,9 @@ export default function Newsletter() {
         </div>
       </header>
 
+      {/* Source Bias Key — "How We Read the News" */}
+      <SourceBiasKey />
+
       {/* ── Filter/Sort Bar (sticky) ── */}
       <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-20">
         <div className="max-w-6xl mx-auto px-4 py-2.5">
@@ -470,7 +498,7 @@ export default function Newsletter() {
             </div>
 
             <span className="ml-auto text-xs text-muted-foreground/50 font-mono whitespace-nowrap shrink-0">
-              {filtered.length} stories
+              {filtered.length > 50 ? "50+" : filtered.length} stories
             </span>
           </div>
         </div>
