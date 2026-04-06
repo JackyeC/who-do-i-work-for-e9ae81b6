@@ -92,20 +92,6 @@ function fmtMoney(n?: number | null): string {
   return `$${n.toLocaleString()}`;
 }
 
-/* ─── CEO Memo Decoder ─── */
-const DECODER_MAP: Record<string, string> = {
-  "strategic reallocation": "Budget is being redirected. Some teams will feel it.",
-  "modernization": "Often means automation is replacing certain roles.",
-  "restructuring": "Organizational changes. Could mean layoffs, reorgs, or both.",
-  "right-sizing": "Headcount reduction, described differently.",
-  "operational efficiency": "Doing more with fewer people.",
-  "people first": "Worth watching what follows this phrase.",
-  "organizational simplification": "Management layers are being removed.",
-  "workforce optimization": "Headcount reduction by another name.",
-  "transformation": "Large-scale change. Details tend to emerge slowly.",
-  "synergies": "Post-merger consolidation. Usually includes job cuts.",
-  "realignment": "Team structures may change significantly.",
-};
 
 /* ─── Component ─── */
 export function WarningLabelView({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: WarningLabelProps) {
@@ -488,29 +474,6 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         </Card>
       )}
 
-      {/* ─── CEO MEMO DECODER ─── */}
-      <Card className="rounded-none border border-border/50">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <MessageSquare className="w-5 h-5 text-primary" />
-            <div>
-              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">CEO MEMO DECODER</h3>
-              <p className="text-xs text-muted-foreground">What corporate language actually means</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {Object.entries(DECODER_MAP).map(([phrase, meaning]) => (
-              <div key={phrase} className="flex items-start gap-2 p-2.5 bg-muted/15 border border-border/20 rounded-none">
-                <MinusCircle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs font-semibold text-foreground capitalize">"{phrase}"</p>
-                  <p className="text-xs text-muted-foreground leading-snug">{meaning}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* ─── 3 HARD QUESTIONS ─── */}
       <Card className="rounded-none border-2 border-primary/30 bg-primary/5">
