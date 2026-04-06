@@ -129,10 +129,15 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
           <CategoryBadge category={article.category} />
         </div>
 
-        {/* Content overlay — bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-          {/* Headline */}
-          <h3 className="text-white text-sm font-black leading-snug line-clamp-3" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}>
+        {/* Big W? watermark — center of poster, semi-transparent */}
+        <div className="absolute inset-0 flex items-center justify-center z-[5] pointer-events-none">
+          <span className="text-[80px] font-black text-white/[0.07] leading-none" style={{ fontFamily: "'Playfair Display', serif" }}>W?</span>
+        </div>
+
+        {/* Content overlay — bottom, above brand strip */}
+        <div className="absolute bottom-7 left-0 right-0 p-4 z-10">
+          {/* Headline — no truncation, wrap naturally */}
+          <h3 className="text-white text-[13px] font-black leading-snug" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}>
             {article.source_url ? (
               <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="text-white no-underline hover:text-primary transition-colors">
                 {article.headline}
@@ -140,19 +145,19 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
             ) : article.headline}
           </h3>
 
-          {/* Jackye's Take — FIRST SENTENCE ONLY, punchy */}
+          {/* Jackye's Take — punchy, max 120 chars */}
           {article.jackye_take && (
-            <p className="text-primary/90 text-xs font-bold mt-2 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <p className="text-primary/90 text-[11px] font-bold mt-1.5 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
               👑 {jackyeVoice(article.jackye_take)}
             </p>
           )}
         </div>
 
         {/* Brand strip — bottom bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-6 bg-[#0A0A0E]/90 flex items-center px-2 z-20">
-          <span className="text-[9px] font-bold text-primary font-mono tracking-wider">W?</span>
-          <span className="text-[8px] text-[#F0EBE0]/60 font-mono ml-1.5">WhoDoIWorkFor.com</span>
-          <span className="text-[8px] text-[#F0EBE0]/40 font-mono ml-auto">by Jackye Clayton</span>
+        <div className="absolute bottom-0 left-0 right-0 h-7 bg-[#0A0A0E]/95 flex items-center px-3 z-20">
+          <span className="text-[10px] font-black text-primary font-mono tracking-wider">W?</span>
+          <span className="text-[9px] text-[#F0EBE0]/70 font-mono ml-2">WhoDoIWorkFor.com</span>
+          <span className="text-[9px] text-[#F0EBE0]/40 font-mono ml-auto">by Jackye Clayton</span>
         </div>
       </div>
 
@@ -402,12 +407,13 @@ export default function Newsletter() {
       );
     }
     if (sortBy === "hottest") {
-      list.sort((a, b) => b.spice_level - a.spice_level);
+      // Most Covered = sort by real source count
+      list.sort((a, b) => (b.coverage?.total ?? 1) - (a.coverage?.total ?? 1));
     } else if (sortBy === "drama") {
       list.sort((a, b) => {
-        const aDrama = b.spice_level * 20 + (b.is_controversy ? 10 : 0);
-        const bDrama = a.spice_level * 20 + (a.is_controversy ? 10 : 0);
-        return aDrama - bDrama;
+        const aDrama = (a.spice_level || 0) * 20 + (a.is_controversy ? 10 : 0) + (a.coverage?.total ?? 1) * 5;
+        const bDrama = (b.spice_level || 0) * 20 + (b.is_controversy ? 10 : 0) + (b.coverage?.total ?? 1) * 5;
+        return bDrama - aDrama;
       });
     } else {
       list.sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime());
