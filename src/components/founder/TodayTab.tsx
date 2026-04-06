@@ -438,16 +438,21 @@ export function TodayTab({ onNavigateTab }: { onNavigateTab?: (tab: string) => v
           <MetricRow label="Strong evidence" value={dataHealth?.strong ?? "—"} loading={dataLoading} />
           <MetricRow label="No evidence yet" value={dataHealth?.none ?? "—"} loading={dataLoading} highlight={watchData ? watchData.dataGaps > (dataHealth?.total ?? 0) * 0.3 : false} />
           {!criticalLoading && (
-            <div className={cn(
-              "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5",
-              missingWebsiteCount > 0 ? "bg-amber-500/10 text-amber-800 dark:text-amber-200" : "bg-civic-green/10 text-civic-green"
-            )}>
+            <button
+              onClick={() => missingWebsiteCount > 0 && onNavigateTab?.("signals")}
+              className={cn(
+                "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5 w-full text-left transition-colors",
+                missingWebsiteCount > 0
+                  ? "bg-amber-500/10 text-amber-800 dark:text-amber-200 hover:bg-amber-500/20 cursor-pointer"
+                  : "bg-civic-green/10 text-civic-green cursor-default"
+              )}
+            >
               {missingWebsiteCount > 0 ? (
                 <><Link2 className="w-3 h-3" />{missingWebsiteCount.toLocaleString()} missing website {missingWebsiteCount === 1 ? "URL" : "URLs"}</>
               ) : (
                 <><CheckCircle className="w-3 h-3" />All indexed companies have a website URL</>
               )}
-            </div>
+            </button>
           )}
         </TriageCard>
 
