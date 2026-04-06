@@ -104,26 +104,17 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
   const compDate = data.compensation[0]?.created_at ?? null;
   allDates.push(compDate);
   if (data.compensation.length > 0) {
-    const relevant = role
-      ? data.compensation.find(c => c.role_title?.toLowerCase().includes(role.toLowerCase()))
-      : data.compensation[0];
-    if (relevant) {
-      insights.push({
-        icon: DollarSign,
-        title: "Compensation Signals",
-        detail: `${relevant.role_title}: $${(relevant.salary_range_min ?? 0).toLocaleString()}–$${(relevant.salary_range_max ?? 0).toLocaleString()}. Source: ${relevant.source_type || "reported"}.`,
-        tier: "multi_source",
-        freshness: getSignalFreshness(relevant.created_at),
-      });
-    } else {
-      insights.push({
-        icon: DollarSign,
-        title: "Compensation Signals",
-        detail: `${data.compensation.length} salary data point(s) on file. No exact match for "${role ?? "your role"}" yet.`,
-        tier: "inferred",
-        freshness: getSignalFreshness(compDate),
-      });
-    }
+    const c = data.compensation[0];
+    const median = c.median_total_compensation_usd;
+    insights.push({
+      icon: DollarSign,
+      title: "Compensation Signals",
+      detail: median
+        ? `Median total compensation: $${median.toLocaleString()}. ${c.source_summary || ""}`
+        : `Compensation data on file. ${c.source_summary || ""}`,
+      tier: "multi_source",
+      freshness: getSignalFreshness(c.created_at),
+    });
   } else {
     insights.push({
       icon: DollarSign,
