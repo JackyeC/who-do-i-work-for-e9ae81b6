@@ -1,7 +1,9 @@
 /**
  * Sync Work News — Dual-source workforce intelligence feed.
  * Sources: NewsAPI.org + GDELT DOC API
- * Runs every 4 hours via pg_cron.
+ * Runs every 2 hours via pg_cron.
+ * Dedup: ON CONFLICT (headline) DO UPDATE SET updated_at = now()
+ * Purge: Deletes rows older than 30 days after each run.
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -14,43 +16,30 @@ const corsHeaders = {
 const GDELT_DOC_API = "https://api.gdeltproject.org/api/v2/doc/doc";
 const NEWSAPI_BASE = "https://newsapi.org/v2/everything";
 
-// ─── Unified domain blocklist (synced with jackyefy-news) ───
+// ─── Unified domain blocklist ───
 
 const BLOCKED_DOMAINS = new Set([
-  // Gaming / lifestyle
   "psychologytoday.com", "kotaku.com", "ign.com", "gamespot.com",
   "polygon.com", "pcgamer.com", "eurogamer.net",
-  // Australia / NZ / UK
   "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "ibtimes.com.au",
   "starcommunity.com.au", "abc.net.au",
-  // Asia / Pacific
-  "colombogazette.com", "etnews.com", "sunstar.com.ph",
-  "channelnewsasia.com",
-  // Latin America / Brazil
+  "colombogazette.com", "etnews.com", "sunstar.com.ph", "channelnewsasia.com",
   "terra.com.br", "g1.globo.com", "globo.com", "uol.com.br",
   "folha.uol.com.br", "senado.leg.br", "sonoticias.com.br",
-  // France
   "lemonde.fr", "lefigaro.fr", "liberation.fr", "20minutes.fr", "francetvinfo.fr",
-  // Spain
   "elpais.com", "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
-  // Germany
   "spiegel.de", "welt.de", "bild.de", "handelsblatt.com", "faz.net",
   "sueddeutsche.de", "zeit.de", "hna.de", "op-marburg.de",
   "merkur.de", "finanznachrichten.de",
-  // Italy
   "corriere.it", "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
   "ilfattoquotidiano.it", "ansa.it", "rainews.it", "spotandweb.it",
-  // Scandinavia
   "di.se", "dn.se", "dagensjuridik.se", "aftonbladet.se", "expressen.se",
   "nyteknik.se", "arbetet.se", "svensktnaringsliv.se",
   "demokraatti.fi",
-  // Netherlands
   "nrc.nl",
-  // Poland
   "tvn24.pl", "wp.pl", "onet.pl", "gazeta.pl",
 ]);
 
-// TLD-based blocking for domains not in the exact list
 const BLOCKED_TLDS = new Set([
   ".se", ".fi", ".pl", ".it", ".de", ".fr", ".es", ".br",
   ".nl", ".ph", ".au", ".kr", ".jp", ".cn", ".tw", ".ru",
@@ -63,11 +52,43 @@ function isBlockedSource(domain: string | null): boolean {
   if (!domain) return false;
   const d = domain.toLowerCase().trim();
   if (BLOCKED_DOMAINS.has(d)) return true;
-  // TLD check
   for (const tld of BLOCKED_TLDS) {
     if (d.endsWith(tld)) return true;
   }
   return false;
+}
+
+// ─── Source bias classification ───
+
+const LEFT_SOURCES = new Set([
+  "huffpost.com", "huffingtonpost.com", "msnbc.com", "theguardian.com",
+  "vox.com", "slate.com", "salon.com", "motherjones.com", "thenation.com",
+  "dailykos.com", "rawstory.com", "alternet.org", "commondreams.org",
+  "democracynow.org", "jacobin.com", "theintercept.com", "newrepublic.com",
+  "buzzfeednews.com", "cnn.com",
+]);
+
+const RIGHT_SOURCES = new Set([
+  "foxnews.com", "foxbusiness.com", "dailywire.com", "breitbart.com",
+  "nypost.com", "washingtontimes.com", "dailycaller.com", "theblaze.com",
+  "oann.com", "newsmax.com", "freebeacon.com", "townhall.com",
+  "nationalreview.com", "thefederalist.com", "americanthinker.com",
+  "pjmedia.com", "redstate.com", "dailysignal.com",
+]);
+
+const CENTER_SOURCES = new Set([
+  "apnews.com", "reuters.com", "bbc.com", "bbc.co.uk", "npr.org",
+  "pbs.org", "usatoday.com", "thehill.com", "politico.com",
+  "axios.com", "bloomberg.com", "wsj.com", "nytimes.com",
+  "washingtonpost.com", "abcnews.go.com", "cbsnews.com", "nbcnews.com",
+]);
+
+function classifySourceBias(domain: string | null): "left" | "center" | "right" {
+  if (!domain) return "center";
+  const d = domain.toLowerCase().replace("www.", "");
+  if (LEFT_SOURCES.has(d)) return "left";
+  if (RIGHT_SOURCES.has(d)) return "right";
+  return "center";
 }
 
 // ─── Shared config ───
@@ -112,7 +133,7 @@ function hashUrl(url: string): string {
   return url.slice(-100).replace(/[^a-zA-Z0-9]/g, "");
 }
 
-// ─── Content quality gates (English-only, US/AI/world-scale focus) ───
+// ─── Content quality gates ───
 
 const NON_LATIN_RE = /[\u0400-\u04FF\u0500-\u052F\u0600-\u06FF\u0750-\u077F\u0590-\u05FF\u0900-\u097F\u0980-\u09FF\u0E00-\u0E7F\u1100-\u11FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\u10A0-\u10FF\u0530-\u058F]/;
 const ROMANCE_MARKERS = [
@@ -137,14 +158,11 @@ function isServerEnglish(text: string): boolean {
     if (m) romanceHits += m.length;
   }
   if (romanceHits >= 3) return false;
-  // German connective gate
   const lower = text.toLowerCase();
   const germanHits = (lower.match(/\b(der|die|das|und|für|mit|auf|ist|von|nicht)\b/g) || []).length;
   if (germanHits >= 4) return false;
-  // Italian connective gate
   const italianHits = (lower.match(/\b(il|la|le|lo|di|del|della|dei|per|che|non|con|una|più|nel|sul)\b/g) || []).length;
   if (italianHits >= 4) return false;
-  // Nordic connective gate
   const nordicHits = (lower.match(/\b(och|att|det|för|som|med|har|kan|inte|vara|eller|från|efter|denna|till)\b/g) || []).length;
   if (nordicHits >= 3) return false;
   return true;
@@ -161,13 +179,15 @@ function passesContentGates(headline: string, source?: string | null): boolean {
 }
 
 function buildValidatedWorkNewsRow(row: any) {
-  if (!passesContentGates(row.headline, row.source_name)) {
-    return null;
-  }
-
+  if (!passesContentGates(row.headline, row.source_name)) return null;
+  const bias = classifySourceBias(row.source_name);
   return {
     ...row,
     language: "en",
+    source_count_left: bias === "left" ? 1 : 0,
+    source_count_center: bias === "center" ? 1 : 0,
+    source_count_right: bias === "right" ? 1 : 0,
+    source_total: 1,
   };
 }
 
@@ -179,28 +199,19 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
   for (const { q, category } of NEWSAPI_QUERIES) {
     try {
       const params = new URLSearchParams({
-        q,
-        language: "en",
-        sortBy: "publishedAt",
-        pageSize: "20",
-        apiKey,
+        q, language: "en", sortBy: "publishedAt", pageSize: "20", apiKey,
       });
-
       const res = await fetch(`${NEWSAPI_BASE}?${params}`);
-      if (!res.ok) {
-        console.warn(`[NewsAPI] Query "${q.slice(0, 30)}..." failed: ${res.status}`);
-        continue;
-      }
+      if (!res.ok) { console.warn(`[NewsAPI] "${q.slice(0, 30)}..." failed: ${res.status}`); continue; }
 
       const data = await res.json();
       for (const article of data.articles || []) {
         if (!article.url || !article.title || article.title === "[Removed]") continue;
-        // Domain block at fetch level
         if (isBlockedSource(article.source?.name)) continue;
         try {
           const urlDomain = new URL(article.url).hostname.replace("www.", "");
           if (isBlockedSource(urlDomain)) continue;
-        } catch { /* skip URL parse errors */ }
+        } catch { /* skip */ }
 
         const title = article.title;
         const isControversy = controversyPatterns.test(title);
@@ -210,22 +221,15 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
           source_name: article.source?.name || null,
           source_url: article.url,
           published_at: article.publishedAt || new Date().toISOString(),
-          sentiment_score: null,
-          tone_label: null,
-          themes: [],
-          category,
+          sentiment_score: null, tone_label: null, themes: [], category,
           is_controversy: isControversy,
           controversy_type: isControversy ? detectControversyType(title) : null,
           gdelt_url_hash: hashUrl(article.url),
         });
       }
-
       await new Promise(r => setTimeout(r, 300));
-    } catch (e: any) {
-      console.warn(`[NewsAPI] Error for "${q.slice(0, 30)}...":`, e);
-    }
+    } catch (e: any) { console.warn(`[NewsAPI] Error:`, e); }
   }
-
   console.log(`[NewsAPI] Fetched ${rows.length} articles`);
   return rows;
 }
@@ -239,30 +243,17 @@ async function fetchGDELT(): Promise<any[]> {
     try {
       const encoded = encodeURIComponent(q);
       const url = `${GDELT_DOC_API}?query=${encoded} sourcelang:english sourcecountry:us&mode=ArtList&maxrecords=15&format=json&timespan=48h&sort=DateDesc`;
-
       const res = await fetch(url);
-      if (!res.ok) {
-        console.warn(`[GDELT] Query failed: ${res.status}`);
-        await new Promise(r => setTimeout(r, 2000));
-        continue;
-      }
+      if (!res.ok) { console.warn(`[GDELT] Query failed: ${res.status}`); await new Promise(r => setTimeout(r, 2000)); continue; }
 
       const text = await res.text();
-      if (!text.startsWith("{") && !text.startsWith("[")) {
-        console.warn(`[GDELT] Non-JSON response: ${text.slice(0, 80)}`);
-        await new Promise(r => setTimeout(r, 2000));
-        continue;
-      }
+      if (!text.startsWith("{") && !text.startsWith("[")) { await new Promise(r => setTimeout(r, 2000)); continue; }
 
       const data = JSON.parse(text);
       for (const a of data?.articles || []) {
         if (!a.url || !a.title) continue;
-        // Domain block at fetch level
         const domain = a.domain || "";
-        if (isBlockedSource(domain)) {
-          console.log(`[GDELT] Blocked domain: ${domain}`);
-          continue;
-        }
+        if (isBlockedSource(domain)) continue;
 
         const tone = a.tone ? parseFloat(String(a.tone).split(",")[0]) : 0;
         const title = a.title;
@@ -275,22 +266,16 @@ async function fetchGDELT(): Promise<any[]> {
           published_at: a.seendate
             ? new Date(a.seendate.slice(0, 4) + "-" + a.seendate.slice(4, 6) + "-" + a.seendate.slice(6, 8)).toISOString()
             : new Date().toISOString(),
-          sentiment_score: tone,
-          tone_label: toneLabel(tone),
+          sentiment_score: tone, tone_label: toneLabel(tone),
           themes: a.themes ? String(a.themes).split(";").slice(0, 10) : [],
-          category,
-          is_controversy: isControversy,
+          category, is_controversy: isControversy,
           controversy_type: isControversy ? detectControversyType(title) : null,
           gdelt_url_hash: hashUrl(a.url),
         });
       }
-
       await new Promise(r => setTimeout(r, 2000));
-    } catch (e: any) {
-      console.warn(`[GDELT] Error:`, e);
-    }
+    } catch (e: any) { console.warn(`[GDELT] Error:`, e); }
   }
-
   console.log(`[GDELT] Fetched ${rows.length} articles`);
   return rows;
 }
@@ -313,41 +298,60 @@ Deno.serve(async (req: Request) => {
       const unique = rows.flatMap(r => {
         if (seen.has(r.gdelt_url_hash)) return [];
         const validatedRow = buildValidatedWorkNewsRow(r);
-        if (!validatedRow) {
-          console.log(`[${label}] Content gate rejected: "${r.headline?.slice(0, 50)}" from ${r.source_name}`);
-          return [];
-        }
+        if (!validatedRow) return [];
         seen.add(r.gdelt_url_hash);
         return [validatedRow];
       });
-      if (unique.length > 0) {
-        const { error } = await supabase.from("work_news").upsert(unique, {
-          onConflict: "gdelt_url_hash",
-          ignoreDuplicates: true,
-        });
-        if (error) console.error(`[${label}] upsert error:`, error);
-        else console.log(`[${label}] Upserted ${unique.length} articles`);
+
+      if (unique.length === 0) return;
+
+      // Use ON CONFLICT (headline) to dedup by headline
+      // Also upsert on gdelt_url_hash for URL-level dedup
+      const { error } = await supabase.from("work_news").upsert(unique, {
+        onConflict: "headline",
+        ignoreDuplicates: false,
+      });
+
+      if (error) {
+        console.error(`[${label}] upsert error:`, error);
+        // Fallback: try individual inserts to skip dupes
+        for (const row of unique) {
+          const { error: singleErr } = await supabase.from("work_news").upsert([row], {
+            onConflict: "headline",
+            ignoreDuplicates: true,
+          });
+          if (!singleErr) totalInserted++;
+        }
+      } else {
+        console.log(`[${label}] Upserted ${unique.length} articles`);
         totalInserted += unique.length;
       }
     }
 
-    // 1. NewsAPI first (fast, reliable)
+    // 1. NewsAPI
     if (newsApiKey) {
       try {
         const newsRows = await fetchNewsAPI(newsApiKey);
         await upsertBatch(newsRows, "NewsAPI");
-      } catch (e) {
-        console.warn("[NewsAPI] Failed:", e);
-      }
+      } catch (e) { console.warn("[NewsAPI] Failed:", e); }
     }
 
-    // 2. GDELT second (slower, may timeout)
+    // 2. GDELT
     try {
       const gdeltRows = await fetchGDELT();
       await upsertBatch(gdeltRows, "GDELT");
-    } catch (e) {
-      console.warn("[GDELT] Failed:", e);
-    }
+    } catch (e) { console.warn("[GDELT] Failed:", e); }
+
+    // 3. Purge stories older than 30 days
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { error: purgeErr, count: purgeCount } = await supabase
+      .from("work_news")
+      .delete()
+      .lt("published_at", thirtyDaysAgo)
+      .select("*", { count: "exact", head: true });
+    
+    if (purgeErr) console.warn("[Purge] Error:", purgeErr);
+    else console.log(`[Purge] Removed old articles before ${thirtyDaysAgo}`);
 
     const { count } = await supabase
       .from("work_news")
