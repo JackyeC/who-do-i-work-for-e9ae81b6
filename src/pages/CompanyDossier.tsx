@@ -461,9 +461,12 @@ export default function CompanyDossier() {
   const influenceScore = company.employer_clarity_score || 0;
   const civicScore = company.civic_footprint_score ?? 0;
 
-  // Verdict logic
+  // Verdict logic — score of 0 means "no data yet", not "high risk"
   const verdictScore = Math.max(civicScore, influenceScore);
-  const verdict = verdictScore >= 60
+  const isUnscored = civicScore === 0 && influenceScore === 0;
+  const verdict = isUnscored
+    ? { label: "Under Review", color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border", Icon: Search }
+    : verdictScore >= 60
     ? { label: "Low Risk", color: "text-civic-green", bg: "bg-civic-green/10", border: "border-civic-green/30", Icon: ShieldCheck }
     : verdictScore >= 35
     ? { label: "Medium Risk", color: "text-civic-yellow", bg: "bg-civic-yellow/10", border: "border-civic-yellow/30", Icon: AlertTriangle }
