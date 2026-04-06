@@ -1,19 +1,5 @@
 {
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "wdiwf.com" }],
-      "destination": "https://whodoiworkfor.com/$1",
-      "permanent": true
-    },
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.wdiwf.com" }],
-      "destination": "https://whodoiworkfor.com/$1",
-      "permanent": true
-    }
-  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!posters|assets|favicon|embed).*)", "destination": "/index.html" }
   ]
 }
