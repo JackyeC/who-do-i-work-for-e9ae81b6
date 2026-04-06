@@ -3,22 +3,7 @@ import { Linkedin, Facebook, Twitter, X } from "lucide-react";
 import { BiasBar, getSourceBiasKey } from "./BiasBar";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
 
-// Poster pool for lightbox — matches Newsletter.tsx
-const CDN = "/posters";
-const ALL_POSTERS = [
-  `${CDN}/poster-jackye-throne.jpg`, `${CDN}/poster-jackye-receipts.jpg`, `${CDN}/poster-jackye-broadcast.jpg`,
-  `${CDN}/poster-boardroom.jpg`, `${CDN}/poster-golden-parachute.jpg`, `${CDN}/poster-ghost-jobs.jpg`,
-  `${CDN}/poster-water-cooler.jpg`, `${CDN}/poster-supply-chain.jpg`, `${CDN}/poster-rto-commute.jpg`,
-  `${CDN}/poster-surveillance.jpg`, `${CDN}/poster-tech-stack.jpg`, `${CDN}/poster-robot-helper.jpg`,
-  `${CDN}/poster-fewer-humans.jpg`, `${CDN}/poster-follow-money.jpg`, `${CDN}/poster-exit-interview.jpg`,
-  `${CDN}/poster-dei-rollback.jpg`, `${CDN}/poster-smile-more.jpg`, `${CDN}/poster-pay-ratio.jpg`,
-];
-function getPosterForArticle(article: ReceiptArticle): string {
-  const s = article.headline || article.id || "";
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-  return ALL_POSTERS[Math.abs(h) % ALL_POSTERS.length];
-}
+import { getPosterForArticle } from "@/lib/poster-pool";
 
 const CAT_COLORS: Record<string, string> = {
   ai_workplace: "#38BDF8",

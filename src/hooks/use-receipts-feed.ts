@@ -124,7 +124,7 @@ export function useReceiptsFeed() {
         .from("receipts_enriched")
         .select("*")
         .order("published_at", { ascending: false })
-        .limit(200);
+        .limit(800); // Pull more articles so topic clustering finds multiple sources per story
       if (error) throw error;
       // Deduplicate by headline — keep the newest entry
       const seen = new Set<string>();
