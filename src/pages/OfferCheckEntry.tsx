@@ -47,6 +47,7 @@ interface CompanyResult {
 
 /* ─── Verdict logic ─── */
 function deriveVerdict(score: number): { label: string; color: string; bg: string; border: string; icon: typeof ShieldCheck } {
+  if (score === 0 || score == null) return { label: "Under Review", color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border", icon: Search };
   if (score >= 60) return { label: "Low Risk", color: "text-civic-green", bg: "bg-civic-green/10", border: "border-civic-green/30", icon: ShieldCheck };
   if (score >= 35) return { label: "Medium Risk", color: "text-civic-yellow", bg: "bg-civic-yellow/10", border: "border-civic-yellow/30", icon: AlertTriangle };
   return { label: "High Risk", color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", icon: XCircle };

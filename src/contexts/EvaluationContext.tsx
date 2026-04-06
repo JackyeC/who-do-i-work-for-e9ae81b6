@@ -184,7 +184,8 @@ export function EvaluationProvider({ children }: { children: ReactNode }) {
     }
 
     let verdict = "";
-    if (jobAlignment >= 70 && offerRisk < 40) verdict = "Worth serious consideration";
+    if (civic === 0 && clarity === 0) verdict = "Under review — we're pulling records";
+    else if (jobAlignment >= 70 && offerRisk < 40) verdict = "Worth serious consideration";
     else if (jobAlignment >= 40 || offerRisk < 60) verdict = "Proceed with caution";
     else verdict = "Protect your peace";
 
