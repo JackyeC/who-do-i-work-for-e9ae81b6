@@ -94,6 +94,46 @@ function extractPdfText(buffer: ArrayBuffer): string {
   return words.join(" ").slice(0, 30000);
 }
 
+/** OCR a PDF using Gemini vision when native extraction fails */
+async function ocrPdfWithVision(buffer: ArrayBuffer, apiKey: string): Promise<string> {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  const base64 = btoa(binary);
+
+  console.log("[analyze-offer-letter] Native extraction poor, falling back to Gemini OCR...");
+
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "Extract ALL text from this document exactly as written. Return only the extracted text, no commentary." },
+            { type: "image_url", image_url: { url: `data:application/pdf;base64,${base64}` } },
+          ],
+        },
+      ],
+    }),
+  });
+
+  if (!res.ok) {
+    console.error("[analyze-offer-letter] OCR API error:", res.status, await res.text());
+    return "";
+  }
+
+  const json = await res.json();
+  return json.choices?.[0]?.message?.content || "";
+}
+
 /** Extract readable text from a DOCX file */
 function extractDocxText(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
