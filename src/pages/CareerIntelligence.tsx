@@ -20,6 +20,7 @@ import { BeforeYouAcceptBlock } from "@/components/career/BeforeYouAcceptBlock";
 import { WhatThisMeansForYou } from "@/components/career/WhatThisMeansForYou";
 import { SampleDossierPreview } from "@/components/career/SampleDossierPreview";
 import { CompanyResearchTrigger } from "@/components/research/CompanyResearchTrigger";
+import { InterviewPrepBrief } from "@/components/career/InterviewPrepBrief";
 
 export default function CareerIntelligence() {
   const { user } = useAuth();
@@ -105,6 +106,9 @@ export default function CareerIntelligence() {
             <SampleDossierPreview />
           </div>
         ) : null}
+
+        {/* Interview Prep Brief */}
+        <InterviewPrepBrief selectedCompany={selectedCompany} />
 
         {/* Deep Dive Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
