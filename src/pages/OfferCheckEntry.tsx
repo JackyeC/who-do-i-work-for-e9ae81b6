@@ -419,9 +419,8 @@ export default function OfferCheckEntry() {
           </motion.div>
         </div>
 
-        {/* ═══ RESULTS (unchanged) ═══ */}
-
         {/* ═══ RESULTS ═══ */}
+        <div className="max-w-2xl mx-auto">
         <AnimatePresence mode="wait">
           {showResult && (
             <motion.div
