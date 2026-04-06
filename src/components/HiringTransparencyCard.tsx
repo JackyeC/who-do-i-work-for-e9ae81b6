@@ -177,7 +177,7 @@ export function HiringTransparencyCard({ companyName, dbCompanyId }: HiringTrans
                     ? "Company has published a bias audit or AEDT disclosure."
                     : overallStatus === "clean"
                     ? "No AI hiring tools detected in public sources."
-                    : "Run a Deep Dive scan to detect AI hiring tools."}
+                    : "AI hiring tool detection updates automatically during scans."}
                 </div>
               </div>
             </div>

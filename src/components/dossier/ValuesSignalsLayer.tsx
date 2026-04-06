@@ -40,7 +40,7 @@ export function ValuesSignalsLayer({ signals, companyName }: ValuesSignalsProps)
       <div className="text-center py-8">
         <Heart className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
         <p className="text-caption text-muted-foreground">No values signals detected yet for {companyName}.</p>
-        <p className="text-micro text-muted-foreground mt-1">Run a scan to generate evidence-based values signals.</p>
+        <p className="text-micro text-muted-foreground mt-1">This section updates automatically when new intelligence is detected.</p>
       </div>
     );
   }
