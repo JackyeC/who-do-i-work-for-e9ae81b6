@@ -128,8 +128,9 @@ export function AnimatedDemo() {
             How It Works
           </div>
           <h2 className="text-xl lg:text-2xl text-foreground">
-            Three steps. Full transparency.
+            We say the quiet part out loud.
           </h2>
+          <p className="text-sm text-muted-foreground mt-1">We already looked. You decide what to do next.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-8 lg:gap-12 items-center">

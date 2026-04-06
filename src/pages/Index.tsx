@@ -150,7 +150,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <section className="bg-muted/40 border-y border-border px-6 lg:px-16 py-20 lg:py-28">
         <div className="max-w-[900px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">How It Works</p>
-          <h2 className="text-h1 text-foreground text-center mb-14">Three moves. One spine.</h2>
+          <h2 className="text-h1 text-foreground text-center mb-2">We say the quiet part out loud.</h2>
+          <p className="text-base text-muted-foreground text-center mb-14">We already looked. You decide what to do next.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {(
