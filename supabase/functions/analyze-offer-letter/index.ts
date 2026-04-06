@@ -188,16 +188,24 @@ serve(async (req: Request) => {
             .slice(0, 30000);
         }
 
-        // Check if we got meaningful text
+        // Check if we got meaningful text — if not, try OCR via Gemini vision
         const wordCount = offerText.split(/\s+/).filter(w => w.length > 2).length;
         if (wordCount < 15) {
-          return new Response(
-            JSON.stringify({
-              error: "pdf_extraction_failed",
-              message: "We couldn't extract enough text from this PDF. It may be image-based or encrypted. Please paste your offer text instead.",
-            }),
-            { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
+          console.log(`[analyze-offer-letter] Native extraction got ${wordCount} words, trying OCR...`);
+          const ocrText = await ocrPdfWithVision(buffer, LOVABLE_API_KEY);
+          const ocrWordCount = ocrText.split(/\s+/).filter(w => w.length > 2).length;
+          if (ocrWordCount >= 15) {
+            offerText = ocrText.slice(0, 30000);
+            console.log(`[analyze-offer-letter] OCR extracted ${ocrWordCount} words`);
+          } else {
+            return new Response(
+              JSON.stringify({
+                error: "pdf_extraction_failed",
+                message: "We couldn't extract text from this PDF even with OCR. It may be encrypted or corrupted. Please paste your offer text instead.",
+              }),
+              { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
         }
       } else if (text) {
         offerText = text.trim();
