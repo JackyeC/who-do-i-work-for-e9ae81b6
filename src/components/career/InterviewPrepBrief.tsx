@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { AlertCircle, X, FileSearch } from "lucide-react";
 import type { CompanyResult } from "@/components/career/EmployerDossierSearch";
 
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export function InterviewPrepBrief({ selectedCompany }: Props) {
+  const { user } = useAuth();
   const [companyInput, setCompanyInput] = useState("");
   const [roleInput, setRoleInput] = useState("");
   const [useSelected, setUseSelected] = useState(true);
@@ -32,9 +34,56 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
   const [brief, setBrief] = useState<PrepBrief | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [savedCompanyName, setSavedCompanyName] = useState<string | null>(null);
+  const [isRestoredBrief, setIsRestoredBrief] = useState(false);
+
+  // Load last saved brief on mount
+  useEffect(() => {
+    if (!user) return;
+    const loadSaved = async () => {
+      const { data } = await supabase
+        .from("interview_prep_briefs")
+        .select("company_name, role, intel_summary, checklist")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
+        const restored: PrepBrief = {
+          company: data.company_name,
+          role: data.role,
+          intel_summary: data.intel_summary,
+          checklist: data.checklist as PrepBrief["checklist"],
+        };
+        setBrief(restored);
+        setCompanyInput(data.company_name);
+        setRoleInput(data.role || "");
+        setSavedCompanyName(data.company_name);
+        setIsRestoredBrief(true);
+        setUseSelected(false);
+      }
+    };
+    loadSaved();
+  }, [user]);
 
   const companyName = useSelected && selectedCompany ? selectedCompany.name : companyInput;
   const companyId = useSelected && selectedCompany ? selectedCompany.id : undefined;
+
+  const saveBrief = async (briefData: PrepBrief) => {
+    if (!user) return;
+    try {
+      await supabase.from("interview_prep_briefs").insert({
+        user_id: user.id,
+        company_name: briefData.company || companyName.trim(),
+        role: briefData.role || null,
+        intel_summary: briefData.intel_summary,
+        checklist: briefData.checklist as any,
+      });
+    } catch (e) {
+      console.error("Failed to save brief:", e);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!companyName.trim()) return;
@@ -42,6 +91,7 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
     setError(null);
     setBrief(null);
     setChecked({});
+    setIsRestoredBrief(false);
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke("interview-prep-brief", {
@@ -59,7 +109,10 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
         throw new Error("malformed");
       }
 
-      setBrief(data as PrepBrief);
+      const parsedBrief = data as PrepBrief;
+      setBrief(parsedBrief);
+      setSavedCompanyName(companyName.trim());
+      await saveBrief(parsedBrief);
     } catch (e: any) {
       console.error("Interview prep brief error:", e);
       setError("Couldn't pull intel on this one. Double-check the company name and try again.");
@@ -68,12 +121,32 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
     }
   };
 
+  const handleStartFresh = () => {
+    setBrief(null);
+    setCompanyInput("");
+    setRoleInput("");
+    setChecked({});
+    setSavedCompanyName(null);
+    setIsRestoredBrief(false);
+    setUseSelected(!!selectedCompany);
+  };
+
   const toggle = (key: string) => setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const displayName = companyName || "this company";
 
   return (
     <div className="max-w-2xl mx-auto mb-8 space-y-4">
+      {/* Restored brief label */}
+      {isRestoredBrief && savedCompanyName && brief && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>Your last prep brief — {savedCompanyName}</span>
+          <button onClick={handleStartFresh} className="underline hover:text-foreground transition-colors">
+            Start fresh
+          </button>
+        </div>
+      )}
+
       {/* Input Block */}
       <Card>
         <CardHeader className="pb-3">
@@ -82,7 +155,6 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {/* Company field */}
           {useSelected && selectedCompany ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Company:</span>
@@ -101,7 +173,6 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
             />
           )}
 
-          {/* Role field */}
           <Input
             placeholder="What role are you interviewing for? (optional)"
             value={roleInput}
@@ -165,38 +236,15 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
       {brief && (
         <Card>
           <CardContent className="py-5 space-y-0">
-            {/* Group 1 — Research */}
-            <ChecklistGroup
-              items={brief.checklist.research}
-              prefix="research"
-              checked={checked}
-              onToggle={toggle}
-            />
+            <ChecklistGroup items={brief.checklist.research} prefix="research" checked={checked} onToggle={toggle} />
             <Divider />
-            {/* Group 2 — Questions to Ask */}
-            <ChecklistGroup
-              items={brief.checklist.questions_to_ask}
-              prefix="ask"
-              checked={checked}
-              onToggle={toggle}
-            />
+            <ChecklistGroup items={brief.checklist.questions_to_ask} prefix="ask" checked={checked} onToggle={toggle} />
             <Divider />
-            {/* Group 3 — Watch For */}
-            <ChecklistGroup
-              items={brief.checklist.watch_for}
-              prefix="watch"
-              checked={checked}
-              onToggle={toggle}
-            />
+            <ChecklistGroup items={brief.checklist.watch_for} prefix="watch" checked={checked} onToggle={toggle} />
             <Divider />
-            {/* Group 4 — Power Move */}
             <div className="border-l-2 border-primary pl-3 py-2">
               <label className="flex items-start gap-3 cursor-pointer">
-                <Checkbox
-                  checked={!!checked["power"]}
-                  onCheckedChange={() => toggle("power")}
-                  className="mt-0.5"
-                />
+                <Checkbox checked={!!checked["power"]} onCheckedChange={() => toggle("power")} className="mt-0.5" />
                 <span className="text-sm font-medium leading-relaxed">{brief.checklist.power_move}</span>
               </label>
             </div>
@@ -207,12 +255,7 @@ export function InterviewPrepBrief({ selectedCompany }: Props) {
   );
 }
 
-function ChecklistGroup({
-  items,
-  prefix,
-  checked,
-  onToggle,
-}: {
+function ChecklistGroup({ items, prefix, checked, onToggle }: {
   items: string[];
   prefix: string;
   checked: Record<string, boolean>;
@@ -224,11 +267,7 @@ function ChecklistGroup({
         const key = `${prefix}-${i}`;
         return (
           <label key={key} className="flex items-start gap-3 cursor-pointer">
-            <Checkbox
-              checked={!!checked[key]}
-              onCheckedChange={() => onToggle(key)}
-              className="mt-0.5"
-            />
+            <Checkbox checked={!!checked[key]} onCheckedChange={() => onToggle(key)} className="mt-0.5" />
             <span className="text-sm leading-relaxed">{item}</span>
           </label>
         );
