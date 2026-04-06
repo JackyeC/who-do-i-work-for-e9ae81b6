@@ -29,6 +29,89 @@ Rules:
 - Power move: one concrete action (e.g., "Ask for the vesting schedule in writing before you sign").
 - Return ONLY valid JSON. No markdown, no explanation outside the JSON.`;
 
+/** Extract readable text from a PDF buffer using multiple strategies */
+function extractPdfText(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  const raw = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+  const textBlocks: string[] = [];
+
+  // Strategy 1: BT/ET text objects with Tj/TJ operators
+  const btEtRegex = /BT\s([\s\S]*?)ET/g;
+  let match;
+  while ((match = btEtRegex.exec(raw)) !== null) {
+    const block = match[1];
+    // Tj operator
+    const tjMatches = block.match(/\(([^)]*)\)\s*Tj/g);
+    if (tjMatches) {
+      for (const t of tjMatches) {
+        const inner = t.match(/\(([^)]*)\)/);
+        if (inner) textBlocks.push(inner[1]);
+      }
+    }
+    // TJ array operator
+    const tjArrayMatches = block.match(/\[([^\]]*)\]\s*TJ/g);
+    if (tjArrayMatches) {
+      for (const t of tjArrayMatches) {
+        const parts = t.match(/\(([^)]*)\)/g);
+        if (parts) {
+          for (const p of parts) {
+            const inner = p.match(/\(([^)]*)\)/);
+            if (inner) textBlocks.push(inner[1]);
+          }
+        }
+      }
+    }
+  }
+
+  if (textBlocks.length > 10) {
+    return textBlocks.join(" ").replace(/\s+/g, " ").trim().slice(0, 30000);
+  }
+
+  // Strategy 2: Look for readable text in streams
+  const streamParts = raw
+    .split(/stream[\r\n]|endstream/)
+    .filter(s => s.length > 50)
+    .map(s => s.replace(/[^\x20-\x7E\n\r]/g, " ").replace(/\s+/g, " ").trim())
+    .filter(s => s.length > 20 && /[a-zA-Z]{3,}/.test(s));
+
+  if (streamParts.length > 0) {
+    return streamParts.join(" ").slice(0, 30000);
+  }
+
+  // Strategy 3: Grab any readable ASCII from the whole file
+  const readable = raw
+    .replace(/[^\x20-\x7E\n\r]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // Filter out PDF syntax noise
+  const words = readable.split(" ").filter(w => 
+    w.length > 2 && 
+    !/^[0-9]+$/.test(w) && 
+    !/^(obj|endobj|stream|endstream|xref|trailer|startxref)$/i.test(w)
+  );
+
+  return words.join(" ").slice(0, 30000);
+}
+
+/** Extract readable text from a DOCX file */
+function extractDocxText(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  if (bytes[0] !== 0x50 || bytes[1] !== 0x4B) return "";
+  
+  const rawText = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+  const xmlMatches = rawText.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
+  if (xmlMatches && xmlMatches.length > 0) {
+    return xmlMatches
+      .map(m => m.replace(/<[^>]+>/g, ""))
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  
+  return rawText.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim().slice(0, 20000);
+}
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -39,7 +122,7 @@ serve(async (req: Request) => {
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
     const contentType = req.headers.get("content-type") || "";
-    let userContent: any[];
+    let offerText = "";
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
@@ -47,50 +130,52 @@ serve(async (req: Request) => {
       const text = formData.get("text") as string | null;
 
       if (file) {
-        // Send the file directly to Gemini as base64 — it handles PDF/DOCX natively
         const buffer = await file.arrayBuffer();
-        const base64 = btoa(
-          new Uint8Array(buffer).reduce((s, b) => s + String.fromCharCode(b), "")
-        );
+        const name = file.name.toLowerCase();
 
-        const mimeType = file.type || getMimeFromName(file.name);
+        if (name.endsWith(".pdf")) {
+          offerText = extractPdfText(buffer);
+        } else if (name.endsWith(".docx")) {
+          offerText = extractDocxText(buffer);
+        } else if (name.endsWith(".txt") || name.endsWith(".rtf")) {
+          offerText = new TextDecoder().decode(buffer).slice(0, 30000);
+        } else {
+          // Try as plain text
+          offerText = new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(buffer))
+            .replace(/[^\x20-\x7E\n\r\t]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 30000);
+        }
 
-        userContent = [
-          {
-            type: "text",
-            text: "Analyze this offer letter document. Extract all terms, compensation, benefits, and conditions. Return the analysis as JSON.",
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: `data:${mimeType};base64,${base64}`,
-            },
-          },
-        ];
+        // Check if we got meaningful text
+        const wordCount = offerText.split(/\s+/).filter(w => w.length > 2).length;
+        if (wordCount < 15) {
+          return new Response(
+            JSON.stringify({
+              error: "pdf_extraction_failed",
+              message: "We couldn't extract enough text from this PDF. It may be image-based or encrypted. Please paste your offer text instead.",
+            }),
+            { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
       } else if (text) {
-        userContent = [
-          {
-            type: "text",
-            text: `Analyze this offer letter text. Extract all terms, compensation, benefits, and conditions. Return the analysis as JSON.\n\n---\n\n${text}`,
-          },
-        ];
+        offerText = text.trim();
       } else {
         throw new Error("No file or text provided");
       }
     } else {
-      // JSON body fallback
       const body = await req.json();
       if (!body.text) throw new Error("No text provided");
-      userContent = [
-        {
-          type: "text",
-          text: `Analyze this offer letter text. Extract all terms, compensation, benefits, and conditions. Return the analysis as JSON.\n\n---\n\n${body.text}`,
-        },
-      ];
+      offerText = body.text.trim();
+    }
+
+    if (offerText.length < 30) {
+      throw new Error("Offer text too short to analyze");
     }
 
     // Call Gemini via Lovable AI proxy
-    const aiRes = await fetch("https://ai.lovable.dev/api/chat", {
+    const aiRes = await fetch("https://ai.lovable.dev/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -100,10 +185,11 @@ serve(async (req: Request) => {
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: userContent },
+          {
+            role: "user",
+            content: `Analyze this offer letter. Return ONLY the JSON analysis.\n\n---\n\n${offerText}`,
+          },
         ],
-        temperature: 0.3,
-        response_format: { type: "json_object" },
       }),
     });
 
@@ -117,17 +203,22 @@ serve(async (req: Request) => {
     const raw = aiJson.choices?.[0]?.message?.content;
     if (!raw) throw new Error("Empty AI response");
 
-    // Parse and validate
+    // Parse JSON from response
     let analysis;
     try {
       analysis = JSON.parse(raw);
     } catch {
-      // Try to extract JSON from markdown code blocks
-      const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (match) {
-        analysis = JSON.parse(match[1].trim());
+      const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonMatch) {
+        analysis = JSON.parse(jsonMatch[1].trim());
       } else {
-        throw new Error("Could not parse AI response as JSON");
+        // Try to find a JSON object in the response
+        const objMatch = raw.match(/\{[\s\S]*\}/);
+        if (objMatch) {
+          analysis = JSON.parse(objMatch[0]);
+        } else {
+          throw new Error("Could not parse AI response as JSON");
+        }
       }
     }
 
@@ -145,18 +236,3 @@ serve(async (req: Request) => {
     );
   }
 });
-
-function getMimeFromName(name: string): string {
-  const ext = name.split(".").pop()?.toLowerCase() || "";
-  const map: Record<string, string> = {
-    pdf: "application/pdf",
-    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    doc: "application/msword",
-    txt: "text/plain",
-    rtf: "application/rtf",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-  };
-  return map[ext] || "application/octet-stream";
-}
