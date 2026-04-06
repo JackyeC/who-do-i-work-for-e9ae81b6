@@ -89,7 +89,7 @@ export default function FounderConsole() {
             ))}
           </TabsList>
 
-          <TabsContent value="today"><TodayTab /></TabsContent>
+          <TabsContent value="today"><TodayTab onNavigateTab={handleTabChange} /></TabsContent>
           <TabsContent value="queue"><ReviewQueueTab /></TabsContent>
           <TabsContent value="signals"><SignalsDataTab /></TabsContent>
           <TabsContent value="users"><UsersFeedbackTab /></TabsContent>
