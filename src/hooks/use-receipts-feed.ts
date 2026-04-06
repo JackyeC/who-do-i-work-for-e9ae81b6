@@ -2,6 +2,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
+import { getSourceProfile } from "@/lib/source-bias-map";
+
+/** Extract significant keywords from a headline for topic matching */
+function topicKey(headline: string): string {
+  const stop = new Set(["the","a","an","is","are","was","were","in","on","at","to","for","of","and","or","but","how","why","what","with","from","by","its","it","as","be","has","had","have","that","this","will","can","not","do","does","about","more","new","says","say","could","would","than","into","over","after","just","also"]);
+  return headline.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 2 && !stop.has(w)).sort().slice(0, 5).join(" ");
+}
 
 // US-first sort: American stories float to top, international below
 const NON_US_DOMAINS = new Set([
@@ -20,9 +27,18 @@ function isUSSource(sourceName: string | null): boolean {
   return !NON_US_DOMAINS.has(domain);
 }
 
+export interface CoverageStats {
+  total: number;
+  left: number;
+  center: number;
+  right: number;
+  sources: string[];
+}
+
 export interface ReceiptArticle {
   id: string;
   work_news_id: string;
+  coverage?: CoverageStats;
   headline: string;
   source_name: string | null;
   source_url: string | null;
@@ -109,8 +125,41 @@ export function useReceiptsFeed() {
           if (!isUSOrEmployerRelevant(a.headline, a.source_name, true)) return false;
           return true;
         });
+      // Topic grouping: cluster similar stories, count real sources + bias
+      const topicGroups = new Map<string, ReceiptArticle[]>();
+      for (const a of unique) {
+        const key = topicKey(a.headline);
+        if (!topicGroups.has(key)) topicGroups.set(key, []);
+        topicGroups.get(key)!.push(a);
+      }
+      // Enrich each article with coverage stats from its topic group
+      for (const [, group] of topicGroups) {
+        const sources = [...new Set(group.map(a => a.source_name).filter(Boolean) as string[])];
+        let left = 0, center = 0, right = 0;
+        for (const src of sources) {
+          const profile = getSourceProfile(src);
+          if (profile.bias === "Left" || profile.bias === "Lean Left") left++;
+          else if (profile.bias === "Right" || profile.bias === "Lean Right") right++;
+          else center++;
+        }
+        const coverage: CoverageStats = { total: sources.length, left, center, right, sources };
+        for (const a of group) a.coverage = coverage;
+      }
+      // Deduplicate within topic groups: keep the highest-spice article per topic
+      const deduped: ReceiptArticle[] = [];
+      const seenTopics = new Set<string>();
+      for (const a of unique) {
+        const key = topicKey(a.headline);
+        if (seenTopics.has(key)) continue;
+        seenTopics.add(key);
+        // Pick the best article from this topic group
+        const group = topicGroups.get(key) || [a];
+        const best = group.sort((x, y) => (y.spice_level || 0) - (x.spice_level || 0))[0];
+        deduped.push(best);
+      }
+
       // US-first sort: American stories at top, then international
-      unique.sort((a, b) => {
+      deduped.sort((a, b) => {
         const aUS = isUSSource(a.source_name) ? 0 : 1;
         const bUS = isUSSource(b.source_name) ? 0 : 1;
         if (aUS !== bUS) return aUS - bUS;
@@ -119,7 +168,7 @@ export function useReceiptsFeed() {
         const bTime = b.published_at ? new Date(b.published_at).getTime() : 0;
         return bTime - aTime;
       });
-      return unique;
+      return deduped;
     },
     staleTime: 1000 * 60 * 5,
   });

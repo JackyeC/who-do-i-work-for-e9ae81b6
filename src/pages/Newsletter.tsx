@@ -185,7 +185,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
       <div className="p-3 flex-1 flex flex-col">
         {/* Coverage Bias Bar */}
         <div className="mb-2">
-          <CoverageBiasBar sourceName={article.source_name} />
+          <CoverageBiasBar sourceName={article.source_name} coverage={article.coverage} />
         </div>
 
         {/* Source + time + share footer */}
@@ -297,7 +297,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
           )}
 
           <div className="mt-auto">
-            <CoverageBiasBar sourceName={article.source_name} />
+            <CoverageBiasBar sourceName={article.source_name} coverage={article.coverage} />
             <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/20">
               <span className="text-[11px] font-medium text-foreground/60 font-mono">{article.source_name || "Source"}</span>
               <div className="flex items-center gap-2">
