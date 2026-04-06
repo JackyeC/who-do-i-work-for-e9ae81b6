@@ -277,71 +277,80 @@ function OfferUploadCard() {
     return <OfferResults analysis={analysis} onReset={reset} />;
   }
 
-  // ── Upload / paste input state ──
+  // ── Paste-first input state ──
   return (
     <div className="mt-auto space-y-3">
-      {/* Drop zone */}
-      <div
-        className="border border-dashed border-border/60 rounded-lg p-5 text-center cursor-pointer hover:border-primary/40 transition-colors"
-        onClick={() => fileInputRef.current?.click()}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
-      >
-        {selectedFile ? (
-          <div className="flex items-center justify-center gap-2">
-            <FileText className="w-4 h-4 text-primary" />
-            <span className="text-xs text-foreground truncate max-w-[180px]">{selectedFile.name}</span>
-            <button onClick={(e) => { e.stopPropagation(); reset(); }} className="text-muted-foreground hover:text-foreground">
-              <XCircle className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        ) : (
-          <>
-            <Upload className="w-5 h-5 text-muted-foreground mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">
-              Drag & drop or <span className="text-primary font-medium">click to upload</span>
-            </p>
-            <p className="text-[10px] text-muted-foreground/60 mt-1">.pdf, .docx, .txt</p>
-          </>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf,.docx,.txt"
-          className="hidden"
-          onChange={handleFileChange}
+      {/* Trust signal */}
+      <p className="text-[10px] text-muted-foreground/80 text-center leading-relaxed">
+        Your input is processed in-session and not stored.
+      </p>
+
+      {/* Primary: Paste text */}
+      <div className="space-y-2">
+        <Textarea
+          placeholder="Paste only the terms you want reviewed. Do not include personal information such as name, address, or signature."
+          value={pastedText}
+          onChange={(e) => setPastedText(e.target.value)}
+          rows={6}
+          className="text-xs bg-background border-border"
         />
-      </div>
-
-      {selectedFile && !showPasteFallback && (
-        <Button
-          onClick={handleAnalyzeFile}
-          className="w-full h-10 text-sm gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          <ShieldCheck className="w-4 h-4" /> Analyze My Offer
-        </Button>
-      )}
-
-      {error && (
-        <p className="text-xs text-amber-400 text-center">{error}</p>
-      )}
-
-      {showPasteFallback && (
-        <div className="space-y-2">
-          <Textarea
-            placeholder="Paste your offer letter text here..."
-            value={pastedText}
-            onChange={(e) => setPastedText(e.target.value)}
-            rows={6}
-            className="text-xs bg-background border-border"
-          />
+        {pastedText.trim().length >= 50 && (
           <Button
             onClick={handleAnalyzePasted}
             className="w-full h-10 text-sm gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            <ShieldCheck className="w-4 h-4" /> Analyze Pasted Text
+            <ShieldCheck className="w-4 h-4" /> Check My Offer Terms
           </Button>
+        )}
+      </div>
+
+      {/* Secondary: Optional file upload */}
+      <details className="group">
+        <summary className="text-[10px] text-muted-foreground/60 cursor-pointer hover:text-muted-foreground text-center">
+          Optional: Upload a redacted document only
+        </summary>
+        <div className="mt-2 space-y-2">
+          <div
+            className="border border-dashed border-border/60 rounded-lg p-4 text-center cursor-pointer hover:border-primary/40 transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+          >
+            {selectedFile ? (
+              <div className="flex items-center justify-center gap-2">
+                <FileText className="w-4 h-4 text-primary" />
+                <span className="text-xs text-foreground truncate max-w-[180px]">{selectedFile.name}</span>
+                <button onClick={(e) => { e.stopPropagation(); reset(); }} className="text-muted-foreground hover:text-foreground">
+                  <XCircle className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-4 h-4 text-muted-foreground mx-auto mb-1" />
+                <p className="text-[10px] text-muted-foreground">.pdf, .docx, .txt — redacted only</p>
+              </>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.docx,.txt"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+          {selectedFile && (
+            <Button
+              onClick={handleAnalyzeFile}
+              className="w-full h-10 text-sm gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <ShieldCheck className="w-4 h-4" /> Analyze Redacted Document
+            </Button>
+          )}
         </div>
+      </details>
+
+      {error && (
+        <p className="text-xs text-amber-400 text-center">{error}</p>
       )}
     </div>
   );
@@ -637,9 +646,9 @@ export default function OfferCheckEntry() {
             <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-2">
               Know before you sign
             </p>
-            <h2 className="text-lg font-bold text-foreground mb-1">Upload your offer letter</h2>
+            <h2 className="text-lg font-bold text-foreground mb-1">Check your offer privately</h2>
             <p className="text-xs text-muted-foreground leading-relaxed mb-5">
-              We'll tell you exactly what's missing, what's red-flagged, and what to negotiate.
+              Paste only the terms you want reviewed. Nothing is saved.
             </p>
 
             <OfferUploadCard />
