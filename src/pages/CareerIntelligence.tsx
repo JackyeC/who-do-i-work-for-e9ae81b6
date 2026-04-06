@@ -107,6 +107,9 @@ export default function CareerIntelligence() {
           </div>
         ) : null}
 
+        {/* Interview Prep Brief */}
+        <InterviewPrepBrief selectedCompany={selectedCompany} />
+
         {/* Deep Dive Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
           <TabsList className="grid w-full grid-cols-8">
