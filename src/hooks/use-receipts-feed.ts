@@ -3,6 +3,23 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
 
+// US-first sort: American stories float to top, international below
+const NON_US_DOMAINS = new Set([
+  "bbc.com","telegraph.co.uk","independent.co.uk","mirror.co.uk",
+  "dailymail.co.uk","metro.co.uk","standard.co.uk","sky.com","itv.com",
+  "abc.net.au","smh.com.au","theaustralian.com.au","stuff.co.nz",
+  "cbc.ca","globalnews.ca","thestar.com","nationalpost.com",
+  "scmp.com","straitstimes.com","japantimes.co.jp","hindustantimes.com",
+  "timesofindia.com","ndtv.com","aljazeera.com","theguardian.com",
+  "lemonde.fr","elpais.com","spiegel.de","corriere.it","repubblica.it",
+  "bbc.co.uk","hcamag.com","channelnewsasia.com",
+]);
+function isUSSource(sourceName: string | null): boolean {
+  if (!sourceName) return true;
+  const domain = sourceName.toLowerCase().replace(/^www\./, "");
+  return !NON_US_DOMAINS.has(domain);
+}
+
 export interface ReceiptArticle {
   id: string;
   work_news_id: string;
@@ -92,6 +109,16 @@ export function useReceiptsFeed() {
           if (!isUSOrEmployerRelevant(a.headline, a.source_name, true)) return false;
           return true;
         });
+      // US-first sort: American stories at top, then international
+      unique.sort((a, b) => {
+        const aUS = isUSSource(a.source_name) ? 0 : 1;
+        const bUS = isUSSource(b.source_name) ? 0 : 1;
+        if (aUS !== bUS) return aUS - bUS;
+        // Within same group, keep chronological (newest first)
+        const aTime = a.published_at ? new Date(a.published_at).getTime() : 0;
+        const bTime = b.published_at ? new Date(b.published_at).getTime() : 0;
+        return bTime - aTime;
+      });
       return unique;
     },
     staleTime: 1000 * 60 * 5,

@@ -22,7 +22,7 @@ export function SharePastiche({ headline, articleId }: SharePasticheProps) {
 
   const line = PASTICHE_LINES[Math.abs(headline.length) % PASTICHE_LINES.length];
   const shareUrl = `${window.location.origin}/newsletter#story-${articleId}`;
-  const shareText = `${headline}\n\n"${line}"\n\n${shareUrl}`;
+  const shareText = `"${headline}"\n\nJackye's Take: "${line}"\n\n\u{1F4F0} Shared from \u{265B}DIWF by Jackye Clayton\nWhoDoIWorkFor.com/newsletter\n${shareUrl}`;
 
   const handleCopy = async () => {
     try {
@@ -87,7 +87,7 @@ export function SharePastiche({ headline, articleId }: SharePasticheProps) {
 
               <blockquote className="border-l-2 border-primary pl-4 mb-5">
                 <p className="text-sm text-foreground/70 italic leading-relaxed">"{line}"</p>
-                <cite className="text-[10px] text-muted-foreground font-mono mt-1 block not-italic">— The Work Signal</cite>
+                <cite className="text-[10px] text-muted-foreground font-mono mt-1 block not-italic">— Jackye Clayton · WhoDoIWorkFor.com</cite>
               </blockquote>
 
               <div className="flex gap-2">

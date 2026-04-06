@@ -69,15 +69,20 @@ const SORT_OPTIONS = [
 // IMPORTANT: Images hosted on GitHub — use absolute URLs so they load regardless of Lovable deploy state
 const CDN = "https://raw.githubusercontent.com/JackyeC/who-do-i-work-for-e9ae81b6/main/public/posters";
 const POSTER_POOL: Record<string, string[]> = {
-  ai_workplace: [`${CDN}/poster-fewer-humans.jpg`, `${CDN}/poster-ai-handshake.jpg`, `${CDN}/poster-ai-screening.jpg`],
-  future_of_work: [`${CDN}/poster-smile-more.jpg`, `${CDN}/poster-wfh-reality.jpg`, `${CDN}/poster-open-office.jpg`],
-  worker_rights: [`${CDN}/poster-dei-rollback.jpg`, `${CDN}/poster-the-handbook.jpg`, `${CDN}/poster-pay-scale.jpg`],
-  regulation: [`${CDN}/poster-regulation.jpg`, `${CDN}/poster-fine-print.jpg`],
-  pay_equity: [`${CDN}/poster-pay-ratio.jpg`, `${CDN}/poster-ceo-lunch-v2.jpg`, `${CDN}/poster-pay-scale.jpg`],
-  layoffs: [`${CDN}/poster-ghost-postings.jpg`, `${CDN}/poster-the-box.jpg`, `${CDN}/poster-the-pivot.jpg`],
-  legislation: [`${CDN}/poster-legislation.jpg`, `${CDN}/poster-fine-print.jpg`],
-  labor_organizing: [`${CDN}/poster-labor.jpg`, `${CDN}/poster-open-office.jpg`],
-  general: [`${CDN}/poster-follow-money.jpg`, `${CDN}/poster-exit-interview.jpg`, `${CDN}/poster-open-office.jpg`, `${CDN}/poster-the-handbook.jpg`],
+  ai_workplace: [`${CDN}/poster-fewer-humans.jpg`, `${CDN}/poster-ai-handshake.jpg`, `${CDN}/poster-ai-screening.jpg`, `${CDN}/poster-tech-stack.jpg`, `${CDN}/poster-robot-helper.jpg`, `${CDN}/poster-surveillance.jpg`],
+  tech_stack: [`${CDN}/poster-tech-stack.jpg`, `${CDN}/poster-robot-helper.jpg`, `${CDN}/poster-ai-screening.jpg`, `${CDN}/poster-surveillance.jpg`],
+  future_of_work: [`${CDN}/poster-smile-more.jpg`, `${CDN}/poster-wfh-reality.jpg`, `${CDN}/poster-open-office.jpg`, `${CDN}/poster-rto-commute.jpg`, `${CDN}/poster-water-cooler.jpg`],
+  worker_rights: [`${CDN}/poster-dei-rollback.jpg`, `${CDN}/poster-the-handbook.jpg`, `${CDN}/poster-pay-scale.jpg`, `${CDN}/poster-boardroom.jpg`],
+  regulation: [`${CDN}/poster-regulation.jpg`, `${CDN}/poster-fine-print.jpg`, `${CDN}/poster-legislation.jpg`],
+  pay_equity: [`${CDN}/poster-pay-ratio.jpg`, `${CDN}/poster-ceo-lunch-v2.jpg`, `${CDN}/poster-pay-scale.jpg`, `${CDN}/poster-golden-parachute.jpg`],
+  layoffs: [`${CDN}/poster-ghost-postings.jpg`, `${CDN}/poster-the-box.jpg`, `${CDN}/poster-the-pivot.jpg`, `${CDN}/poster-golden-parachute.jpg`],
+  legislation: [`${CDN}/poster-legislation.jpg`, `${CDN}/poster-fine-print.jpg`, `${CDN}/poster-regulation.jpg`],
+  labor_organizing: [`${CDN}/poster-labor.jpg`, `${CDN}/poster-open-office.jpg`, `${CDN}/poster-supply-chain.jpg`],
+  daily_grind: [`${CDN}/poster-water-cooler.jpg`, `${CDN}/poster-rto-commute.jpg`, `${CDN}/poster-exit-interview.jpg`, `${CDN}/poster-smile-more.jpg`, `${CDN}/poster-surveillance.jpg`],
+  c_suite: [`${CDN}/poster-golden-parachute.jpg`, `${CDN}/poster-boardroom.jpg`, `${CDN}/poster-follow-money.jpg`],
+  fine_print: [`${CDN}/poster-fine-print.jpg`, `${CDN}/poster-regulation.jpg`, `${CDN}/poster-legislation.jpg`, `${CDN}/poster-the-handbook.jpg`],
+  paycheck: [`${CDN}/poster-pay-ratio.jpg`, `${CDN}/poster-ceo-lunch-v2.jpg`, `${CDN}/poster-pay-scale.jpg`],
+  general: [`${CDN}/poster-jackye-throne.jpg`, `${CDN}/poster-jackye-receipts.jpg`, `${CDN}/poster-jackye-broadcast.jpg`, `${CDN}/poster-follow-money.jpg`, `${CDN}/poster-exit-interview.jpg`, `${CDN}/poster-ghost-jobs.jpg`, `${CDN}/poster-water-cooler.jpg`, `${CDN}/poster-supply-chain.jpg`],
 };
 const ALL_POSTERS = [...new Set(Object.values(POSTER_POOL).flat())];
 
@@ -359,8 +364,9 @@ export default function Newsletter() {
   }, [location.hash, isLoading]);
 
   usePageSEO({
-    title: "The Work Signal — Live Work Intelligence | Who Do I Work For?",
-    description: "Live employer intelligence: layoffs, DEI rollbacks, AI workplace moves, pay equity, and enforcement actions — with Jackye's Take on every story.",
+    title: "The Work Signal by Jackye Clayton — Who Do I Work For?",
+    description: "We pull stories from across the political spectrum so you see the full picture. Every source is tagged for lean. WDIWF always gives you the centrist, evidence-first view. By Jackye Clayton.",
+    image: `${CDN}/poster-jackye-throne.jpg`,
     path: "/newsletter",
     jsonLd: {
       "@type": "WebPage",
