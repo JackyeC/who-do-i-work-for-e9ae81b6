@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useReceiptUnlock } from "@/hooks/use-receipt-unlock";
 import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { motion } from "framer-motion";
@@ -80,6 +81,7 @@ export default function Receipts() {
   const [timeFilter, setTimeFilter] = useState("all");
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const { unlocked: receiptUnlocked, markUnlocked: markReceiptUnlocked } = useReceiptUnlock();
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -232,7 +234,7 @@ export default function Receipts() {
             >
               {feedArticles.map((article, idx) => (
                 <motion.div key={article?.id} variants={stagger.item}>
-                  <ReceiptCard article={article} onPosterClick={setLightboxArticle} onRequestEmailCapture={() => setShowEmailCapture(true)} />
+                  <ReceiptCard article={article} onPosterClick={setLightboxArticle} onRequestEmailCapture={() => setShowEmailCapture(true)} isUnlocked={receiptUnlocked} />
                   {(idx + 1) % 5 === 0 && <SpecialEditionCard />}
                 </motion.div>
               ))}
@@ -305,7 +307,7 @@ export default function Receipts() {
       <FloatingBubble />
 
       {/* Email Capture Modal */}
-      <EmailCaptureModal open={showEmailCapture} onClose={() => setShowEmailCapture(false)} />
+      <EmailCaptureModal open={showEmailCapture} onClose={() => setShowEmailCapture(false)} onUnlocked={markReceiptUnlocked} />
 
       {/* Poster Lightbox */}
       <PosterLightbox article={lightboxArticle} onClose={() => setLightboxArticle(null)} />

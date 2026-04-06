@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { JACKYE_VOICE_INSTRUCTION } from "../_shared/jrc-edit-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,14 +28,14 @@ serve(async (req: Request) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `You are a Tactical Salary Negotiation Coach for job candidates. You have access to proprietary company intelligence data.
+    const systemPrompt = `${JACKYE_VOICE_INSTRUCTION}
 
-Your job: Generate 3 negotiation email drafts and leverage insights based on the company's health signals.
+YOUR JOB: Generate 3 negotiation email drafts and leverage insights based on the company's health signals. You're helping someone figure out their leverage and use it.
 
 RULES:
 - Be professional, specific, and actionable
 - Reference concrete data points (salary percentile, company signals, legal flags)
-- Never be aggressive or threatening — frame everything as collaborative
+- Never be aggressive or threatening. Frame everything as collaborative.
 - Each email should be 150-250 words, ready to send
 - The "Collaborative" email is warm, relationship-first
 - The "Data-Driven" email references market benchmarks and percentiles
@@ -60,10 +61,10 @@ USER PRIORITIES:
 ${JSON.stringify(userPriorities || [], null, 2)}
 
 Generate leverage insights based on this data. For example:
-- If hiring_activity is high → "They need you. You have leverage."
-- If compensation_transparency is low → "Hidden budget likely exists."
-- If innovation_activity is high → "Prioritize equity — company is scaling."
-- If workforce_stability is low → "Ask for guaranteed severance."`;
+- If hiring_activity is high: "They need you. You have leverage."
+- If compensation_transparency is low: "Hidden budget likely exists."
+- If innovation_activity is high: "Prioritize equity. Company is scaling."
+- If workforce_stability is low: "Ask for guaranteed severance."`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -93,17 +94,17 @@ Generate leverage insights based on this data. For example:
                   collaborative: {
                     type: "string",
                     description:
-                      "The Collaborative email — warm, relationship-first approach",
+                      "The Collaborative email, warm, relationship-first approach",
                   },
                   dataDriven: {
                     type: "string",
                     description:
-                      "The Data-Driven email — references market benchmarks",
+                      "The Data-Driven email, references market benchmarks",
                   },
                   highValue: {
                     type: "string",
                     description:
-                      "The High-Value email — equity and long-term focus",
+                      "The High-Value email, equity and long-term focus",
                   },
                   leverageInsights: {
                     type: "array",

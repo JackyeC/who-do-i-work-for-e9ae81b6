@@ -37,18 +37,25 @@ function TriageCard({ title, icon: Icon, children, iconColor = "text-primary", b
   );
 }
 
-function MetricRow({ label, value, loading, highlight }: {
-  label: string; value: string | number; loading?: boolean; highlight?: boolean;
+function MetricRow({ label, value, loading, highlight, onClick }: {
+  label: string; value: string | number; loading?: boolean; highlight?: boolean; onClick?: () => void;
 }) {
+  const Wrapper = onClick ? "button" : "div";
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className={cn("text-muted-foreground", highlight && "text-amber-600 font-medium")}>{label}</span>
+    <Wrapper
+      className={cn(
+        "flex items-center justify-between text-sm w-full",
+        onClick && "hover:bg-muted/40 -mx-1 px-1 py-0.5 rounded cursor-pointer transition-colors text-left"
+      )}
+      onClick={onClick}
+    >
+      <span className={cn("text-muted-foreground", highlight && "text-amber-600 font-medium", onClick && "hover:underline")}>{label}</span>
       {loading ? (
         <Skeleton className="h-4 w-10" />
       ) : (
         <span className={cn("font-mono font-medium tabular-nums text-foreground", highlight && "text-amber-600")}>{value}</span>
       )}
-    </div>
+    </Wrapper>
   );
 }
 
@@ -75,7 +82,7 @@ function ProgressBar({ label, value, color }: { label: string; value: number; co
 
 type AlertItem = { label: string; count: number; tab: string; severity: "critical" | "data_gap" };
 
-export function TodayTab() {
+export function TodayTab({ onNavigateTab }: { onNavigateTab?: (tab: string) => void }) {
   const navigate = useNavigate();
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
@@ -399,11 +406,11 @@ export function TodayTab() {
             <EmptyLine text="No urgent items right now. Queues are clear." />
           ) : (
             <>
-              {watchData.reviews.pendingReviews > 0 && <MetricRow label="Company reviews" value={watchData.reviews.pendingReviews} highlight={watchData.reviews.pendingReviews > 5} />}
-              {watchData.reviews.draftResearch > 0 && <MetricRow label="Draft research" value={watchData.reviews.draftResearch} />}
-              {watchData.reviews.certQueue > 0 && <MetricRow label="Certifications" value={watchData.reviews.certQueue} highlight={watchData.certsElevated} />}
-              {watchData.reviews.waitlist > 0 && <MetricRow label="Waitlist" value={watchData.reviews.waitlist} />}
-              {watchData.reviews.pendingJobs > 0 && <MetricRow label="Job posts" value={watchData.reviews.pendingJobs} />}
+              {watchData.reviews.pendingReviews > 0 && <MetricRow label="Company reviews" value={watchData.reviews.pendingReviews} highlight={watchData.reviews.pendingReviews > 5} onClick={() => onNavigateTab?.("queue")} />}
+              {watchData.reviews.draftResearch > 0 && <MetricRow label="Draft research" value={watchData.reviews.draftResearch} onClick={() => onNavigateTab?.("queue")} />}
+              {watchData.reviews.certQueue > 0 && <MetricRow label="Certifications" value={watchData.reviews.certQueue} highlight={watchData.certsElevated} onClick={() => onNavigateTab?.("queue")} />}
+              {watchData.reviews.waitlist > 0 && <MetricRow label="Waitlist" value={watchData.reviews.waitlist} onClick={() => onNavigateTab?.("users")} />}
+              {watchData.reviews.pendingJobs > 0 && <MetricRow label="Job posts" value={watchData.reviews.pendingJobs} onClick={() => onNavigateTab?.("queue")} />}
             </>
           )}
         </TriageCard>
@@ -431,16 +438,21 @@ export function TodayTab() {
           <MetricRow label="Strong evidence" value={dataHealth?.strong ?? "—"} loading={dataLoading} />
           <MetricRow label="No evidence yet" value={dataHealth?.none ?? "—"} loading={dataLoading} highlight={watchData ? watchData.dataGaps > (dataHealth?.total ?? 0) * 0.3 : false} />
           {!criticalLoading && (
-            <div className={cn(
-              "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5",
-              missingWebsiteCount > 0 ? "bg-amber-500/10 text-amber-800 dark:text-amber-200" : "bg-civic-green/10 text-civic-green"
-            )}>
+            <button
+              onClick={() => missingWebsiteCount > 0 && onNavigateTab?.("signals")}
+              className={cn(
+                "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5 w-full text-left transition-colors",
+                missingWebsiteCount > 0
+                  ? "bg-amber-500/10 text-amber-800 dark:text-amber-200 hover:bg-amber-500/20 cursor-pointer"
+                  : "bg-civic-green/10 text-civic-green cursor-default"
+              )}
+            >
               {missingWebsiteCount > 0 ? (
                 <><Link2 className="w-3 h-3" />{missingWebsiteCount.toLocaleString()} missing website {missingWebsiteCount === 1 ? "URL" : "URLs"}</>
               ) : (
                 <><CheckCircle className="w-3 h-3" />All indexed companies have a website URL</>
               )}
-            </div>
+            </button>
           )}
         </TriageCard>
 

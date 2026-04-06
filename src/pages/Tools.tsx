@@ -3,7 +3,7 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  FileSearch, Map, GitCompare, Landmark, Briefcase, Radio, UserCheck, ArrowRight, Dna, Shield,
+  FileSearch, Map, GitCompare, Landmark, Briefcase, Radio, UserCheck, ArrowRight, Dna, Shield, Newspaper,
 } from "lucide-react";
 
 const TOOLS = [
@@ -12,6 +12,13 @@ const TOOLS = [
     title: "The Receipts",
     description: "Forensic company files: values claims vs. political spend, labor signals, and citations. You see the evidence, not a verdict handed down.",
     path: "/receipts",
+    badge: "Free",
+  },
+  {
+    icon: Newspaper,
+    title: "The Work Signal",
+    description: "Live employer intelligence feed — layoffs, policy shifts, AI workplace moves, pay equity, enforcement. Each story: what happened, what it means, what to watch.",
+    path: "/newsletter",
     badge: "Free",
   },
   {

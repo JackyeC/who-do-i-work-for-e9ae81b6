@@ -7,8 +7,11 @@ import { LogoMark } from "@/components/brand/LogoMark";
 import { cn } from "@/lib/utils";
 
 const PRIMARY_LINKS = [
+  { label: "Intelligence Check", to: "/intelligence-check" },
   { label: "How It Works", to: "/how-it-works" },
   { label: "Check a Company", to: "/offer-check" },
+  { label: "About", to: "/about" },
+  { label: "Methodology", to: "/methodology" },
   { label: "Pricing", to: "/pricing" },
 ];
 
@@ -83,13 +86,24 @@ export function MarketingNav() {
               </Link>
             ))}
             {user ? (
-              <Link
-                to="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-sans text-sm py-2.5 text-muted-foreground hover:text-foreground"
-              >
-                Workspace
-              </Link>
+              <>
+                <Link
+                  to="/ask-jackye"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`font-sans text-sm py-2 transition-colors ${
+                    location.pathname === "/ask-jackye" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Ask Jackye
+                </Link>
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-sans text-sm py-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  Workspace
+                </Link>
+              </>
             ) : (
               <Link
                 to="/login"

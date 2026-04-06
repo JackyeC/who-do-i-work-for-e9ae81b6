@@ -31,7 +31,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
     <aside className="sticky top-[74px] space-y-5">
       {/* Newsletter */}
       <div className="bg-card border border-border rounded-xl p-6">
-        <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">
+        <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">
           Every Morning
         </p>
         <h3 className="text-2xl font-black text-foreground mb-2 leading-tight">
@@ -56,7 +56,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
 
       {/* Hottest Takes */}
       <div className="bg-card border border-border rounded-xl p-5">
-        <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
+        <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
           ⭐ Highest Stargaze
         </p>
         {hotArticles.slice(0, 4).map((article) => (
@@ -67,7 +67,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
           >
             <div className="flex items-center gap-2 mb-1.5">
               <span
-                className="text-[9px] font-bold uppercase tracking-[0.1em]"
+                className="text-[11px] font-bold uppercase tracking-[0.1em]"
                 style={{ color: CAT_COLORS[article.category ?? ""] || "#EDE8DC" }}
               >
                 {article.category?.replace("_", " ") || "NEWS"}
@@ -86,7 +86,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
 
       {/* Source Bias Legend */}
       <div className="bg-card border border-border rounded-xl p-5">
-        <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
+        <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
           Source Bias
         </p>
         {BIAS_LEGEND.map(({ color, label }) => (
@@ -95,17 +95,17 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
             <span className="text-xs font-semibold" style={{ color }}>{label}</span>
           </div>
         ))}
-        <p className="text-[10px] text-muted-foreground mt-2.5 leading-relaxed font-mono">
+        <p className="text-xs text-muted-foreground mt-2.5 leading-relaxed font-mono">
           Multiple perspectives, labeled honestly.
         </p>
       </div>
 
       {/* The Receipts blurb */}
       <div className="rounded-xl p-5 border" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
-        <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-2.5 font-mono">
+        <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-2.5 font-mono">
           🧾 The Receipts
         </p>
-        <p className="text-xs text-muted-foreground leading-relaxed">
+        <p className="text-sm text-muted-foreground leading-relaxed">
           Connecting dots corporate PR hoped you wouldn't. Every story. Every time.
         </p>
       </div>

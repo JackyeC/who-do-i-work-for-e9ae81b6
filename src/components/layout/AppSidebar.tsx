@@ -36,10 +36,17 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
-    id: "home",
-    label: "Home",
-    path: "/",
+    id: "command-center",
+    label: "Your Signal",
+    path: "/dashboard",
     dotColor: "bg-[hsl(var(--primary))]",
+    auth: true,
+  },
+  {
+    id: "home",
+    label: "Site Home",
+    path: "/",
+    dotColor: "bg-[hsl(var(--muted-foreground))]",
   },
   {
     id: "places",
@@ -63,9 +70,9 @@ const NAV_ITEMS: NavItem[] = [
     dotColor: "bg-[#fbbf24]",
   },
   {
-    id: "receipts",
-    label: "The Receipts",
-    path: "/the-receipts",
+    id: "work-signal",
+    label: "The Work Signal",
+    path: "/newsletter",
     dotColor: "bg-[#fb7185]",
   },
   {

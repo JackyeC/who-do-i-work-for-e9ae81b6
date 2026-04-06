@@ -70,9 +70,12 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                   "text-foreground/90 hover:text-primary transition-colors",
                   article.is_controversy && "text-destructive font-medium"
                 )}>
-                  {article.headline.length > 80
-                    ? article.headline.slice(0, 80) + "…"
-                    : article.headline}
+                  {(() => {
+                    const text = (article as any).jackye_take && (article as any).jackye_take !== "[FILTERED]"
+                      ? (article as any).jackye_take
+                      : article.headline;
+                    return text.length > 70 ? text.slice(0, 70) + "…" : text;
+                  })()}
                 </span>
                 <span className="text-muted-foreground/50">·</span>
                 <span className="text-muted-foreground text-xs">{article.source_name}</span>

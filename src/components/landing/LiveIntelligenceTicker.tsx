@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Radio } from "lucide-react";
-import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant, TICKER_SEPARATOR } from "@/lib/ticker-filters";
+import { decodeEscapes, isLikelyEnglish, TICKER_SEPARATOR } from "@/lib/ticker-filters";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   getSourceProfile,
@@ -21,9 +21,14 @@ interface TickerNewsItem {
   jackye_take: string | null;
 }
 
+const ALLOWED_CATEGORIES = [
+  "regulation", "worker_rights", "ai_workplace",
+  "legislation", "layoffs", "pay_equity", "labor_organizing",
+  "dei", "workplace", "policy", "wdiwf_intel",
+];
+
 const CATEGORY_LABELS: Record<string, string> = {
   regulation: "REG",
-  future_of_work: "WORK",
   worker_rights: "RIGHTS",
   ai_workplace: "AI",
   legislation: "LAW",
@@ -34,8 +39,16 @@ const CATEGORY_LABELS: Record<string, string> = {
   workplace: "WORK",
   policy: "POLICY",
   wdiwf_intel: "WDIWF",
-  general: "NEWS",
 };
+
+// Trusted sources for workplace/labor intelligence
+const TRUSTED_SOURCES = /\b(nlrb|osha|bls|sec\.gov|dol\.gov|eeoc|reuters|bloomberg|associated press|ap news|hr dive|shrm|the guardian|washington post|new york times|nyt|propublica|politico|the hill|cnn|cnbc|npr|pbs|marketplace|fortune|fast company|harvard business review|hbr|wall street journal|wsj|labor department|department of labor|bureau of labor|national labor|federal register)\b/i;
+
+// Blocklist: reject purely off-topic content (tighter — no longer catches labor stories about film sets, sports labor, etc.)
+const BLOCKED_CONTENT = /\b(bible|church|gospel|devotion|prayer|christian|catholic|faith|sermon|cricket|soccer|horoscope|astrology|recipe|cooking|celebrity gossip|bollywood|telenovela|pageant|runway|bitcoin|crypto|ethereum|solana|blockchain|nft|token|defi|memecoin|meme coin|k-?drama|dramabeans|korean drama|anime|manga|kpop|k-pop|netflix|disney\+|hulu|movie review|box office|album|concert|tour dates|real estate|mortgage|home price|housing market|stock pick|day trading|forex|mutual fund|portfolio|investment tip|weight loss|diet|fitness|workout|wellness|meditation|yoga|skincare|makeup|perfume|fragrance|wedding|bridal|baby shower|parenting tip|puppy|kitten|garden|landscaping|diy craft|interior design|home decor|travel deal|vacation|resort|cruise|airline miles|frequent flyer|botnet|ddos|tamil nadu|piyush goyal|dmk)\b/i;
+
+// Require workplace/labor relevance keywords
+const RELEVANCE_KEYWORDS = /\b(worker|employee|employer|labor|union|strike|layoff|fired|hiring|wage|salary|pay gap|discrimination|harassment|osha|nlrb|eeoc|sec filing|workplace|dei|diversity|equity|inclusion|pension|benefits|401k|health insurance|parental leave|remote work|return to office|rto|gig economy|contractor|independent contractor|minimum wage|overtime|whistleblower|retaliation|wrongful termination|severance|non-?compete|arbitration|class action|settlement|compliance|regulation|enforcement|safety|violation|fine|penalty|investigation|audit|accountability|lobby|lobbying|pac|political action|campaign contribution|corporate governance|board of directors|ceo pay|executive compensation|stock buyback|restructuring|downsizing|outsourcing|offshoring|ai hiring|automated|surveillance|monitoring|budget cut|crew|negotiate|collective bargaining|inflation|cost of living)\b/i;
 
 export function LiveIntelligenceTicker() {
   const navigate = useNavigate();
@@ -49,20 +62,31 @@ export function LiveIntelligenceTicker() {
           "id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take"
         )
         .eq("language", "en")
+        .in("category", ALLOWED_CATEGORIES)
         .order("published_at", { ascending: false })
-        .limit(10);
+        .limit(60);
 
       if (error) throw error;
+
       return ((data as TickerNewsItem[]) || [])
         .map(item => ({
           ...item,
           headline: decodeEscapes(item.headline || ""),
           source_name: item.source_name ? decodeEscapes(item.source_name) : null,
         }))
-        .filter(item =>
-          isLikelyEnglish(item.headline) &&
-          isUSOrEmployerRelevant(item.headline, item.source_name)
-        );
+        .filter(item => {
+          if (!isLikelyEnglish(item.headline)) return false;
+          // If Jackye already vetted it with a real take, trust it
+          if (item.jackye_take && item.jackye_take !== "[FILTERED]") return true;
+          const combined = `${item.headline} ${item.source_name || ""}`;
+          if (BLOCKED_CONTENT.test(combined)) return false;
+          const fromTrustedSource = item.source_name && TRUSTED_SOURCES.test(item.source_name);
+          const hasRelevance = RELEVANCE_KEYWORDS.test(item.headline);
+          return fromTrustedSource || hasRelevance;
+        })
+        // Deduplicate by headline text
+        .filter((item, idx, arr) => arr.findIndex(a => a.headline === item.headline) === idx)
+        .slice(0, 12);
     },
     staleTime: 120_000,
     refetchInterval: 300_000,
@@ -74,7 +98,7 @@ export function LiveIntelligenceTicker() {
       : [
           {
             id: "fallback-1",
-            headline: "Live intelligence scanning active \u2014 world-of-work news loading",
+            headline: "Live intelligence scanning active — world-of-work news loading",
             source_name: "Who Do I Work For",
             source_url: null,
             category: "general",
@@ -84,13 +108,11 @@ export function LiveIntelligenceTicker() {
           },
         ];
 
-  // Calculate speed: ~80px/sec feels readable but not boring
-  // More items = longer duration so everything gets seen
   const totalChars = tickerItems.reduce(
     (sum, i) => sum + (i.headline?.length || 0) + (i.source_name?.length || 0) + 20,
     0
   );
-  const duration = Math.max(140, Math.min((totalChars * 0.6), 360));
+  const duration = Math.max(160, Math.min((totalChars * 0.8), 400));
 
   const handleStoryClick = (storyId: string) => {
     navigate(`/newsletter#story-${storyId}`);
@@ -112,10 +134,13 @@ export function LiveIntelligenceTicker() {
     getFactualityColor(profile.factuality);
     const catLabel = CATEGORY_LABELS[item.category] || "NEWS";
 
+    const displayText = item.jackye_take && item.jackye_take !== "[FILTERED]"
+      ? item.jackye_take
+      : item.headline;
     const headlineText =
-      item.headline.length > 70
-        ? item.headline.slice(0, 70) + "\u2026"
-        : item.headline;
+      displayText.length > 70
+        ? displayText.slice(0, 70) + "\u2026"
+        : displayText;
 
     return (
       <button
@@ -124,7 +149,6 @@ export function LiveIntelligenceTicker() {
         onClick={() => handleStoryClick(item.id)}
         className="px-6 inline-flex items-center gap-2 bg-transparent border-none p-0 font-inherit text-left cursor-pointer hover:text-primary transition-colors"
       >
-        {/* Category tag */}
         <span
           className="font-mono text-[10px] tracking-wider uppercase shrink-0"
           style={{
@@ -139,7 +163,6 @@ export function LiveIntelligenceTicker() {
 
         <span className="font-sans text-ticker text-foreground/90">{headlineText}</span>
 
-        {/* Source + bias label */}
         {item.source_name && (
           <span className="font-sans text-ticker text-muted-foreground/50 shrink-0">
             via {item.source_name}
@@ -155,10 +178,11 @@ export function LiveIntelligenceTicker() {
 
   return (
     <div
-      className="bg-background overflow-hidden whitespace-nowrap h-[36px] flex items-center"
+      className="bg-background overflow-hidden whitespace-nowrap h-[36px] flex items-center relative"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
     >
-      {/* LIVE badge */}
+      <div className="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, hsl(var(--background)), transparent)" }} />
+      <div className="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, hsl(var(--background)), transparent)" }} />
       <div
         className="flex items-center gap-2 px-3 shrink-0"
         style={{ borderRight: "1px solid rgba(255,255,255,0.1)" }}
@@ -167,7 +191,6 @@ export function LiveIntelligenceTicker() {
         <span className="font-sans text-eyebrow">LIVE</span>
       </div>
 
-      {/* Scrolling ticker — pauses on hover so people can read + click */}
       <div
         className="ticker-track"
         style={{ ["--ticker-duration" as string]: `${duration}s` }}

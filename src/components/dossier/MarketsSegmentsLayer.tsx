@@ -17,7 +17,7 @@ export function MarketsSegmentsLayer({ segments, companyName }: MarketsSegmentsP
     return (
       <div className="text-center py-8">
         <Globe className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
-        <p className="text-caption text-muted-foreground">No market segment data available yet for {companyName}.</p>
+        <p className="text-caption text-muted-foreground">No market segment data available yet for {companyName}. This section updates automatically when new intelligence is detected.</p>
       </div>
     );
   }

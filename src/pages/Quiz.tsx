@@ -1,7 +1,10 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { WorkplaceDNAShareCard } from "@/components/quiz/WorkplaceDNAShareCard";
 import { supabase } from "@/integrations/supabase/client";
 import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
+import { useAuth } from "@/contexts/AuthContext";
+import { Shield, Lock, AlertTriangle, Scan, ChevronRight, Eye } from "lucide-react";
 
 // ─── TYPES ───────────────────────────────────────────────
 type PersonaKey =
@@ -394,6 +397,86 @@ function resolvePersonas(
   return { primary: entries[0][0], secondary: entries[1][0] };
 }
 
+// ─── WELCOME BACK INTERSTITIAL ───────────────────────────
+function WelcomeBackInterstitial({
+  profileName,
+  onViewResults,
+  onRetake,
+}: {
+  profileName: string;
+  onViewResults: () => void;
+  onRetake: () => void;
+}) {
+  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    // Countdown display
+    const interval = setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) { clearInterval(interval); return 0; }
+        return c - 1;
+      });
+    }, 1000);
+    // Auto-advance after 3s
+    autoTimerRef.current = setTimeout(onViewResults, 3000);
+    return () => {
+      clearInterval(interval);
+      if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    };
+  }, [onViewResults]);
+
+  const handleRetake = () => {
+    if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    onRetake();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 overflow-hidden flex items-center justify-center"
+      style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="text-center max-w-[400px] px-6"
+      >
+        <div className="text-4xl mb-4">♕</div>
+        <h2 className="text-xl font-bold mb-2" style={{ color: "#f5f0e8" }}>
+          Welcome back, {profileName}.
+        </h2>
+        <p className="text-sm mb-6" style={{ color: "rgba(245,240,232,0.55)" }}>
+          Your intelligence profile is ready.
+        </p>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={() => {
+              if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+              onViewResults();
+            }}
+            className="px-6 py-3 text-sm font-mono tracking-wider uppercase font-bold transition-all hover:opacity-90 rounded-sm"
+            style={{
+              background: "hsl(var(--primary))",
+              color: "#0a0a0e",
+              boxShadow: "0 0 20px rgba(201,168,76,0.25)",
+            }}
+          >
+            View My Results{countdown > 0 ? ` (${countdown}s)` : ""}
+          </button>
+          <button
+            onClick={handleRetake}
+            className="px-6 py-3 text-xs font-mono tracking-wider uppercase border transition-opacity hover:opacity-80"
+            style={{ borderColor: "rgba(245,240,232,0.12)", color: "rgba(245,240,232,0.45)" }}
+          >
+            Start fresh instead
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 // ─── COMPONENT ───────────────────────────────────────────
 const TOTAL_QUESTIONS = 7;
 
@@ -410,6 +493,71 @@ export default function Quiz() {
     meta: MetaFlags;
   } | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showWelcomeBack, setShowWelcomeBack] = useState(false);
+  const [savedProfile, setSavedProfile] = useState<{ primary: PersonaKey; secondary: PersonaKey; meta: MetaFlags } | null>(null);
+  const [checkingProfile, setCheckingProfile] = useState(true);
+
+  // Detect returning visitor — auth-aware: DB profile takes priority over localStorage
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        // Wait for auth to settle first
+        const { data: { user } } = await supabase.auth.getUser();
+        if (cancelled) return;
+
+        // If logged in, check DB for quiz results first
+        if (user) {
+          const { data: dbResult } = await (supabase as any)
+            .from("wdiwf_quiz_results")
+            .select("result_profile, result_secondary, meta_flags")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (cancelled) return;
+          if (dbResult?.result_profile && dbResult?.result_secondary && dbResult?.meta_flags) {
+            const dbProfile = {
+              primary: dbResult.result_profile as PersonaKey,
+              secondary: dbResult.result_secondary as PersonaKey,
+              meta: dbResult.meta_flags as MetaFlags,
+            };
+            setSavedProfile(dbProfile);
+            setShowWelcomeBack(true);
+            setCheckingProfile(false);
+            return;
+          }
+        }
+
+        // Fallback to localStorage
+        const saved = localStorage.getItem("workDnaProfile");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed.primary && parsed.secondary && parsed.meta) {
+              setSavedProfile(parsed);
+              setShowWelcomeBack(true);
+            }
+          } catch {}
+        }
+      } catch {
+        // Auth check failed — fall back to localStorage silently
+        const saved = localStorage.getItem("workDnaProfile");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed.primary && parsed.secondary && parsed.meta) {
+              setSavedProfile(parsed);
+              setShowWelcomeBack(true);
+            }
+          } catch {}
+        }
+      } finally {
+        if (!cancelled) setCheckingProfile(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const isResults = step === TOTAL_QUESTIONS;
   const progressPct = isResults ? 100 : (step / TOTAL_QUESTIONS) * 100;
@@ -421,6 +569,8 @@ export default function Quiz() {
     return answers[step] !== null;
   }, [step, answers, isResults]);
 
+  const autoAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const selectAnswer = useCallback(
     (idx: number) => {
       setAnswers((prev) => {
@@ -428,9 +578,24 @@ export default function Quiz() {
         next[step] = idx;
         return next;
       });
+      // Auto-advance after 400ms for tile questions (not the last question)
+      const q = QUESTIONS[step];
+      if (q.type === "tiles" && step < TOTAL_QUESTIONS - 1) {
+        if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current);
+        autoAdvanceRef.current = setTimeout(() => {
+          setDirection("left");
+          setStep((s) => s + 1);
+        }, 400);
+      }
     },
     [step]
   );
+
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current);
+    };
+  }, []);
 
   const computeResults = useCallback(() => {
     const s: Scores = {
@@ -453,6 +618,8 @@ export default function Quiz() {
 
     const { primary, secondary } = resolvePersonas(s, m.nepotism_concern);
 
+    const profileData = { primary, secondary, meta: m };
+    localStorage.setItem("workDnaProfile", JSON.stringify(profileData));
     localStorage.setItem("wdiwf_persona", primary);
     localStorage.setItem("wdiwf_nepotism_flag", m.nepotism_concern);
     localStorage.setItem("wdiwf_trust", m.trust_level);
@@ -460,10 +627,28 @@ export default function Quiz() {
     setResult({ primary, secondary, meta: m });
 
     void (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      // Save quiz results to database
       try {
-        await syncDreamJobProfileRemote(supabase, user.id);
+        const { data: { user } } = await supabase.auth.getUser();
+        await (supabase as any).from("wdiwf_quiz_results").insert({
+          user_id: user?.id ?? null,
+          answers,
+          slider_value: sliderVal,
+          result_profile: primary,
+          result_secondary: secondary,
+          scores: s,
+          meta_flags: m,
+        });
+      } catch (e) {
+        console.warn("Quiz result save failed", e);
+      }
+
+      // Sync dream job profile if logged in
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await syncDreamJobProfileRemote(supabase, user.id);
+        }
       } catch (e) {
         console.warn("Dream job profile sync failed", e);
       }
@@ -486,6 +671,10 @@ export default function Quiz() {
   }, [step]);
 
   const reset = useCallback(() => {
+    localStorage.removeItem("workDnaProfile");
+    localStorage.removeItem("wdiwf_persona");
+    localStorage.removeItem("wdiwf_nepotism_flag");
+    localStorage.removeItem("wdiwf_trust");
     setDirection("right");
     setStep(0);
     setAnswers([null, null, null, null, null, null, null]);
@@ -545,6 +734,55 @@ export default function Quiz() {
     return () => window.removeEventListener("keydown", handler);
   }, [canAdvance, advance, isResults]);
 
+  // Loading shimmer while checking for existing profile
+  if (checkingProfile) {
+    return (
+      <div
+        className="fixed inset-0 overflow-hidden flex items-center justify-center"
+        style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <div
+            className="w-10 h-10 rounded-full border-2 border-transparent"
+            style={{
+              borderTopColor: "#C9A84C",
+              animation: "spin 0.6s linear infinite",
+            }}
+          />
+          <motion.p
+            animate={{ opacity: [0.35, 0.6, 0.35] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            style={{ color: "rgba(245,240,232,0.5)", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}
+          >
+            Loading your profile…
+          </motion.p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Welcome-back interstitial for returning visitors — auto-advances after 2s
+  if (showWelcomeBack && savedProfile) {
+    const profileName = PERSONA_PROFILES[savedProfile.primary]?.name || "Your Profile";
+    const goToResults = () => {
+      setResult(savedProfile);
+      setStep(TOTAL_QUESTIONS);
+      setShowWelcomeBack(false);
+    };
+    return (
+      <WelcomeBackInterstitial
+        profileName={profileName}
+        onViewResults={goToResults}
+        onRetake={() => { setShowWelcomeBack(false); reset(); }}
+      />
+    );
+  }
+
   return (
     <div
       className="fixed inset-0 overflow-hidden"
@@ -566,19 +804,50 @@ export default function Quiz() {
         <rect width="100%" height="100%" filter="url(#quizGrain)" />
       </svg>
 
-      {/* Progress bar */}
-      <div
-        className="fixed top-0 left-0 right-0"
-        style={{ height: 3, background: "rgba(255,255,255,0.05)", zIndex: 60 }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: `${progressPct}%`,
-            background: "#f0c040",
-            transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
-          }}
-        />
+      {/* Progress indicator */}
+      <div className="fixed top-0 left-0 right-0" style={{ zIndex: 60 }}>
+        {!isResults && (
+          <>
+            <div
+              aria-live="polite"
+              aria-atomic="true"
+              style={{
+                textAlign: "center",
+                padding: "10px 0 6px",
+                fontSize: 12,
+                fontWeight: 500,
+                letterSpacing: "0.05em",
+                color: "hsl(var(--muted-foreground))",
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              Question {step + 1} of {TOTAL_QUESTIONS}
+            </div>
+            <div
+              role="progressbar"
+              aria-valuenow={step + 1}
+              aria-valuemin={1}
+              aria-valuemax={TOTAL_QUESTIONS}
+              aria-label={`Quiz progress: question ${step + 1} of ${TOTAL_QUESTIONS}`}
+              style={{ height: 3, background: "rgba(255,255,255,0.05)" }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${progressPct}%`,
+                  background: "hsl(var(--primary))",
+                  transition: "width 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease",
+                  boxShadow: progressPct >= 100 ? "0 0 16px 4px hsl(var(--primary) / 0.5)" : "none",
+                }}
+              />
+            </div>
+          </>
+        )}
+        {isResults && (
+          <div style={{ height: 3, background: "rgba(255,255,255,0.05)" }}>
+            <div style={{ height: "100%", width: "100%", background: "hsl(var(--primary))" }} />
+          </div>
+        )}
       </div>
 
       {/* Slide track */}
@@ -587,7 +856,7 @@ export default function Quiz() {
         style={{
           width: `${(TOTAL_QUESTIONS + 1) * 100}vw`,
           transform: `translateX(-${step * 100}vw)`,
-          transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
+          transition: "transform 0.35s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
         {/* Question screens */}
@@ -636,6 +905,8 @@ export default function Quiz() {
                 {qIdx > 0 && (
                   <button
                     onClick={goBack}
+                    aria-label="Go to previous question"
+                    className="quiz-focus-ring"
                     style={{
                       background: "transparent",
                       border: "1px solid rgba(255,255,255,0.07)",
@@ -663,6 +934,8 @@ export default function Quiz() {
                 <button
                   onClick={advance}
                   disabled={!canAdvance}
+                  aria-label={qIdx === TOTAL_QUESTIONS - 1 ? "See my profile" : "Go to next question"}
+                  className="quiz-focus-ring"
                   style={{
                     background: canAdvance ? "#f0c040" : "rgba(240,192,64,0.25)",
                     color: "#0a0a0e",
@@ -680,6 +953,27 @@ export default function Quiz() {
                   {qIdx === TOTAL_QUESTIONS - 1 ? "See my profile" : "Next →"}
                 </button>
               </div>
+              {/* Reset link on first question screen */}
+              {qIdx === 0 && (
+                <div className="text-center mt-6">
+                  <button
+                    onClick={reset}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "rgba(245,240,232,0.35)",
+                      fontSize: 12,
+                      cursor: "pointer",
+                      fontFamily: "'DM Sans', sans-serif",
+                      transition: "color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "#C9A84C")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(245,240,232,0.35)")}
+                  >
+                    Already took the quiz? Reset and start over.
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -706,9 +1000,28 @@ function TileGrid({
   selected: number | null;
   onSelect: (idx: number) => void;
 }) {
+  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    let next = idx;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      next = (idx + 1) % answers.length;
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      next = (idx - 1 + answers.length) % answers.length;
+    } else {
+      return;
+    }
+    onSelect(next);
+    const container = e.currentTarget.parentElement;
+    const buttons = container?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+    buttons?.[next]?.focus();
+  };
+
   return (
     <div
       className="grid gap-4"
+      role="radiogroup"
+      aria-label="Choose one answer"
       style={{ gridTemplateColumns: "repeat(2, 1fr)" }}
     >
       {answers.map((text, idx) => {
@@ -716,8 +1029,12 @@ function TileGrid({
         return (
           <button
             key={idx}
+            role="radio"
+            aria-checked={isSelected}
+            tabIndex={isSelected || (selected === null && idx === 0) ? 0 : -1}
             onClick={() => onSelect(idx)}
-            className="text-left"
+            onKeyDown={(e) => handleKeyDown(e, idx)}
+            className="text-left quiz-focus-ring active:scale-[0.97]"
             style={{
               background: isSelected
                 ? "rgba(240,192,64,0.12)"
@@ -735,8 +1052,11 @@ function TileGrid({
               cursor: "pointer",
               fontFamily: "'DM Sans', sans-serif",
               transition:
-                "border-color 0.2s, background 0.2s, transform 0.2s, color 0.2s",
+                "border-color 0.2s, background 0.2s, transform 0.15s, color 0.2s, box-shadow 0.3s",
               transform: isSelected ? "scale(1.02)" : "scale(1)",
+              boxShadow: isSelected
+                ? "0 0 12px 2px rgba(240,192,64,0.15)"
+                : "none",
             }}
             onMouseEnter={(e) => {
               if (!isSelected) {
@@ -777,7 +1097,9 @@ function SliderInput({
         max={100}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="quiz-slider w-full"
+        aria-label={`Trust level: ${getSliderLabel(value)}`}
+        aria-valuetext={getSliderLabel(value)}
+        className="quiz-slider quiz-focus-ring w-full"
         style={{
           WebkitAppearance: "none",
           appearance: "none",
@@ -810,7 +1132,91 @@ function SliderInput({
   );
 }
 
-// ─── RESULTS SCREEN ──────────────────────────────────────
+// ─── DOSSIER MODULE SHIMMER ──────────────────────────────
+function DossierShimmer({ label, delay = 0 }: { label: string; delay?: number }) {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 1800 + delay * 600);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  if (loaded) return null;
+  return (
+    <div style={{
+      position: "absolute", inset: 0, zIndex: 5,
+      background: "linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.06) 50%, transparent 100%)",
+      backgroundSize: "200% 100%",
+      animation: "dossierShimmer 1.5s ease infinite",
+      borderRadius: 12, pointerEvents: "none",
+    }}>
+      <div style={{
+        position: "absolute", bottom: 8, right: 12,
+        display: "flex", alignItems: "center", gap: 4,
+        fontSize: 10, color: "rgba(201,168,76,0.5)",
+        fontFamily: "'DM Sans', sans-serif",
+      }}>
+        <Scan size={10} /> Scanning…
+      </div>
+    </div>
+  );
+}
+
+// ─── SOURCE BADGE ────────────────────────────────────────
+function SourceBadge({ source }: { source: string }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 4,
+      fontSize: 9, fontWeight: 600, letterSpacing: "0.08em",
+      textTransform: "uppercase", color: "rgba(201,168,76,0.55)",
+      fontFamily: "'DM Sans', sans-serif",
+      background: "rgba(201,168,76,0.06)",
+      border: "1px solid rgba(201,168,76,0.12)",
+      borderRadius: 4, padding: "2px 8px",
+    }}>
+      <Eye size={8} /> Source: {source}
+    </span>
+  );
+}
+
+// ─── BLURRED SECTION ─────────────────────────────────────
+function BlurredSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{
+      position: "relative", borderRadius: 12,
+      background: "#161514",
+      border: "1px solid rgba(255,255,255,0.06)",
+      padding: "20px 22px", overflow: "hidden",
+    }}>
+      <div style={{ filter: "blur(6px)", pointerEvents: "none", userSelect: "none" }}>
+        {children}
+      </div>
+      <div style={{
+        position: "absolute", inset: 0,
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        background: "rgba(10,10,14,0.6)",
+        backdropFilter: "blur(2px)",
+        borderRadius: 12,
+      }}>
+        <Lock size={24} style={{ color: "#C9A84C", marginBottom: 8 }} />
+        <span style={{
+          fontSize: 13, fontWeight: 600, color: "#f0ebe0",
+          fontFamily: "'DM Sans', sans-serif",
+        }}>
+          {title}
+        </span>
+        <span style={{
+          fontSize: 11, color: "hsl(var(--muted-foreground))",
+          fontFamily: "'DM Sans', sans-serif", marginTop: 2,
+        }}>
+          Requires Intelligence Dossier access
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── RESULTS SCREEN (Intelligence Dossier) ───────────────
 function ResultsScreen({
   result,
   onReset,
@@ -825,234 +1231,379 @@ function ResultsScreen({
   onCopy: () => void;
 }) {
   const [showShareModal, setShowShareModal] = useState(false);
+  const { user } = useAuth();
   const profile = PERSONA_PROFILES[result.primary];
   const secondaryProfile = PERSONA_PROFILES[result.secondary];
   const showNepotism = result.meta.nepotism_concern === "high";
+  const userName = user?.user_metadata?.full_name?.split(" ")[0]
+    || user?.user_metadata?.name?.split(" ")[0]
+    || user?.email?.split("@")[0]
+    || null;
+
+  // Alignment summary based on meta
+  const alignmentVerdict = useMemo(() => {
+    if (result.meta.trust_level === "skeptic") return "You question everything — and that's your edge.";
+    if (result.meta.data_orientation === "data") return "You follow the receipts, not the branding.";
+    if (result.meta.nepotism_concern === "high") return "You see the hidden networks others miss.";
+    return "You know what matters — now you need the data to prove it.";
+  }, [result.meta]);
 
   return (
-    <div
-      className="w-full flex flex-col items-center"
-      style={{ maxWidth: 560 }}
-    >
-      {/* Badge */}
-      <span
+    <div className="w-full flex flex-col items-center" style={{ maxWidth: 620 }}>
+      {/* Personalized greeting */}
+      {userName && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            fontSize: 13, color: "hsl(var(--muted-foreground))",
+            fontFamily: "'DM Sans', sans-serif",
+            marginBottom: 20, letterSpacing: "0.02em",
+          }}
+        >
+          {userName}, here is what we found.
+        </motion.p>
+      )}
+
+      {/* ── 1. PRIMARY CAREER SIGNAL (Hero Insight) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
         style={{
-          display: "inline-block",
-          background: "rgba(240,192,64,0.12)",
-          border: "1px solid rgba(240,192,64,0.3)",
-          color: "#f0c040",
-          borderRadius: 20,
-          padding: "6px 16px",
-          fontSize: 12,
-          fontWeight: 500,
-          letterSpacing: 2,
-          textTransform: "uppercase",
-          fontFamily: "'DM Sans', sans-serif",
+          width: "100%",
+          background: "linear-gradient(135deg, #161514 0%, #1a1917 100%)",
+          border: "1px solid #C9A84C",
+          borderRadius: 14,
+          padding: "28px 24px",
           marginBottom: 24,
-          animation: "quizFadeUp 0.6s ease both",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        Your Workplace DNA
-      </span>
+        {/* Gold glow effect */}
+        <div style={{
+          position: "absolute", top: -40, right: -40,
+          width: 120, height: 120,
+          background: "radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
 
-      {/* Primary persona name */}
-      <h1
-        style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontWeight: 700,
-          fontSize: "clamp(32px, 5vw, 56px)",
-          letterSpacing: "-1.5px",
-          color: "#f0ebe0",
-          textAlign: "center",
-          lineHeight: 1.1,
-          marginBottom: 16,
-          animation: "quizFadeUp 0.6s ease 0.1s both",
-        }}
-      >
-        {profile.name}
-      </h1>
-
-      {/* Subtitle */}
-      <p
-        style={{
-          fontSize: 16,
-          color: "hsl(var(--muted-foreground))",
-          lineHeight: 1.7,
-          maxWidth: 420,
-          textAlign: "center",
-          marginBottom: 12,
-          fontFamily: "'DM Sans', sans-serif",
-          animation: "quizFadeUp 0.6s ease 0.25s both",
-        }}
-      >
-        {profile.subtitle}
-      </p>
-
-      {/* Secondary */}
-      <p
-        style={{
-          fontSize: 13,
-          color: "hsl(var(--muted-foreground))",
-          textAlign: "center",
-          marginBottom: 36,
-          fontFamily: "'DM Sans', sans-serif",
-          animation: "quizFadeUp 0.6s ease 0.35s both",
-        }}
-      >
-        You also think like{" "}
-        <span style={{ color: "#f0ebe0" }}>{secondaryProfile.name}</span>
-      </p>
-
-      {/* Signals header */}
-      <p
-        style={{
-          fontSize: 12,
-          textTransform: "uppercase",
-          letterSpacing: 2,
-          color: "hsl(var(--muted-foreground))",
-          marginBottom: 14,
-          fontFamily: "'DM Sans', sans-serif",
-          animation: "quizFadeUp 0.6s ease 0.35s both",
-        }}
-      >
-        Your signals to watch
-      </p>
-
-      {/* Signal chips */}
-      <div className="w-full flex flex-col gap-3" style={{ maxWidth: 560 }}>
-        {profile.signals.map((sig, i) => (
-          <SignalChip key={i} signal={sig} delay={0.4 + i * 0.15} />
-        ))}
-        {showNepotism && (
-          <SignalChip
-            signal={{
-              label: "Connected Dots",
-              text: "You flagged hidden networks as a priority. Every company audit will surface this signal first.",
-            }}
-            delay={0.85}
-            dotColor="#ff6b35"
-          />
-        )}
-      </div>
-
-      {/* CTA buttons */}
-      <div
-        className="flex flex-col items-center justify-center gap-4 mt-10 w-full sm:w-auto"
-        style={{ animation: "quizFadeUp 0.6s ease 0.95s both", paddingBottom: 48 }}
-      >
-        {/* Framing text */}
-        <p style={{
-          fontSize: 14,
-          color: "hsl(var(--muted-foreground))",
-          fontFamily: "'DM Sans', sans-serif",
-          textAlign: "center",
-          maxWidth: 400,
-          lineHeight: 1.5,
-          marginBottom: 4,
-        }}>
-          Create a free account to save your results and unlock your personalized dashboard.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <a
-            href="/login"
-            style={{
-              background: "#f0c040",
-              color: "#0a0a0e",
-              borderRadius: 50,
-              padding: "14px 36px",
-              fontSize: 14,
-              fontWeight: 600,
-              textDecoration: "none",
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 16, position: "relative", zIndex: 1 }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: 12,
+            background: "rgba(201,168,76,0.12)",
+            border: "1px solid rgba(201,168,76,0.25)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0,
+          }}>
+            <Shield size={24} style={{ color: "#C9A84C" }} />
+          </div>
+          <div>
+            <span style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+              textTransform: "uppercase", color: "#C9A84C",
               fontFamily: "'DM Sans', sans-serif",
-              transition: "opacity 0.2s",
-              display: "inline-block",
-            }}
-          >
-            Create free account →
-          </a>
-          <button
-            onClick={() => setShowShareModal(true)}
-            style={{
-              background: "#221f30",
-              border: "1px solid rgba(240,192,64,0.3)",
-              color: "#f0c040",
-              borderRadius: 50,
-              padding: "12px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: "pointer",
+              display: "block", marginBottom: 6,
+            }}>
+              Primary Career Signal
+            </span>
+            <h2 style={{
               fontFamily: "'DM Sans', sans-serif",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.5)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.3)")
-            }
-          >
-            Share your DNA →
-          </button>
-          <button
-            onClick={onCopy}
-            style={{
-              background: "#221f30",
-              border: "1px solid rgba(255,255,255,0.07)",
-              color: "#f0ebe0",
-              borderRadius: 50,
-              padding: "12px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.3)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")
-            }
-          >
-            Share my profile
-          </button>
+              fontWeight: 700, fontSize: 28,
+              color: "#f0ebe0", lineHeight: 1.15,
+              marginBottom: 8,
+            }}>
+              {profile.name}
+            </h2>
+            <p style={{
+              fontSize: 14, color: "hsl(var(--muted-foreground))",
+              fontFamily: "'DM Sans', sans-serif", lineHeight: 1.6,
+            }}>
+              {alignmentVerdict}
+            </p>
+          </div>
         </div>
 
-        {/* Browse without account */}
-        <a
-          href="/browse"
-          style={{
-            fontSize: 13,
-            color: "hsl(var(--muted-foreground))",
-            textDecoration: "none",
+        <div style={{
+          marginTop: 16, paddingTop: 16,
+          borderTop: "1px solid rgba(201,168,76,0.15)",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <span style={{
+            fontSize: 12, color: "hsl(var(--muted-foreground))",
             fontFamily: "'DM Sans', sans-serif",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
-          onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
-        >
-          Or browse companies first →
-        </a>
-      </div>
+          }}>
+            Secondary signal: <span style={{ color: "#f0ebe0" }}>{secondaryProfile.name}</span>
+          </span>
+          <SourceBadge source="Work DNA Analysis" />
+        </div>
+      </motion.div>
 
-      {/* Reset */}
-      <button
-        onClick={onReset}
+      {/* ── 2. SIGNALS TO WATCH (with shimmer) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        style={{ width: "100%", marginBottom: 24 }}
+      >
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          marginBottom: 12,
+        }}>
+          <span style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.1em",
+            textTransform: "uppercase", color: "hsl(var(--muted-foreground))",
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Your Intelligence Signals
+          </span>
+          <SourceBadge source="Behavioral Model" />
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {profile.signals.map((sig, i) => (
+            <div key={i} style={{ position: "relative" }}>
+              <DossierShimmer label={sig.label} delay={i} />
+              <SignalChip signal={sig} delay={0.4 + i * 0.12} />
+            </div>
+          ))}
+          {showNepotism && (
+            <div style={{ position: "relative" }}>
+              <DossierShimmer label="Connected Dots" delay={3} />
+              <SignalChip
+                signal={{
+                  label: "Connected Dots",
+                  text: "You flagged hidden networks as a priority. Every company audit will surface this signal first.",
+                }}
+                delay={0.85}
+                dotColor="#ff6b35"
+              />
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* ── 3. POLITICAL DNA (partially visible) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
         style={{
-          marginTop: 24,
-          background: "none",
-          border: "none",
-          color: "hsl(var(--muted-foreground))",
-          fontSize: 12,
-          cursor: "pointer",
-          fontFamily: "'DM Sans', sans-serif",
+          width: "100%",
+          background: "#161514",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: 12,
+          padding: "20px 22px",
+          marginBottom: 16,
+          position: "relative",
         }}
       >
-        ← Start over
+        <DossierShimmer label="Political DNA" delay={4} />
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          marginBottom: 14,
+        }}>
+          <span style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.1em",
+            textTransform: "uppercase", color: "#C9A84C",
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Political DNA Preview
+          </span>
+          <SourceBadge source="FEC Filings" />
+        </div>
+
+        <div style={{
+          display: "flex", alignItems: "center", gap: 12,
+          padding: "12px 16px", borderRadius: 8,
+          background: "rgba(201,168,76,0.06)",
+          border: "1px solid rgba(201,168,76,0.12)",
+        }}>
+          <AlertTriangle size={18} style={{ color: "#C9A84C", flexShrink: 0 }} />
+          <div>
+            <span style={{
+              fontSize: 13, fontWeight: 600, color: "#f0ebe0",
+              fontFamily: "'DM Sans', sans-serif", display: "block",
+            }}>
+              {result.meta.trust_level === "skeptic"
+                ? "TRUST LEVEL: SKEPTIC"
+                : result.meta.trust_level === "balanced"
+                ? "TRUST LEVEL: BALANCED"
+                : "TRUST LEVEL: BELIEVER"}
+            </span>
+            <span style={{
+              fontSize: 12, color: "hsl(var(--muted-foreground))",
+              fontFamily: "'DM Sans', sans-serif",
+            }}>
+              {result.meta.data_orientation === "data"
+                ? "You'll want receipts for every claim."
+                : result.meta.data_orientation === "instinct"
+                ? "You read between the lines — we'll give you the lines."
+                : "A blend of instinct and evidence shapes your decisions."}
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── 4. BLURRED PAYWALL SECTIONS ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.65 }}
+        className="w-full flex flex-col gap-3"
+        style={{ marginBottom: 24 }}
+      >
+        <BlurredSection title="Leadership Network">
+          <div style={{ padding: 8 }}>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>Board Connections: 12 detected</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>Political Network Ties: 4 flagged</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0" }}>Revolving Door Signals: 2 active</p>
+          </div>
+        </BlurredSection>
+
+        <BlurredSection title="Executive Pay Gap Analysis">
+          <div style={{ padding: 8 }}>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>CEO-to-Median Ratio: 287:1</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0", marginBottom: 8 }}>Industry Benchmark: 198:1</p>
+            <p style={{ fontSize: 13, color: "#f0ebe0" }}>Pay Equity Grade: C+</p>
+          </div>
+        </BlurredSection>
+      </motion.div>
+
+      {/* ── 5. UNLOCK CTA ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="w-full flex flex-col items-center"
+        style={{ marginBottom: 32 }}
+      >
+        <a
+          href="/login"
+          className="quiz-focus-ring"
+          aria-label="Unlock the full intelligence dossier"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            width: "100%", maxWidth: 420,
+            background: "#C9A84C",
+            color: "#0a0a0e",
+            borderRadius: 50,
+            padding: "16px 36px",
+            fontSize: 15,
+            fontWeight: 700,
+            textDecoration: "none",
+            fontFamily: "'DM Sans', sans-serif",
+            transition: "box-shadow 0.3s ease, transform 0.15s ease",
+            boxShadow: "0 0 20px 4px rgba(201,168,76,0.2)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 30px 8px rgba(201,168,76,0.35)";
+            e.currentTarget.style.transform = "scale(1.02)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 20px 4px rgba(201,168,76,0.2)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+        >
+          Unlock the Full Intelligence Dossier
+          <ChevronRight size={18} />
+        </a>
+
+        <p style={{
+          fontSize: 11, color: "hsl(var(--muted-foreground))",
+          fontFamily: "'DM Sans', sans-serif",
+          marginTop: 10, textAlign: "center",
+        }}>
+          Create a free account to save results and access full company scans.
+        </p>
+      </motion.div>
+
+      {/* ── 6. SECONDARY ACTIONS ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.95 }}
+        className="flex flex-col sm:flex-row items-center gap-3"
+        style={{ marginBottom: 16 }}
+      >
+        <button
+          onClick={() => setShowShareModal(true)}
+          className="quiz-focus-ring"
+          aria-label="Share your Workplace DNA"
+          style={{
+            background: "#221f30",
+            border: "1px solid rgba(201,168,76,0.3)",
+            color: "#C9A84C",
+            borderRadius: 50,
+            padding: "12px 24px",
+            fontSize: 14,
+            fontWeight: 500,
+            cursor: "pointer",
+            fontFamily: "'DM Sans', sans-serif",
+            transition: "border-color 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)")}
+        >
+          Share your DNA →
+        </button>
+        <button
+          onClick={onCopy}
+          className="quiz-focus-ring"
+          aria-label="Copy profile text to clipboard"
+          style={{
+            background: "#221f30",
+            border: "1px solid rgba(255,255,255,0.07)",
+            color: "#f0ebe0",
+            borderRadius: 50,
+            padding: "12px 24px",
+            fontSize: 14,
+            fontWeight: 500,
+            cursor: "pointer",
+            fontFamily: "'DM Sans', sans-serif",
+            transition: "border-color 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
+        >
+          Copy my profile
+        </button>
+      </motion.div>
+
+      {/* Browse / retake */}
+      <a
+        href="/browse"
+        className="quiz-focus-ring"
+        aria-label="Browse companies"
+        style={{
+          fontSize: 13, color: "hsl(var(--muted-foreground))",
+          textDecoration: "none", fontFamily: "'DM Sans', sans-serif",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+      >
+        Or browse companies first →
+      </a>
+
+      <button
+        onClick={onReset}
+        className="quiz-focus-ring"
+        aria-label="Retake the quiz"
+        style={{
+          marginTop: 16, background: "none", border: "none",
+          color: "rgba(245,240,232,0.4)", fontSize: 12,
+          cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+          transition: "color 0.2s ease",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "#C9A84C")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(245,240,232,0.4)")}
+      >
+        ← Retake the quiz
       </button>
 
-
-      {/* Workplace DNA Share Modal */}
+      {/* Share Modal */}
       {showShareModal && result && (
         <WorkplaceDNAShareCard
           archetypeName={PERSONA_PROFILES[result.primary].name}

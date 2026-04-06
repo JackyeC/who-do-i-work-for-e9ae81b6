@@ -2,11 +2,12 @@ import { useRef, useEffect, useCallback, useState } from "react";
 
 const SITE_KEY = "0x4AAAAAACwUKaSXORtxl_tu";
 const DOMAIN_NOT_AUTHORIZED = "110200";
+const TOKEN_TIMEOUT_MS = 5000;
 
 declare global {
   interface Window {
     turnstile?: {
-      render: (container: HTMLElement, options: Record<string, unknown>) => string;
+      render: (container: HTMLElement, options: Record<string, unknown>) => string | undefined;
       execute: (widgetId: string) => void;
       reset: (widgetId: string) => void;
       remove: (widgetId: string) => void;
@@ -51,7 +52,7 @@ export function useTurnstile() {
 
     const mount = () => {
       if (!containerRef.current || !window.turnstile || widgetIdRef.current || disabledRef.current) return false;
-      widgetIdRef.current = window.turnstile.render(containerRef.current, {
+      const result = window.turnstile.render(containerRef.current, {
         sitekey: SITE_KEY,
         size: "invisible",
         callback: (token: string) => {
@@ -61,7 +62,12 @@ export function useTurnstile() {
         },
         "error-callback": (code?: string) => handleError(code),
       });
-      return true;
+      // Guard: render may return undefined/null in some edge cases
+      if (typeof result === "string" && result) {
+        widgetIdRef.current = result;
+        return true;
+      }
+      return false;
     };
 
     if (window.turnstile) return mount();
@@ -91,9 +97,32 @@ export function useTurnstile() {
       return "";
     }
 
+    // Guard: ensure execute is actually a function
+    if (typeof window.turnstile.execute !== "function") {
+      console.warn("[Turnstile] execute is not a function, skipping verification");
+      return "";
+    }
+
     return new Promise((resolve) => {
-      resolveRef.current = resolve;
-      window.turnstile?.execute(widgetIdRef.current!);
+      const timer = setTimeout(() => {
+        console.warn("[Turnstile] Token request timed out");
+        resolveRef.current = null;
+        resolve("");
+      }, TOKEN_TIMEOUT_MS);
+
+      resolveRef.current = (token: string) => {
+        clearTimeout(timer);
+        resolve(token);
+      };
+
+      try {
+        window.turnstile?.execute(widgetIdRef.current!);
+      } catch (err) {
+        clearTimeout(timer);
+        console.warn("[Turnstile] execute threw:", err);
+        resolveRef.current = null;
+        resolve("");
+      }
     });
   }, [ensureWidget]);
 
@@ -101,7 +130,9 @@ export function useTurnstile() {
     tokenRef.current = null;
     if (disabledRef.current) return;
     if (widgetIdRef.current && window.turnstile) {
-      window.turnstile.reset(widgetIdRef.current);
+      try {
+        window.turnstile.reset(widgetIdRef.current);
+      } catch {}
     }
   }, []);
 

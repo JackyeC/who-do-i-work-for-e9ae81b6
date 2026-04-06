@@ -40,12 +40,12 @@ Each Signal Story must include:
 - company_name: string or null (for macro stories)
 - category: one of "c_suite", "tech_stack", "paycheck", "fine_print", "daily_grind"
 - signal_type: one of "breaking", "developing", "overnight"
-- headline: Jackye-voice headline — punchy, specific, screenshot-worthy, slightly amused
+- headline: Jackye-voice headline, punchy, specific, screenshot-worthy
 - heat_level: "low", "medium", or "high"
 - source_name: the publication name
 - source_url: the article URL
-- receipt: 2-4 sentences of pure facts — what happened, no opinion
-- jrc_take: 3-6 sentences of sharp but fair editorial analysis in The Work Signal voice
+- receipt: 2-4 sentences of pure facts, what happened, no opinion
+- jrc_take: 3-6 sentences of sharp but fair editorial analysis
 - why_it_matters_applicants: 1-3 sentences for people considering applying
 - why_it_matters_employees: 1-3 sentences for people who already work there
 - why_it_matters_execs: 1-3 sentences for leaders/executives

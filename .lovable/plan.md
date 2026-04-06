@@ -1,44 +1,39 @@
 
 
-## Daily Note Control System — Implementation
+# Fix "Your Recent Work" — It's Reading the Wrong Table
 
-### What's wrong
+## The Problem
 
-1. **Prompt** (lines 139–159): Inherits `JRC_MASTER_SYSTEM_PROMPT` (identity-specific framing), asks for "Always in your corner — Jackye" signature, uses old 4-part structure that doesn't match the new spec.
-2. **User message** (lines 109–119): Contradicts the new prompt — asks for "text message from a mentor" and signature.
-3. **No validation**: AI output goes straight to client with no sanitization, word-count check, or banned-phrase scan.
-4. **Fallbacks**: Generic, fluffy, no sharp closing question.
+"Your Recent Work" pulls from `tracked_companies`, which is the premium watchlist table. You have to explicitly click "Track" on a company AND have an active subscription for anything to show up there.
 
-### Changes
+Opening a dossier, running a Check, or browsing a company profile does not write to `tracked_companies`. So unless you manually tracked companies through the slot system, this section stays empty.
 
-#### 1. `supabase/functions/_shared/jrc-edit-prompt.ts` (lines 139–159)
-Replace `JRC_DAILY_NOTE_PROMPT` with the user's exact standalone prompt (no longer inheriting `JRC_MASTER_SYSTEM_PROMPT`).
+The old `useScanTracker` hook writes to `company_scan_events`, but RLS blocks non-admin inserts there. And it only runs on `/company/:id`, not on `/dossier/:id` or `/check`.
 
-#### 2. `supabase/functions/generate-jackye-note/index.ts`
-- **Replace user message** (lines 109–119) with context-only content (headline, summary, industry, company, values) — no formatting instructions (the system prompt handles that).
-- **Add `sanitizeNote()`**: Strip lines containing `<think>`, `JRC EDIT`, `draft`, `Here is`, system scaffolding.
-- **Add `validateNote()`**: Check ≤120 words, scan for banned phrases, verify final line ends with `?`. If fail → return fallback.
-- **Rewrite `generateTemplateNote()`**: 3 rotating spec-compliant fallbacks, each ≤120 words, ending with a sharp question.
+## What We Build
 
-#### 3. `src/components/dashboard/JackyeMessage.tsx`
-- Add artifact-detection filter before render (check for `<think>`, `JRC EDIT`, draft markers). If contaminated → show "Still reviewing today's signal. Check back shortly."
-- Render signature ("Always in your corner — Jackye") as a static element — not part of AI output.
-- **No layout/styling changes.**
+### 1. New table: `user_recent_company_views`
+A lightweight per-user audit trail. Columns: `id`, `user_id`, `company_id`, `company_name`, `viewed_at`. RLS: users can only read/write their own rows. Upsert on `(user_id, company_id)` so repeated views just update `viewed_at`.
 
-#### 4. `src/services/JackyeNoteService.ts`
-- Rewrite `fallbackNote()` with 3 rotating notes matching the 4-beat structure, each ≤120 words, ending with a question. No signature in note text.
+### 2. Update `useScanTracker` to write to the new table
+Switch from `company_scan_events` (admin-only) to `user_recent_company_views`. Upsert instead of insert. Invalidate the dashboard query on success so the section refreshes live.
 
-### What will NOT change
-- Dashboard layout, spacing, typography, component order
-- Greeting, date, gold separator, Like/Save buttons
-- Any other page, route, or component
+### 3. Wire tracking on all audit routes
+Currently only runs on `CompanyProfile`. Add it to:
+- `CompanyDossier` (the `/dossier/:slug` page)
+- `Check` component (when a company is selected)
 
-### Files
+### 4. Update the dashboard to read from the new table
+Change `useDashboardBriefing` to query `user_recent_company_views` joined with `companies` (for name, slug, score, industry) instead of relying on `tracked_companies`. Keep tracked companies as a secondary source so both paid tracking AND casual browsing show up.
 
-| File | Scope |
-|------|-------|
-| `supabase/functions/_shared/jrc-edit-prompt.ts` | Replace lines 139–159 with standalone prompt |
-| `supabase/functions/generate-jackye-note/index.ts` | New user message, sanitize+validate, new fallbacks |
-| `src/components/dashboard/JackyeMessage.tsx` | Sanitization filter, static signature |
-| `src/services/JackyeNoteService.ts` | Spec-compliant rotating fallbacks |
+### 5. Keep existing empty state copy
+"Your lens is clear" / "No companies audited yet" stays. It will just actually populate now.
+
+## Technical Detail
+
+- **Migration**: Creates `user_recent_company_views` with RLS policies for authenticated users (SELECT/INSERT/UPDATE own rows only), plus a unique constraint on `(user_id, company_id)` for upsert.
+- **`use-scan-tracker.ts`**: Switches target table, adds `user_id` field, uses upsert, invalidates `dashboard-briefing` query key.
+- **`use-dashboard-briefing.ts`**: Adds a parallel query to `user_recent_company_views` joined with `companies`. Merges with tracked companies, deduplicates by company ID, sorts by most recent view.
+- **Dossier/Check pages**: Import and call `useScanTracker` with the company ID and name.
+- **No backfill**: Past visits won't appear. First time you open any company after this ships, it starts recording.
 

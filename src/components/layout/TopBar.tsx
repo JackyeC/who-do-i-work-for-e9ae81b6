@@ -5,7 +5,7 @@ import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
-import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio, CreditCard, Building2 } from "lucide-react";
+import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio, CreditCard, Building2, FileSearch } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaChip } from "@/components/PersonaChip";
 import { LogoMark } from "@/components/brand/LogoMark";
@@ -38,10 +38,10 @@ export const MAIN_SECTIONS = [
     subItems: [],
   },
   {
-    id: "receipts",
-    label: "Receipts",
-    path: "/receipts",
-    matchPaths: ["/receipts"],
+    id: "work-signal",
+    label: "The Work Signal",
+    path: "/newsletter",
+    matchPaths: ["/newsletter"],
     subItems: [],
   },
   {
@@ -138,6 +138,7 @@ export function TopBar() {
   /* Primary nav items (desktop) */
   const PRIMARY_NAV = [
     { id: "check", label: "Check a Company", icon: Building2, path: "/offer-check", matchPaths: ["/offer-check"] },
+    { id: "work-signal", label: "The Work Signal", icon: FileSearch, path: "/newsletter", matchPaths: ["/newsletter"] },
     { id: "intelligence", label: "My Intel", icon: BarChart3, onClick: handleMyIntelligence, matchPaths: ["/dashboard"] },
     { id: "signals", label: "Signals", icon: Radio, path: "/signal-alerts", matchPaths: ["/signal-alerts"] },
     { id: "career-map", label: "Career Map", icon: Compass, path: "/career-intelligence", matchPaths: ["/career-intelligence", "/career-map"], auth: true },

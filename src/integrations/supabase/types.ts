@@ -473,6 +473,39 @@ export type Database = {
           },
         ]
       }
+      audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
       audit_requests: {
         Row: {
           company_name: string
@@ -993,6 +1026,8 @@ export type Database = {
       }
       briefing_signals: {
         Row: {
+          dna_profile: string | null
+          email: string | null
           id: string
           is_active: boolean
           is_pinned: boolean
@@ -1002,10 +1037,13 @@ export type Database = {
           source_bias: string
           source_name: string
           source_url: string | null
+          submitted_at: string | null
           summary: string | null
           title: string
         }
         Insert: {
+          dna_profile?: string | null
+          email?: string | null
           id?: string
           is_active?: boolean
           is_pinned?: boolean
@@ -1015,10 +1053,13 @@ export type Database = {
           source_bias?: string
           source_name: string
           source_url?: string | null
+          submitted_at?: string | null
           summary?: string | null
           title: string
         }
         Update: {
+          dna_profile?: string | null
+          email?: string | null
           id?: string
           is_active?: boolean
           is_pinned?: boolean
@@ -1028,6 +1069,7 @@ export type Database = {
           source_bias?: string
           source_name?: string
           source_url?: string | null
+          submitted_at?: string | null
           summary?: string | null
           title?: string
         }
@@ -4788,6 +4830,54 @@ export type Database = {
         }
         Relationships: []
       }
+      congressional_news: {
+        Row: {
+          created_at: string
+          id: string
+          is_workplace_relevant: boolean | null
+          matched_company_ids: string[] | null
+          matched_keywords: string[] | null
+          published_at: string | null
+          raw_content: string | null
+          relevance_tags: string[] | null
+          source_feed: string
+          source_url: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_workplace_relevant?: boolean | null
+          matched_company_ids?: string[] | null
+          matched_keywords?: string[] | null
+          published_at?: string | null
+          raw_content?: string | null
+          relevance_tags?: string[] | null
+          source_feed: string
+          source_url?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_workplace_relevant?: boolean | null
+          matched_company_ids?: string[] | null
+          matched_keywords?: string[] | null
+          published_at?: string | null
+          raw_content?: string | null
+          relevance_tags?: string[] | null
+          source_feed?: string
+          source_url?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       connection_company_map: {
         Row: {
           company_id: string
@@ -4903,6 +4993,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      contact_submissions: {
+        Row: {
+          created_at: string | null
+          email: string
+          email_sent: boolean | null
+          id: string
+          message: string
+          name: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          email_sent?: boolean | null
+          id?: string
+          message: string
+          name: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          email_sent?: boolean | null
+          id?: string
+          message?: string
+          name?: string
+          reason?: string | null
+        }
+        Relationships: []
       }
       contradiction_signals: {
         Row: {
@@ -5817,6 +5937,68 @@ export type Database = {
           },
         ]
       }
+      federal_register_rules: {
+        Row: {
+          abstract: string | null
+          agency_names: string[] | null
+          company_id: string
+          created_at: string
+          document_number: string
+          document_type: string
+          effective_date: string | null
+          html_url: string | null
+          id: string
+          matched_issue_codes: string[] | null
+          pdf_url: string | null
+          publication_date: string | null
+          raw_payload: Json | null
+          relevance_score: number | null
+          title: string
+        }
+        Insert: {
+          abstract?: string | null
+          agency_names?: string[] | null
+          company_id: string
+          created_at?: string
+          document_number: string
+          document_type?: string
+          effective_date?: string | null
+          html_url?: string | null
+          id?: string
+          matched_issue_codes?: string[] | null
+          pdf_url?: string | null
+          publication_date?: string | null
+          raw_payload?: Json | null
+          relevance_score?: number | null
+          title: string
+        }
+        Update: {
+          abstract?: string | null
+          agency_names?: string[] | null
+          company_id?: string
+          created_at?: string
+          document_number?: string
+          document_type?: string
+          effective_date?: string | null
+          html_url?: string | null
+          id?: string
+          matched_issue_codes?: string[] | null
+          pdf_url?: string | null
+          publication_date?: string | null
+          raw_payload?: Json | null
+          relevance_score?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "federal_register_rules_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       founder_notes: {
         Row: {
           created_at: string
@@ -6158,6 +6340,27 @@ export type Database = {
           },
         ]
       }
+      industry_topic_map: {
+        Row: {
+          id: string
+          industry: string
+          topic_keywords: string[]
+          topic_tag: string
+        }
+        Insert: {
+          id?: string
+          industry: string
+          topic_keywords?: string[]
+          topic_tag: string
+        }
+        Update: {
+          id?: string
+          industry?: string
+          topic_keywords?: string[]
+          topic_tag?: string
+        }
+        Relationships: []
+      }
       insider_testimonials: {
         Row: {
           approved_at: string | null
@@ -6366,6 +6569,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      intelligence_requests: {
+        Row: {
+          concerns: string | null
+          created_at: string
+          email: string
+          employer_name: string
+          id: string
+          job_posting_url: string | null
+          location: string | null
+          role_title: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          concerns?: string | null
+          created_at?: string
+          email: string
+          employer_name: string
+          id?: string
+          job_posting_url?: string | null
+          location?: string | null
+          role_title: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          concerns?: string | null
+          created_at?: string
+          email?: string
+          employer_name?: string
+          id?: string
+          job_posting_url?: string | null
+          location?: string | null
+          role_title?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       interview_flinch_signals: {
         Row: {
@@ -7365,6 +7610,69 @@ export type Database = {
         }
         Relationships: []
       }
+      nonprofit_dark_money: {
+        Row: {
+          city: string | null
+          created_at: string
+          ein: string
+          fetched_at: string
+          filing_year: number | null
+          form_type: string | null
+          id: string
+          ntee_code: string | null
+          org_name: string
+          political_spending: number | null
+          raw_payload: Json | null
+          ruling_date: string | null
+          state: string | null
+          tax_period: string | null
+          total_assets: number | null
+          total_contributions: number | null
+          total_expenses: number | null
+          total_revenue: number | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          ein: string
+          fetched_at?: string
+          filing_year?: number | null
+          form_type?: string | null
+          id?: string
+          ntee_code?: string | null
+          org_name: string
+          political_spending?: number | null
+          raw_payload?: Json | null
+          ruling_date?: string | null
+          state?: string | null
+          tax_period?: string | null
+          total_assets?: number | null
+          total_contributions?: number | null
+          total_expenses?: number | null
+          total_revenue?: number | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          ein?: string
+          fetched_at?: string
+          filing_year?: number | null
+          form_type?: string | null
+          id?: string
+          ntee_code?: string | null
+          org_name?: string
+          political_spending?: number | null
+          raw_payload?: Json | null
+          ruling_date?: string | null
+          state?: string | null
+          tax_period?: string | null
+          total_assets?: number | null
+          total_contributions?: number | null
+          total_expenses?: number | null
+          total_revenue?: number | null
+        }
+        Relationships: []
+      }
       offer_checks: {
         Row: {
           company_id: string
@@ -8071,6 +8379,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      personal_work_logs: {
+        Row: {
+          created_at: string
+          id: string
+          incident_date: string
+          incident_time: string | null
+          original_text: string | null
+          participants: string
+          related_policy: string | null
+          rewritten_text: string | null
+          updated_at: string
+          user_id: string
+          verbatim_quote: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          incident_date: string
+          incident_time?: string | null
+          original_text?: string | null
+          participants?: string
+          related_policy?: string | null
+          rewritten_text?: string | null
+          updated_at?: string
+          user_id: string
+          verbatim_quote?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          incident_date?: string
+          incident_time?: string | null
+          original_text?: string | null
+          participants?: string
+          related_policy?: string | null
+          rewritten_text?: string | null
+          updated_at?: string
+          user_id?: string
+          verbatim_quote?: string
+        }
+        Relationships: []
       }
       personalized_news: {
         Row: {
@@ -8983,6 +9333,7 @@ export type Database = {
           is_controversy: boolean | null
           jackye_take: string
           poster_data: Json
+          poster_url: string | null
           published_at: string | null
           receipt_connection: string
           sentiment_score: number | null
@@ -9006,6 +9357,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take: string
           poster_data: Json
+          poster_url?: string | null
           published_at?: string | null
           receipt_connection: string
           sentiment_score?: number | null
@@ -9029,6 +9381,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take?: string
           poster_data?: Json
+          poster_url?: string | null
           published_at?: string | null
           receipt_connection?: string
           sentiment_score?: number | null
@@ -11493,6 +11846,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_recent_company_views: {
+        Row: {
+          company_id: string
+          company_name: string
+          id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          company_id: string
+          company_name: string
+          id?: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          company_id?: string
+          company_name?: string
+          id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_recent_company_views_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -11516,18 +11901,30 @@ export type Database = {
           additional_slots: number | null
           current_period_end: string | null
           plan_id: string | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
           additional_slots?: number | null
           current_period_end?: string | null
           plan_id?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
           additional_slots?: number | null
           current_period_end?: string | null
           plan_id?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
@@ -11949,6 +12346,114 @@ export type Database = {
         }
         Relationships: []
       }
+      wdiwf_congressional_data: {
+        Row: {
+          bill_number: string | null
+          bill_title: string | null
+          bill_type: string | null
+          bioguide_id: string | null
+          chamber: string | null
+          congress_number: number
+          created_at: string
+          data_type: string
+          district: string | null
+          fetched_at: string
+          id: string
+          member_name: string | null
+          party: string | null
+          raw_payload: Json | null
+          sponsor_bioguide_id: string | null
+          state: string | null
+          vote_date: string | null
+          vote_number: number | null
+          vote_question: string | null
+          vote_result: string | null
+        }
+        Insert: {
+          bill_number?: string | null
+          bill_title?: string | null
+          bill_type?: string | null
+          bioguide_id?: string | null
+          chamber?: string | null
+          congress_number?: number
+          created_at?: string
+          data_type: string
+          district?: string | null
+          fetched_at?: string
+          id?: string
+          member_name?: string | null
+          party?: string | null
+          raw_payload?: Json | null
+          sponsor_bioguide_id?: string | null
+          state?: string | null
+          vote_date?: string | null
+          vote_number?: number | null
+          vote_question?: string | null
+          vote_result?: string | null
+        }
+        Update: {
+          bill_number?: string | null
+          bill_title?: string | null
+          bill_type?: string | null
+          bioguide_id?: string | null
+          chamber?: string | null
+          congress_number?: number
+          created_at?: string
+          data_type?: string
+          district?: string | null
+          fetched_at?: string
+          id?: string
+          member_name?: string | null
+          party?: string | null
+          raw_payload?: Json | null
+          sponsor_bioguide_id?: string | null
+          state?: string | null
+          vote_date?: string | null
+          vote_number?: number | null
+          vote_question?: string | null
+          vote_result?: string | null
+        }
+        Relationships: []
+      }
+      wdiwf_quiz_results: {
+        Row: {
+          answers: Json
+          id: string
+          meta_flags: Json | null
+          result_profile: string
+          result_secondary: string | null
+          scores: Json | null
+          session_id: string
+          slider_value: number | null
+          submitted_at: string
+          user_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          id?: string
+          meta_flags?: Json | null
+          result_profile: string
+          result_secondary?: string | null
+          scores?: Json | null
+          session_id?: string
+          slider_value?: number | null
+          submitted_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          id?: string
+          meta_flags?: Json | null
+          result_profile?: string
+          result_secondary?: string | null
+          scores?: Json | null
+          session_id?: string
+          slider_value?: number | null
+          submitted_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       weekly_issues: {
         Row: {
           created_at: string
@@ -12356,12 +12861,17 @@ export type Database = {
           value_tags: string[]
         }[]
       }
+      has_active_subscription: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      invoke_edge_function: {
+        Args: { body?: Json; fn_name: string }
+        Returns: number
       }
       resolve_name_variants: { Args: { _name: string }; Returns: string[] }
       score_news_for_user: {

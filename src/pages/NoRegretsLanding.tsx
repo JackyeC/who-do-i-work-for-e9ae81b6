@@ -1,215 +1,365 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
+import { useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { SectionReveal } from "@/components/landing/SectionReveal";
-import { ArrowRight, Play } from "lucide-react";
-import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
-import { ColdOpenPreview } from "@/components/no-regrets-game/ColdOpenPreview";
-import heroImage from "@/assets/no-regrets-hero.jpg";
-import receiptsImage from "@/assets/no-regrets-receipts.jpg";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  ShieldCheck,
+  ShieldAlert,
+  AlertTriangle,
+  XCircle,
+  ArrowRight,
+  Search,
+  FileSearch,
+  Target,
+  Loader2,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const EPISODES = [
-  {
-    number: "01",
-    title: "The Shock",
-    question: "Who are you when the floor drops?",
-    description:
-      "Friday afternoon. Your badge stops working. HR is smiling. Your manager won't make eye contact. You have rent due in eleven days, a kid on your insurance, and three very different instincts screaming at once. Which one do you listen to?",
-  },
-  {
-    number: "02",
-    title: "The Offer",
-    question: "What kind of company lies to you best?",
-    description:
-      "Three offers arrive the same week. One pays 40% more but the Glassdoor reviews read like hostage letters. One has a beautiful mission statement and six months of runway. One has a name your parents would recognize — and an attrition rate they wouldn't. You have 48 hours.",
-  },
-  {
-    number: "03",
-    title: "The Cost",
-    question: "What did that choice actually cost you?",
-    description:
-      "Six months in. The warning signs you rationalized on day one are now your morning commute. The thing you told yourself you could live with is the thing keeping you up at 2 a.m. Something has to break. The question is whether it's the job or you.",
-  },
-];
+/* ─────────────────────────── types ─────────────────────────── */
 
-const FORCES = [
-  { emoji: "💰", name: "Money", detail: "Not wealth. Survival. Can you cover rent, insurance, and the life you promised someone? Or are you slowly drowning while telling everyone you're fine?" },
-  { emoji: "🛡️", name: "Safety", detail: "Not comfort. Exposure. If this company lays off your team tomorrow, what's actually underneath you? Severance? Savings? Nothing?" },
-  { emoji: "🧠", name: "Sanity", detail: "Not happiness. Capacity. How much of yourself are you burning to keep this job running? And what happens to the rest of your life when there's nothing left?" },
-  { emoji: "⚡", name: "Power", detail: "Not ambition. Leverage. Can you say no? Can you negotiate? Or are you just grateful they haven't replaced you yet?" },
-];
+type Verdict = "strong-fit" | "mixed-signals" | "proceed-with-caution" | "high-risk";
+
+interface SignalTranslation {
+  signal: string;
+  pattern: string;
+  consequence: string;
+  severity: "positive" | "neutral" | "warning" | "critical";
+}
+
+interface FitProfile {
+  worksFor: string[];
+  doesntWorkFor: string[];
+}
+
+/* ─────────────────────────── verdict engine ─────────────────────────── */
+
+const VERDICT_META: Record<Verdict, { label: string; color: string; icon: typeof ShieldCheck; description: string }> = {
+  "strong-fit": {
+    label: "Strong Fit",
+    color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
+    icon: ShieldCheck,
+    description: "Signals are broadly positive. Public record shows transparency, stable workforce practices, and alignment with stated values.",
+  },
+  "mixed-signals": {
+    label: "Mixed Signals",
+    color: "text-yellow-400 border-yellow-500/30 bg-yellow-500/10",
+    icon: ShieldAlert,
+    description: "Some signals are encouraging, others warrant closer review. Worth investigating further before committing.",
+  },
+  "proceed-with-caution": {
+    label: "Proceed With Caution",
+    color: "text-orange-400 border-orange-500/30 bg-orange-500/10",
+    icon: AlertTriangle,
+    description: "Multiple flags in the public record. The data doesn't say don't apply — it says know exactly what you're walking into.",
+  },
+  "high-risk": {
+    label: "High Risk",
+    color: "text-red-400 border-red-500/30 bg-red-500/10",
+    icon: XCircle,
+    description: "Significant concerns across multiple categories. Enforcement actions, concentrated influence, or transparency gaps suggest elevated career risk.",
+  },
+};
+
+function computeVerdict(company: any, claims: any[], signals: any[]): Verdict {
+  const score = company?.civic_footprint_score ?? 50;
+  const claimCount = claims.length;
+  const highSeverity = signals.filter((s: any) => s.severity === "critical" || s.severity === "high").length;
+
+  if (score >= 65 && highSeverity === 0 && claimCount >= 3) return "strong-fit";
+  if (score >= 45 && highSeverity <= 2) return "mixed-signals";
+  if (score >= 30 || highSeverity <= 4) return "proceed-with-caution";
+  return "high-risk";
+}
+
+function buildTranslations(company: any, claims: any[], signals: any[]): SignalTranslation[] {
+  const translations: SignalTranslation[] = [];
+
+  // Political spending concentration
+  const pacSpending = company?.total_pac_spending ?? 0;
+  if (pacSpending > 100000) {
+    translations.push({
+      signal: `$${(pacSpending / 1000000).toFixed(1)}M in PAC spending`,
+      pattern: "Concentrated political investment suggests active policy influence.",
+      consequence: "Company direction may shift with political cycles. Policies on labor, benefits, or remote work could change based on who's in office.",
+      severity: pacSpending > 1000000 ? "critical" : "warning",
+    });
+  }
+
+  // Lobbying spend
+  const lobbySpend = company?.lobbying_spend ?? 0;
+  if (lobbySpend > 500000) {
+    translations.push({
+      signal: `$${(lobbySpend / 1000000).toFixed(1)}M in lobbying expenditures`,
+      pattern: "Significant resources directed at shaping regulation.",
+      consequence: "The company actively works to influence rules that affect workers, consumers, or the environment. Your workplace conditions may be shaped by these priorities.",
+      severity: "warning",
+    });
+  }
+
+  // High-severity accountability signals
+  const criticalSignals = signals.filter((s: any) => s.severity === "critical" || s.severity === "high");
+  if (criticalSignals.length > 0) {
+    const topSignal = criticalSignals[0];
+    translations.push({
+      signal: topSignal.headline || "Enforcement or accountability flag detected",
+      pattern: `${criticalSignals.length} high-severity signal${criticalSignals.length > 1 ? "s" : ""} in the public record.`,
+      consequence: "Active enforcement actions or unresolved accountability issues can affect team stability, company reputation, and your professional trajectory.",
+      severity: "critical",
+    });
+  }
+
+  // Positive: transparency
+  if (company?.civic_footprint_score >= 60) {
+    translations.push({
+      signal: `Civic footprint score: ${company.civic_footprint_score}/100`,
+      pattern: "Above-average transparency in political spending and corporate governance.",
+      consequence: "Companies that disclose voluntarily tend to have stronger internal accountability. Fewer surprises after you join.",
+      severity: "positive",
+    });
+  }
+
+  // Claims-based insight
+  const positiveClaims = claims.filter((c: any) => c.claim_type === "positive" || c.evidence_type === "verified");
+  if (positiveClaims.length >= 3) {
+    translations.push({
+      signal: `${positiveClaims.length} verified positive claims on record`,
+      pattern: "Consistent public evidence of stated commitments being honored.",
+      consequence: "When a company's public claims hold up under scrutiny, the offer you get is more likely to match the reality you experience.",
+      severity: "positive",
+    });
+  }
+
+  // If very few signals
+  if (translations.length === 0) {
+    translations.push({
+      signal: "Limited public data available",
+      pattern: "This company has a thin public record — not enough signals to form strong conclusions.",
+      consequence: "Ask more questions during the interview. Request specifics on retention, comp equity, and decision-making structure. Absence of data isn't safety.",
+      severity: "neutral",
+    });
+  }
+
+  return translations.slice(0, 3);
+}
+
+function buildFitProfile(company: any, claims: any[], signals: any[]): FitProfile {
+  const score = company?.civic_footprint_score ?? 50;
+  const pacHigh = (company?.total_pac_spending ?? 0) > 500000;
+  const hasEnforcement = signals.some((s: any) => s.signal_category === "enforcement" || s.severity === "critical");
+
+  const worksFor: string[] = [];
+  const doesntWorkFor: string[] = [];
+
+  if (score >= 55) {
+    worksFor.push("People who value employer transparency and public accountability");
+  } else {
+    doesntWorkFor.push("People who need clear visibility into how leadership makes decisions");
+  }
+
+  if (!pacHigh) {
+    worksFor.push("People who prefer employers with limited political exposure");
+  } else {
+    doesntWorkFor.push("People who want their employer to stay out of political spending");
+  }
+
+  if (!hasEnforcement) {
+    worksFor.push("People who prioritize stable, low-risk work environments");
+  } else {
+    doesntWorkFor.push("People who need confidence that workplace protections are consistently enforced");
+  }
+
+  if (company?.employee_count && parseInt(company.employee_count) > 10000) {
+    worksFor.push("People seeking structure, benefits, and established career ladders");
+  }
+
+  if (company?.is_startup) {
+    worksFor.push("People energized by growth-stage environments and willing to accept ambiguity");
+    doesntWorkFor.push("People who need predictable comp progression and long-term stability");
+  }
+
+  return {
+    worksFor: worksFor.slice(0, 3),
+    doesntWorkFor: doesntWorkFor.slice(0, 3),
+  };
+}
+
+/* ─────────────────────────── component ─────────────────────────── */
 
 export default function NoRegretsLanding() {
-  useEffect(() => { trackNoRegrets("landing_page_view"); }, []);
+  const [searchParams] = useSearchParams();
+  const companySlug = searchParams.get("company");
+
+  // Fetch company
+  const { data: company, isLoading: companyLoading } = useQuery({
+    queryKey: ["checkpoint-company", companySlug],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, industry, state, civic_footprint_score, total_pac_spending, lobbying_spend, employee_count, is_startup, is_publicly_traded, confidence_rating, corporate_pac_exists, description")
+        .eq("slug", companySlug!)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!companySlug,
+  });
+
+  // Fetch claims
+  const { data: claims = [] } = useQuery({
+    queryKey: ["checkpoint-claims", company?.id],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("company_claims")
+        .select("claim_text, claim_type, evidence_type, confidence_score, source_label")
+        .eq("company_id", company!.id)
+        .eq("is_active", true)
+        .order("confidence_score", { ascending: false })
+        .limit(20);
+      return data || [];
+    },
+    enabled: !!company?.id,
+  });
+
+  // Fetch accountability signals
+  const { data: signals = [] } = useQuery({
+    queryKey: ["checkpoint-signals", company?.id],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("accountability_signals")
+        .select("headline, severity, signal_category, signal_type, source_type")
+        .eq("company_id", company!.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      return data || [];
+    },
+    enabled: !!company?.id,
+  });
+
+  const verdict = useMemo(() => company ? computeVerdict(company, claims, signals) : null, [company, claims, signals]);
+  const translations = useMemo(() => company ? buildTranslations(company, claims, signals) : [], [company, claims, signals]);
+  const fitProfile = useMemo(() => company ? buildFitProfile(company, claims, signals) : null, [company, claims, signals]);
+  const verdictMeta = verdict ? VERDICT_META[verdict] : null;
+
+  // No company selected — show entry point
+  if (!companySlug) {
+    return (
+      <>
+        <Helmet>
+          <title>No-Regrets Decision Checkpoint | WDIWF</title>
+          <meta name="description" content="Before you sign, accept, or commit — run the decision checkpoint. Know exactly what you're walking into." />
+        </Helmet>
+        <div className="min-h-screen bg-background flex items-center justify-center px-6">
+          <div className="max-w-md text-center">
+            <SectionReveal>
+              <div className="w-12 h-12 rounded-full border border-primary/30 bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <FileSearch className="w-5 h-5 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mb-3">No-Regrets Checkpoint</h1>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-8">
+                This page synthesizes everything we know about a company into one decision:
+                should you move forward, or pause?
+              </p>
+              <p className="text-xs text-muted-foreground/60 mb-6">
+                Search a company first, then return here from their dossier.
+              </p>
+              <Button asChild>
+                <Link to="/check" className="gap-2">
+                  <Search className="w-4 h-4" /> Search a company
+                </Link>
+              </Button>
+            </SectionReveal>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (companyLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!company) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">Company not found.</p>
+          <Button asChild variant="outline">
+            <Link to="/check">Search again</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const VerdictIcon = verdictMeta?.icon ?? ShieldAlert;
 
   return (
     <>
       <Helmet>
-        <title>No-Regrets Career Story | WDIWF</title>
-        <meta
-          name="description"
-          content="Play the career story you don't want to live. A 3-episode interactive thriller about layoffs, bad offers, and the choices that cost people careers — powered by WDIWF employer intelligence."
-        />
+        <title>Decision Checkpoint: {company.name} | WDIWF</title>
+        <meta name="description" content={`No-Regrets Decision Checkpoint for ${company.name}. Verdict, signal analysis, and fit assessment.`} />
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        {/* ── Hero ── */}
-        <section className="relative overflow-hidden border-b border-border/20">
-          <img
-            src={heroImage}
-            alt="Empty office at night, a single desk lamp glowing against a city skyline"
-            width={1920}
-            height={800}
-            className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background pointer-events-none" />
-          <div className="max-w-3xl mx-auto px-5 pt-24 pb-20 md:pt-32 md:pb-28 text-center relative z-10">
-            <SectionReveal>
-              <p className="text-[10px] font-mono uppercase tracking-[0.35em] text-primary/70 mb-5">
-                A WDIWF story experience
+        {/* ── Header context ── */}
+        <div className="border-b border-border/30 bg-card/40">
+          <div className="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60">
+                Decision Checkpoint
               </p>
-            </SectionReveal>
-            <SectionReveal delay={0.1}>
-              <h1 className="text-3xl md:text-5xl font-display font-bold text-foreground leading-[1.15] tracking-tight mb-6">
-                Play the career story you<br className="hidden md:block" /> don't want to live.
-              </h1>
-            </SectionReveal>
-            <SectionReveal delay={0.2}>
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl mx-auto mb-10">
-                You get laid off. Three offers land. Each one is hiding something.
-                You pick the one that feels safest — and six months later, you're wondering
-                how you ended up here again. This is that story. Except this time,
-                you get to see what it costs before you sign.
+              <h1 className="text-lg font-bold text-foreground">{company.name}</h1>
+              <p className="text-xs text-muted-foreground">
+                {company.industry} · {company.state}
               </p>
-            </SectionReveal>
-            <SectionReveal delay={0.3}>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button asChild variant="premium" size="lg" onClick={() => trackNoRegrets("landing_primary_cta_click", { cta_destination: "/no-regrets-game" })}>
-                  <Link to="/no-regrets-game" className="gap-2">
-                    <Play className="w-4 h-4" /> Start Season 1
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" onClick={() => trackNoRegrets("landing_secondary_cta_click", { cta_destination: "/how-it-works" })}>
-                  <Link to="/how-it-works">Explore WDIWF</Link>
-                </Button>
-              </div>
-            </SectionReveal>
-          </div>
-        </section>
-
-        {/* ── Cold Open Preview ── */}
-        <section className="border-b border-border/20">
-          <div className="max-w-3xl mx-auto px-5 py-16 md:py-20">
-            <SectionReveal>
-              <ColdOpenPreview />
-            </SectionReveal>
-          </div>
-        </section>
-
-        {/* ── Season structure ── */}
-        <section className="border-b border-border/20">
-          <div className="max-w-3xl mx-auto px-5 py-20 md:py-28">
-            <SectionReveal>
-              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-3">
-                Season 1 · Three Episodes
-              </p>
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-12">
-                Three decisions. Each one closes a door.
-              </h2>
-            </SectionReveal>
-
-            <div className="space-y-6">
-              {EPISODES.map((ep, i) => (
-                <SectionReveal key={ep.number} delay={i * 0.1}>
-                  <div className="rounded-xl border border-border/30 bg-card/40 p-5 md:p-7 flex gap-5 items-start">
-                    <span className="shrink-0 text-2xl md:text-3xl font-mono font-bold text-primary/30 leading-none pt-1">
-                      {ep.number}
-                    </span>
-                    <div className="space-y-2 min-w-0">
-                      <h3 className="text-lg font-display font-bold text-foreground">{ep.title}</h3>
-                      <p className="text-xs font-mono text-primary/70 italic">{ep.question}</p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{ep.description}</p>
-                    </div>
-                  </div>
-                </SectionReveal>
-              ))}
             </div>
+            <Button asChild variant="outline" size="sm">
+              <Link to={`/dossier/${company.slug}`} className="gap-1.5 text-xs">
+                Full dossier <ArrowRight className="w-3 h-3" />
+              </Link>
+            </Button>
           </div>
-        </section>
+        </div>
 
-        {/* ── Four forces ── */}
+        {/* ── 1. VERDICT ── */}
         <section className="border-b border-border/20">
-          <div className="max-w-3xl mx-auto px-5 py-20 md:py-28">
+          <div className="max-w-2xl mx-auto px-5 py-14 md:py-20">
             <SectionReveal>
-              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-3">
-                What shapes your choices
+              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-6">
+                Decision Signal
               </p>
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
-                Four pressures. You can't max them all.
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-xl mb-12">
-                Every career decision you make under stress is a trade between these four forces.
-                Most people don't realize which one they're sacrificing until it's already gone.
-                The game makes you watch it happen in real time.
-              </p>
-            </SectionReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {FORCES.map((f, i) => (
-                <SectionReveal key={f.name} delay={i * 0.08}>
-                  <div className="rounded-xl border border-border/30 bg-card/40 p-5 space-y-2">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-xl">{f.emoji}</span>
-                      <span className="text-sm font-display font-bold text-foreground uppercase tracking-wide">{f.name}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{f.detail}</p>
+              <div className={cn(
+                "border rounded-lg p-6 md:p-8",
+                verdictMeta?.color
+              )}>
+                <div className="flex items-start gap-4">
+                  <div className="shrink-0 mt-0.5">
+                    <VerdictIcon className="w-7 h-7" />
                   </div>
-                </SectionReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Powered by receipts ── */}
-        <section className="border-b border-border/20">
-          <div className="max-w-3xl mx-auto px-5 py-20 md:py-28">
-            <SectionReveal>
-              <div className="rounded-xl border border-primary/15 bg-card/40 overflow-hidden">
-                <div className="px-5 py-3 border-b border-border/20 flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-                  <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary/70">
-                    Powered by Follow The Money
-                  </p>
-                </div>
-                <div className="p-5 md:p-7 space-y-4 md:flex md:gap-6 md:items-start">
-                  <img
-                    src={receiptsImage}
-                    alt="Stack of dossier files on a dark desk"
-                    loading="lazy"
-                    width={800}
-                    height={512}
-                    className="hidden md:block w-36 h-auto rounded-lg border border-border/20 opacity-80 shrink-0"
-                  />
-                  <div className="space-y-4">
-                  <h2 className="text-lg md:text-xl font-display font-bold text-foreground">
-                    Fiction built on public records.
-                  </h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    The companies in this story are invented. The behavior is not.
-                    Every archetype, every warning sign, every consequence path is modeled on patterns
-                    WDIWF tracks across real employers — PAC spending, lobbying disclosures,
-                    OSHA violations, EEO-1 filings, executive donation histories, and labor signals
-                    that never make it into a job posting or a recruiter pitch.
-                  </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Most people job-search in panic. They skip the research. They trust the brand.
-                    They take the first thing that feels stable. This game exists because that instinct
-                    is usually wrong — and the data to prove it is already public. People just don't know where to look.
-                  </p>
-                  <p className="text-[11px] text-muted-foreground/50 italic border-l-2 border-primary/20 pl-3">
-                    The story is made up. The pattern recognition is real. The receipts are waiting.
-                  </p>
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2">{verdictMeta?.label}</h2>
+                    <p className="text-sm opacity-80 leading-relaxed">
+                      {verdictMeta?.description}
+                    </p>
+                    <div className="flex items-center gap-3 mt-4 flex-wrap">
+                      <Badge variant="outline" className="text-xs border-current/20">
+                        Civic score: {company.civic_footprint_score}/100
+                      </Badge>
+                      <Badge variant="outline" className="text-xs border-current/20">
+                        {signals.length} signals analyzed
+                      </Badge>
+                      <Badge variant="outline" className="text-xs border-current/20">
+                        {claims.length} claims on record
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -217,75 +367,135 @@ export default function NoRegretsLanding() {
           </div>
         </section>
 
-        {/* ── Why this exists ── */}
-        <section className="border-b border-border/20">
-          <div className="max-w-3xl mx-auto px-5 py-20 md:py-28">
+        {/* ── 2. WHAT THIS ACTUALLY MEANS ── */}
+        <section className="border-b border-border/20 bg-card/30">
+          <div className="max-w-2xl mx-auto px-5 py-14 md:py-20">
             <SectionReveal>
-              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-3">
-                Why this exists
+              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-2">
+                What This Actually Means
               </p>
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-5">
-                The wrong company at the wrong time will cost you years.
+              <h2 className="text-xl font-bold text-foreground mb-2">
+                Top signals, translated.
               </h2>
+              <p className="text-sm text-muted-foreground mb-8">
+                Signal → Pattern → What happens to you.
+              </p>
             </SectionReveal>
-            <SectionReveal delay={0.1}>
-              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed max-w-xl">
-                <p>
-                  People take jobs in panic and call it being decisive.
-                  They stay in toxic roles and call it loyalty.
-                  They ignore the public record on an employer because the offer letter felt like rescue.
-                </p>
-                <p>
-                  Then, eighteen months later, they're burned out, underpaid, or complicit in something
-                  they never agreed to — and they can't explain how they got there.
-                </p>
-                <p>
-                  We built this because the patterns are predictable. The warning signs
-                  are almost always visible in advance. And the cost of ignoring them
-                  isn't a bad quarter — it's your health, your savings, your reputation,
-                  or the version of your career you actually wanted.
-                </p>
-                <p className="text-primary/80 font-medium">
-                  The No-Regrets Career Story lets you live those patterns without paying for them.
-                </p>
-              </div>
-            </SectionReveal>
+
+            <div className="space-y-4">
+              {translations.map((t, i) => {
+                const borderColor =
+                  t.severity === "critical" ? "border-red-500/40" :
+                  t.severity === "warning" ? "border-orange-400/40" :
+                  t.severity === "positive" ? "border-emerald-500/40" :
+                  "border-border/40";
+                return (
+                  <SectionReveal key={i} delay={i * 0.08}>
+                    <div className={cn("border-l-2 pl-4 py-3 space-y-2", borderColor)}>
+                      <p className="text-sm font-semibold text-foreground">{t.signal}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        <span className="font-mono text-primary/60 text-[10px] uppercase tracking-wider mr-1.5">Pattern:</span>
+                        {t.pattern}
+                      </p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        <span className="font-mono text-primary/60 text-[10px] uppercase tracking-wider mr-1.5">What happens to you:</span>
+                        {t.consequence}
+                      </p>
+                    </div>
+                  </SectionReveal>
+                );
+              })}
+            </div>
           </div>
         </section>
 
-        {/* ── Final CTA ── */}
+        {/* ── 3. WHO THIS WORKS FOR ── */}
+        {fitProfile && (
+          <section className="border-b border-border/20">
+            <div className="max-w-2xl mx-auto px-5 py-14 md:py-20">
+              <SectionReveal>
+                <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-2">
+                  Fit Assessment
+                </p>
+                <h2 className="text-xl font-bold text-foreground mb-8">
+                  Who this works for — and who it doesn't.
+                </h2>
+              </SectionReveal>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <SectionReveal delay={0.05}>
+                  <div className="border border-emerald-500/20 bg-emerald-500/5 rounded-lg p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      <h3 className="text-sm font-bold text-foreground">This could work for you if…</h3>
+                    </div>
+                    <ul className="space-y-2.5">
+                      {fitProfile.worksFor.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                          <span className="text-emerald-400 mt-0.5 shrink-0">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </SectionReveal>
+
+                <SectionReveal delay={0.1}>
+                  <div className="border border-orange-500/20 bg-orange-500/5 rounded-lg p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <AlertTriangle className="w-4 h-4 text-orange-400" />
+                      <h3 className="text-sm font-bold text-foreground">This probably isn't for you if…</h3>
+                    </div>
+                    <ul className="space-y-2.5">
+                      {fitProfile.doesntWorkFor.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                          <span className="text-orange-400 mt-0.5 shrink-0">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </SectionReveal>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── 4. NO REGRETS CHECK ── */}
         <section>
-          <div className="max-w-3xl mx-auto px-5 py-20 md:py-28 text-center">
+          <div className="max-w-2xl mx-auto px-5 py-16 md:py-24 text-center">
             <SectionReveal>
-              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-3">
-                Season 1 · Ready
-              </p>
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
-                You already know someone who made this mistake.
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto mb-10">
-                Three episodes. Twelve minutes. One career you don't have to actually live through.
-                Find out which pressure you'd sacrifice — before a real offer forces you to choose.
-              </p>
-            </SectionReveal>
-            <SectionReveal delay={0.15}>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button asChild variant="premium" size="lg">
-                  <Link to="/no-regrets-game" className="gap-2">
-                    Start Season 1 <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link to="/follow-the-money">See real employer receipts</Link>
-                </Button>
+              <div className="border border-primary/20 bg-primary/5 rounded-lg p-8 md:p-10">
+                <Target className="w-6 h-6 text-primary mx-auto mb-4" />
+                <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/70 mb-3">
+                  No-Regrets Check
+                </p>
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3 max-w-md mx-auto leading-snug">
+                  If you knew all of this on day one — would you still say yes?
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto mb-8">
+                  That's the only question that matters. Everything above is public record.
+                  The company already knows it. Now you do too.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <Button asChild size="lg">
+                    <Link to={`/dossier/${company.slug}`} className="gap-2">
+                      Review full dossier <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg">
+                    <Link to="/check">Check another company</Link>
+                  </Button>
+                </div>
               </div>
             </SectionReveal>
 
-            {/* Footer stamp */}
-            <div className="mt-16 flex items-center justify-center gap-2">
+            {/* Attribution */}
+            <div className="mt-12 flex items-center justify-center gap-2">
               <div className="h-px w-8 bg-primary/20" />
               <p className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-widest">
-                WDIWF Intelligence · No Spin · No Rankings · Just Receipts
+                Facts over feelings · Public record · No spin
               </p>
               <div className="h-px w-8 bg-primary/20" />
             </div>

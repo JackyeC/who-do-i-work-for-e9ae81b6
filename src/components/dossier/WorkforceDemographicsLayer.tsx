@@ -94,7 +94,7 @@ export function WorkforceDemographicsLayer({ companyId, companyName }: Workforce
       <div className="text-center py-8">
         <Users className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
         <p className="text-caption text-muted-foreground">
-          No workforce demographics data available yet for {companyName}. Run a company scan to detect signals.
+          No workforce demographics data available yet for {companyName}. This section updates automatically when new signals are detected.
         </p>
       </div>
     );

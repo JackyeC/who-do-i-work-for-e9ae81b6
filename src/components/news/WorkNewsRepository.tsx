@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { useWorkNews, useWorkNewsCount, type WorkNewsArticle } from "@/hooks/use-work-news";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  AlertTriangle, ExternalLink, Lock, Newspaper, TrendingUp,
-  Scale, Brain, Megaphone, DollarSign, Users, Gavel
-} from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Lock, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { SignalStoryCard } from "@/components/work-signal/SignalStoryCard";
+import type { SignalStory, SignalCategory, HeatLevel } from "@/lib/work-signal-schema";
 
 interface WorkNewsRepositoryProps {
   className?: string;
@@ -19,99 +17,58 @@ interface WorkNewsRepositoryProps {
   maxFreeCards?: number;
 }
 
-const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  regulation: { label: "Regulation", icon: Scale, color: "text-civic-blue" },
-  future_of_work: { label: "Future of Work", icon: TrendingUp, color: "text-civic-green" },
-  worker_rights: { label: "Worker Rights", icon: Users, color: "text-civic-yellow" },
-  ai_workplace: { label: "AI & Work", icon: Brain, color: "text-violet-500" },
-  legislation: { label: "Legislation", icon: Gavel, color: "text-civic-yellow" },
-  layoffs: { label: "Layoffs", icon: AlertTriangle, color: "text-destructive" },
-  pay_equity: { label: "Pay Equity", icon: DollarSign, color: "text-civic-green" },
-  labor_organizing: { label: "Labor", icon: Megaphone, color: "text-rose-500" },
-  general: { label: "General", icon: Newspaper, color: "text-muted-foreground" },
+const CATEGORY_CONFIG: Record<string, { label: string }> = {
+  regulation: { label: "Regulation" },
+  future_of_work: { label: "Future of Work" },
+  worker_rights: { label: "Worker Rights" },
+  ai_workplace: { label: "AI & Work" },
+  legislation: { label: "Legislation" },
+  layoffs: { label: "Layoffs" },
+  pay_equity: { label: "Pay Equity" },
+  labor_organizing: { label: "Labor" },
+  general: { label: "General" },
 };
 
-const TONE_COLORS: Record<string, string> = {
-  "Very Positive": "bg-civic-green/10 text-civic-green border-civic-green/20",
-  "Positive": "bg-civic-green/10 text-civic-green border-civic-green/20",
-  "Neutral": "bg-muted text-muted-foreground border-border",
-  "Negative": "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20",
-  "Very Negative": "bg-destructive/10 text-destructive border-destructive/20",
-};
+/* ── Adapt WorkNewsArticle → SignalStory for poster cards ── */
+function toSignalStory(a: WorkNewsArticle): SignalStory {
+  const catMap: Record<string, SignalCategory> = {
+    layoffs: "c_suite",
+    worker_rights: "fine_print",
+    ai_workplace: "tech_stack",
+    regulation: "fine_print",
+    pay_equity: "paycheck",
+    future_of_work: "daily_grind",
+    legislation: "fine_print",
+    labor_organizing: "daily_grind",
+    general: "daily_grind",
+  };
 
-function NewsCard({ article, locked }: { article: WorkNewsArticle; locked: boolean }) {
-  const config = CATEGORY_CONFIG[article.category] || CATEGORY_CONFIG.general;
-  const Icon = config.icon;
-  const timeAgo = article.published_at
-    ? formatDistanceToNow(new Date(article.published_at), { addSuffix: true })
-    : "";
+  const sentimentToHeat = (s: number | null): HeatLevel => {
+    if (s === null) return "medium";
+    const abs = Math.abs(s);
+    return abs >= 8 ? "high" : abs >= 4 ? "medium" : "low";
+  };
 
-  return (
-    <Card className={cn(
-      "border-border/40 transition-all hover:border-border/80 group",
-      article.is_controversy && "border-destructive/20 hover:border-destructive/40",
-      locked && "opacity-60 blur-[2px] select-none pointer-events-none"
-    )}>
-      <CardContent className="p-4 space-y-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <Icon className={cn("w-4 h-4 shrink-0", config.color)} />
-            <Badge variant="outline" className="text-xs shrink-0">
-              {config.label}
-            </Badge>
-            {article.is_controversy && (
-              <Badge variant="destructive" className="text-xs shrink-0">
-                ⚠ Controversy
-              </Badge>
-            )}
-          </div>
-          {article.tone_label && (
-            <Badge
-              variant="outline"
-              className={cn("text-xs shrink-0", TONE_COLORS[article.tone_label])}
-            >
-              {article.tone_label}
-            </Badge>
-          )}
-        </div>
-
-        <h3 className="text-sm font-medium text-foreground leading-snug line-clamp-2">
-          {article.headline}
-        </h3>
-
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>{article.source_name || "Unknown source"}</span>
-          <span>{timeAgo}</span>
-        </div>
-
-        {/* Jackye's Take section */}
-        {article.jackye_take && article.jackye_take_approved ? (
-          <div className="mt-2 p-2.5 bg-primary/5 border border-primary/10 rounded">
-            <p className="text-xs font-mono uppercase text-primary tracking-wider mb-1">
-              Jackye's Take
-            </p>
-            <p className="text-xs text-foreground/80 leading-relaxed">{article.jackye_take}</p>
-          </div>
-        ) : !locked ? (
-          <div className="mt-2 p-2.5 bg-muted/50 border border-border/50 rounded flex items-center gap-2">
-            <Lock className="w-3 h-3 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">Jackye's Take — Pro members only</p>
-          </div>
-        ) : null}
-
-        {article.source_url && !locked && (
-          <a
-            href={article.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1"
-          >
-            Read full article <ExternalLink className="w-3 h-3" />
-          </a>
-        )}
-      </CardContent>
-    </Card>
-  );
+  return {
+    id: a.id,
+    company_name: null,
+    category: catMap[a.category] || "daily_grind",
+    signal_type: a.is_controversy ? "breaking" : "developing",
+    headline: a.headline,
+    heat_level: sentimentToHeat(a.sentiment_score),
+    source_name: a.source_name,
+    source_url: a.source_url,
+    receipt: null,
+    jrc_take: a.jackye_take_approved ? a.jackye_take : null,
+    why_it_matters_applicants: null,
+    why_it_matters_employees: null,
+    why_it_matters_execs: null,
+    before_you_say_yes: null,
+    published_at: a.published_at ?? new Date().toISOString(),
+    status: "live",
+    created_at: a.created_at ?? new Date().toISOString(),
+    updated_at: a.created_at ?? new Date().toISOString(),
+  };
 }
 
 export function WorkNewsRepository({ className, isPro = false, maxFreeCards = 3 }: WorkNewsRepositoryProps) {
@@ -123,8 +80,6 @@ export function WorkNewsRepository({ className, isPro = false, maxFreeCards = 3 
   const filtered = activeCategory === "all"
     ? articles
     : articles?.filter(a => a.category === activeCategory);
-
-  const categories = ["all", ...Object.keys(CATEGORY_CONFIG)];
 
   if (isLoading) {
     return (
@@ -173,15 +128,17 @@ export function WorkNewsRepository({ className, isPro = false, maxFreeCards = 3 
         </TabsList>
       </Tabs>
 
-      {/* News Cards */}
-      <div className="grid gap-3">
-        {filtered?.map((article, index) => (
-          <NewsCard
-            key={article.id}
-            article={article}
-            locked={!isPro && index >= maxFreeCards}
-          />
-        ))}
+      {/* Poster-Style News Cards */}
+      <div className="grid gap-4">
+        {filtered?.map((article, index) => {
+          const locked = !isPro && index >= maxFreeCards;
+          if (locked) return (
+            <div key={article.id} className="opacity-50 blur-[2px] select-none pointer-events-none">
+              <SignalStoryCard story={toSignalStory(article)} />
+            </div>
+          );
+          return <SignalStoryCard key={article.id} story={toSignalStory(article)} />;
+        })}
       </div>
 
       {/* Pro Upsell */}

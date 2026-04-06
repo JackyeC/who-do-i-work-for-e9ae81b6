@@ -952,7 +952,13 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;background:no
   </div>
 </div>
 
-<!-- Feedback button -->
+<!-- Deferred name capture banner (non-blocking, appears during gameplay) -->
+<div id="name-banner" style="display:none;position:fixed;bottom:48px;left:50%;transform:translateX(-50%);z-index:25;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 14px;display:none;align-items:center;gap:8px;animation:splashFade .4s ease-out;max-width:420px;width:90%">
+  <input type="text" id="banner-name" placeholder="Your name" style="flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--fg);font-size:13px;font-family:var(--font-display);outline:none;min-width:0" autocomplete="name">
+  <input type="email" id="banner-email" placeholder="Email" style="flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--fg);font-size:13px;font-family:var(--font-display);outline:none;min-width:0" autocomplete="email">
+  <button id="banner-save" style="background:var(--primary);color:var(--bg);font-weight:700;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer;border:none;white-space:nowrap;font-family:var(--font-mono)">Save</button>
+  <button id="banner-dismiss" style="color:var(--muted);font-size:16px;cursor:pointer;background:none;border:none;padding:0 4px">✕</button>
+</div>
 <div id="feedback-btn" title="Give feedback">
   💬 <span class="fb-text">Feedback? Be gentle, it's my first time 😅</span>
 </div>
@@ -1195,8 +1201,8 @@ document.getElementById('drive-cards').addEventListener('click',function(e){
   card.classList.add('selected');
   playerDrive=card.getAttribute('data-drive');
 
-  // Advance to name input step after brief delay
-  setTimeout(function(){ showNameStep() },600);
+  // Skip name step — go straight to auto-combine for faster first discovery
+  setTimeout(function(){ showOnboardScreen2() },300);
 });
 
 // Screen 1.5: Name input
@@ -1269,23 +1275,20 @@ function showOnboardScreen2(){
   document.getElementById('ac-result-name').textContent=combo.n;
   document.getElementById('onboard-2-desc').textContent='Let\'s see what happens when you combine '+infoA.name+' and '+infoB.name+'...';
 
-  // Animate: slide together after 800ms
+  // Compressed animation: merge at 500ms, result at 1000ms, splash at 1500ms
   setTimeout(function(){
     document.getElementById('ac-left').classList.add('merge-left');
     document.getElementById('ac-right').classList.add('merge-right');
-  },800);
+  },500);
 
-  // Show result after merge
   setTimeout(function(){
     document.getElementById('ac-left').style.opacity='0';
     document.getElementById('ac-right').style.opacity='0';
     document.getElementById('ac-result').classList.add('visible');
     SND.ok();
-  },1600);
+  },1000);
 
-  // Register discovery + show splash after 2.4s
   setTimeout(function(){
-    // Register the discovery in state
     if(state.discovered.indexOf(combo.r)===-1){
       state.discovered.push(combo.r);
       state.order.push(combo.r);
@@ -1293,12 +1296,9 @@ function showOnboardScreen2(){
       if(state.inventory.indexOf(combo.r)===-1) state.inventory.push(combo.r);
       state.newlyDiscovered++;
     }
-    // Hide the intro so splash is visible above it
     document.getElementById('intro').style.display='none';
-    // Show the discovery splash
     showSplash(combo);
 
-    // When splash is dismissed, start the game (screen 3)
     var splashEl=document.getElementById('splash');
     var startGameOnDismiss=function handler(e){
       if(e.target.closest('.splash-wdiwf')||e.target.closest('.splash-bridge')) return;
@@ -1306,7 +1306,7 @@ function showOnboardScreen2(){
       startGameFromOnboarding();
     };
     splashEl.addEventListener('click',startGameOnDismiss);
-  },2400);
+  },1500);
 }
 
 function startGameFromOnboarding(){
@@ -2569,9 +2569,7 @@ function fallbackCopy(text){
 // TUTORIAL
 // ============================
 var TUT_STEPS=[
-  {illust:'⬅️ 🧩',title:'Drag from the sidebar',desc:'See the elements on the right? Drag any of them onto the canvas. That\'s your workspace.'},
-  {illust:'🧩 + 🧩 = ✨',title:'Drop elements on each other',desc:'When two elements overlap on the canvas, they combine into something new. Every combo teaches you something real.'},
-  {illust:'💼 → 🔍 → 🌟',title:'Discover the full picture',desc:'72 combos across 6 tiers. Follow the money. Check the receipts. Earn certifications. Share them on LinkedIn.'},
+  {illust:'⬅️ 🧩 → 🧩 = ✨',title:'Drag. Drop. Discover.',desc:'Drag elements from the sidebar onto the canvas. Drop them on each other to combine. Every combo reveals real recruiting intelligence.'},
 ];
 var tutStep=0;
 
@@ -2579,46 +2577,76 @@ function showTutorial(){
   tutStep=0;
   renderTutStep();
   document.getElementById('tutorial-overlay').classList.add('show');
-  // Add game-active class to body so feedback button shows
   document.body.classList.add('game-active');
+
+  // Auto-dismiss tutorial after 4 seconds if user hasn't interacted
+  var autoDismiss = setTimeout(function(){
+    document.getElementById('tutorial-overlay').classList.remove('show');
+    showNameCaptureBanner();
+  }, 4000);
+
+  // Clear auto-dismiss on manual interaction
+  document.getElementById('tut-next').addEventListener('click', function onceTut(){
+    clearTimeout(autoDismiss);
+    document.getElementById('tut-next').removeEventListener('click', onceTut);
+  }, {once:true});
+  document.getElementById('tut-skip').addEventListener('click', function onceSkip(){
+    clearTimeout(autoDismiss);
+    document.getElementById('tut-skip').removeEventListener('click', onceSkip);
+  }, {once:true});
 }
 
 function renderTutStep(){
   var s=TUT_STEPS[tutStep];
-  // Dots
-  var dotsHtml='';
-  for(var i=0;i<TUT_STEPS.length;i++){
-    dotsHtml+='<div class="tut-dot'+(i===tutStep?' active':'')+'">'+'</div>';
-  }
-  document.getElementById('tut-dots').innerHTML=dotsHtml;
+  document.getElementById('tut-dots').innerHTML='<div class="tut-dot active"></div>';
   document.getElementById('tut-illust').textContent=s.illust;
   document.getElementById('tut-title').textContent=s.title;
   document.getElementById('tut-desc').textContent=s.desc;
-  var btn=document.getElementById('tut-next');
-  btn.textContent=tutStep===TUT_STEPS.length-1?'Start playing \u2192':'Next';
+  document.getElementById('tut-next').textContent='Start playing \u2192';
 }
 
 document.getElementById('tut-next').addEventListener('click',function(){
-  tutStep++;
-  if(tutStep>=TUT_STEPS.length){
-    document.getElementById('tutorial-overlay').classList.remove('show');
-    return;
-  }
-  // Re-animate card
-  var card=document.getElementById('tut-card');
-  card.style.animation='none';
-  card.offsetHeight; // force reflow
-  card.style.animation='splashPop .3s ease-out';
-  renderTutStep();
+  document.getElementById('tutorial-overlay').classList.remove('show');
+  showNameCaptureBanner();
 });
 
 document.getElementById('tut-skip').addEventListener('click',function(){
   document.getElementById('tutorial-overlay').classList.remove('show');
+  showNameCaptureBanner();
 });
 
 // ============================
-// FEEDBACK BUTTON
+// DEFERRED NAME CAPTURE BANNER
 // ============================
+var nameBannerShown=false;
+function showNameCaptureBanner(){
+  if(nameBannerShown) return;
+  if(playerName!=='People Puzzler' && playerEmail) return; // already captured
+  nameBannerShown=true;
+  var banner=document.getElementById('name-banner');
+  banner.style.display='flex';
+  // Auto-hide after 15 seconds if not interacted with
+  var autoHide=setTimeout(function(){ banner.style.display='none' },15000);
+
+  document.getElementById('banner-save').addEventListener('click',function(){
+    clearTimeout(autoHide);
+    var n=document.getElementById('banner-name').value.trim();
+    var e=document.getElementById('banner-email').value.trim();
+    if(n) playerName=n;
+    if(e) playerEmail=e;
+    // Pre-fill gate/signup forms
+    if(n){var gn=document.getElementById('gate-name');var sn=document.getElementById('signup-name');if(gn)gn.value=n;if(sn)sn.value=n;}
+    if(e){var ge=document.getElementById('gate-email');var se=document.getElementById('signup-email');if(ge)ge.value=e;if(se)se.value=e;}
+    banner.style.display='none';
+    saveLead();
+  });
+  document.getElementById('banner-dismiss').addEventListener('click',function(){
+    clearTimeout(autoHide);
+    banner.style.display='none';
+  });
+}
+
+
 document.getElementById('feedback-btn').addEventListener('click',function(){
   var subject=encodeURIComponent('PeoplePuzzles Feedback \u2014 from '+playerName);
   var body=encodeURIComponent('Hey Jackye,\n\nJust played PeoplePuzzles and wanted to share some feedback:\n\n[Your feedback here]\n\nDiscovered: '+state.discovered.length+'/'+TOTAL+'\nScore: '+state.score+'\n\n\u2014 '+playerName);

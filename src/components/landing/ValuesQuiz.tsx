@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Check, ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { SectionReveal } from "./SectionReveal";
+import { BriefingHoldingModal } from "./BriefingHoldingModal";
 
 const QUIZ_VALUES = [
   { key: "pay_equity", label: "Pay Equity", emoji: "💰" },
@@ -21,7 +22,16 @@ const QUIZ_VALUES = [
 export function ValuesQuiz() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showResult, setShowResult] = useState(false);
+  const [showBriefing, setShowBriefing] = useState(false);
   const navigate = useNavigate();
+
+  // Show briefing modal shortly after result card appears
+  useEffect(() => {
+    if (showResult) {
+      const timer = setTimeout(() => setShowBriefing(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [showResult]);
 
   const toggle = (key: string) => {
     setSelected(prev => {
@@ -85,7 +95,12 @@ export function ValuesQuiz() {
                     className="gap-1.5 font-mono text-xs tracking-wider uppercase"
                   >
                     See how employers measure up
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <motion.span
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </motion.span>
                   </Button>
                 </motion.div>
               )}
@@ -98,9 +113,14 @@ export function ValuesQuiz() {
               className="max-w-[500px] mx-auto"
             >
               <div className="bg-card border border-border p-8 text-center">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.2, 1] }}
+                  transition={{ duration: 0.5, times: [0, 0.5, 1], ease: "easeOut" }}
+                  className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4"
+                >
                   <Lock className="w-6 h-6 text-primary" />
-                </div>
+                </motion.div>
                 <h3 className="text-lg font-bold text-foreground mb-2 font-display">
                   Your Career DNA: {selected.size} values loaded
                 </h3>
@@ -140,6 +160,8 @@ export function ValuesQuiz() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <BriefingHoldingModal open={showBriefing} onClose={() => setShowBriefing(false)} />
       </section>
     </SectionReveal>
   );

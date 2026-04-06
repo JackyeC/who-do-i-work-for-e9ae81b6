@@ -3,7 +3,7 @@ import { useEvaluation } from "@/contexts/EvaluationContext";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, AlertTriangle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 interface EvaluationViewProps {
@@ -114,22 +114,26 @@ function ActionBar({
   activeJob: any;
   activeOffer: any;
 }) {
+  const location = useLocation();
+  const isOnDossier = location.pathname.startsWith("/dossier/");
   return (
     <div className="sticky bottom-0 z-40 border-t border-border/40 bg-card/95 backdrop-blur-sm">
       <div className="container mx-auto max-w-3xl px-4 py-3 flex items-center gap-3 flex-wrap">
         {/* Company-only context */}
         {activeCompany && !activeJob && !activeOffer && (
           <>
-            <Link to="/offer-check">
+            <Link to="/check">
               <Button size="sm" variant="outline" className="text-xs h-8">
                 Should I apply?
               </Button>
             </Link>
-            <Link to={`/dossier/${activeCompany.slug}`}>
-              <Button size="sm" variant="outline" className="text-xs h-8">
-                View full dossier
-              </Button>
-            </Link>
+            {!isOnDossier && (
+              <Link to={`/dossier/${activeCompany.slug}`}>
+                <Button size="sm" variant="outline" className="text-xs h-8">
+                  View full dossier
+                </Button>
+              </Link>
+            )}
           </>
         )}
 
@@ -152,7 +156,7 @@ function ActionBar({
         {/* Offer context */}
         {activeOffer && (
           <>
-            <Link to="/offer-check">
+            <Link to="/check">
               <Button size="sm" className="text-xs h-8">Should I accept?</Button>
             </Link>
             <Link to="/negotiation-simulator">

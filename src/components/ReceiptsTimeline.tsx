@@ -274,7 +274,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            No timeline events available yet. Run a full company scan to populate the evidence timeline.
+            No timeline events available yet. This section updates automatically when new evidence is detected.
           </p>
         </CardContent>
       </Card>

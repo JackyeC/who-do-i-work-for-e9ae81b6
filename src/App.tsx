@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { DossierLensProvider } from "@/contexts/DossierLensContext";
 import { EvaluationProvider } from "@/contexts/EvaluationContext";
+import { NDModeProvider } from "@/contexts/NDModeContext";
 import { DemoSafeModeProvider } from "@/contexts/DemoSafeModeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
@@ -151,6 +152,10 @@ const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
 const ReportConfirmation = lazy(() => import("./pages/ReportConfirmation"));
 const ApplicationDetail = lazy(() => import("./pages/ApplicationDetail"));
 const Applications = lazy(() => import("./pages/Applications"));
+const EvidenceLogger = lazy(() => import("./pages/EvidenceLogger"));
+const UnfairVsIllegal = lazy(() => import("./pages/UnfairVsIllegal"));
+
+
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
@@ -165,6 +170,8 @@ const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 const HRTechIntelligence = lazy(() => import("./pages/HRTechIntelligence"));
 const PaletteStudio = lazy(() => import("./pages/PaletteStudio"));
 const WhoDidIVoteForPage = lazy(() => import("./pages/WhoDidIVoteForPage"));
+const IntelligenceCheck = lazy(() => import("./pages/IntelligenceCheck"));
+const IntelligenceCheckConfirmation = lazy(() => import("./pages/IntelligenceCheckConfirmation"));
 
 const queryClient = new QueryClient();
 
@@ -196,6 +203,7 @@ const App = () => (
         <ViewModeProvider>
         <DossierLensProvider>
         <EvaluationProvider>
+        <NDModeProvider>
         <SourceDrawerProvider>
         <TooltipProvider>
           <Toaster />
@@ -213,7 +221,9 @@ const App = () => (
                   <Route path="/recruiter-brief" element={<RecruiterBrief />} />
                   <Route path="/ask-jackye" element={<AskJackye />} />
                   <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
-                  <Route path="/would-you-work-here" element={<Navigate to="/offer-check" replace />} />
+                  <Route path="/would-you-work-here" element={<Navigate to="/intelligence-check" replace />} />
+                  <Route path="/intelligence-check" element={<IntelligenceCheck />} />
+                  <Route path="/intelligence-check/confirmation" element={<IntelligenceCheckConfirmation />} />
                   <Route path="/work-with-jackye" element={<WorkWithJackye />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/employer-receipt" element={<EmployerReceipt />} />
@@ -241,10 +251,10 @@ const App = () => (
                   <Route path="/no-regrets-game/episode-2-recap" element={<NoRegretsEpisode2Recap />} />
                   <Route path="/no-regrets-game/episode-3" element={<NoRegretsEpisode3 />} />
                   <Route path="/no-regrets-game/episode-3-recap" element={<NoRegretsEpisode3Recap />} />
-                  <Route path="/receipts" element={<Receipts />} />
-                  <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
-                  <Route path="/thereceipts" element={<Navigate to="/receipts" replace />} />
-                  <Route path="/the-receipts.html" element={<Navigate to="/receipts" replace />} />
+                  <Route path="/receipts" element={<Navigate to="/newsletter" replace />} />
+                  <Route path="/the-receipts" element={<Navigate to="/newsletter" replace />} />
+                  <Route path="/thereceipts" element={<Navigate to="/newsletter" replace />} />
+                  <Route path="/the-receipts.html" element={<Navigate to="/newsletter" replace />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/submit-tip" element={<SubmitTip />} />
                   <Route path="/newsletter" element={<Newsletter />} />
@@ -276,7 +286,7 @@ const App = () => (
                   <Route path="/examples" element={<Examples />} />
                   <Route path="/signals" element={<Navigate to="/signal-alerts" replace />} />
                   <Route path="/workforce-brief" element={<WorkforceBrief />} />
-                  <Route path="/work-signal" element={<WorkSignalFeed />} />
+                  <Route path="/work-signal" element={<Navigate to="/newsletter" replace />} />
                   <Route path="/eeoc-tracker" element={<EEOCTracker />} />
                   <Route path="/search-your-employer" element={<SearchYourEmployer />} />
                   <Route path="/values-search" element={<ValuesSearch />} />
@@ -355,6 +365,8 @@ const App = () => (
                   <Route path="/community" element={<Community />} />
                   <Route path="/dossier" element={<SampleDossier />} />
                   <Route path="/welcome" element={<Welcome />} />
+                  <Route path="/evidence-logger" element={<ProtectedRoute><EvidenceLogger /></ProtectedRoute>} />
+                  <Route path="/unfair-vs-illegal" element={<UnfairVsIllegal />} />
                   <Route path="/tools" element={<Tools />} />
                   <Route path="/report-confirmation" element={<ReportConfirmation />} />
                   <Route path="*" element={<NotFound />} />
@@ -370,6 +382,7 @@ const App = () => (
           </BrowserRouter>
         </TooltipProvider>
         </SourceDrawerProvider>
+        </NDModeProvider>
         </EvaluationProvider>
         </DossierLensProvider>
         </ViewModeProvider>

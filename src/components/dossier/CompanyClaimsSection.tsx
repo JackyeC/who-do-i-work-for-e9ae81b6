@@ -47,6 +47,21 @@ function isAttributed(claim: any): boolean {
   return !!(claim.source_label && claim.source_url);
 }
 
+/**
+ * Quality gate for news-sourced claims: the claim text must mention
+ * the company name (or a reasonable substring) to avoid junk matches
+ * from loosely-associated news articles.
+ */
+function passesQualityGate(claim: any, companyName: string): boolean {
+  if (claim.claim_type !== "news" && claim.signal_table !== "company_news_signals") return true;
+  // News claims must reference the company name to be shown
+  const text = (claim.claim_text || "").toLowerCase();
+  const name = companyName.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+  // Check each word of the company name (at least 4 chars) appears in the claim
+  const words = name.split(/\s+/).filter((w: string) => w.length >= 4);
+  return words.some((w: string) => text.includes(w));
+}
+
 interface CompanyClaimsSectionProps {
   companyId: string;
   companyName: string;
@@ -54,6 +69,8 @@ interface CompanyClaimsSectionProps {
 
 export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSectionProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const INITIAL_LIMIT = 10;
 
   const { data: rawClaims, isLoading } = useQuery({
     queryKey: ["company-claims", companyId],
@@ -71,8 +88,8 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
     enabled: !!companyId,
   });
 
-  // ENFORCEMENT: suppress unattributed claims from UI
-  const claims = (rawClaims ?? []).filter(isAttributed);
+  // ENFORCEMENT: suppress unattributed + junk news claims from UI
+  const claims = (rawClaims ?? []).filter((c: any) => isAttributed(c) && passesQualityGate(c, companyName));
 
   if (isLoading) {
     return (
@@ -133,7 +150,7 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
         </p>
 
         <div className="space-y-2">
-          {claims.map((claim: any) => {
+          {(showAll ? claims : claims.slice(0, INITIAL_LIMIT)).map((claim: any) => {
             const evidenceConf = EVIDENCE_CONFIG[claim.evidence_type as keyof typeof EVIDENCE_CONFIG] || EVIDENCE_CONFIG.inferred;
             const EvidenceIcon = evidenceConf.icon;
             const TypeIcon = CLAIM_TYPE_ICONS[claim.claim_type] || FileText;
@@ -180,7 +197,6 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
 
                 {isExpanded && (
                   <div className="px-3 pb-3 pt-0 border-t border-border/30">
-                    {/* Decision Context */}
                     {claim.decision_impact && (
                       <div className="mt-2 rounded-md border-l-2 border-primary/40 bg-primary/5 px-3 py-2">
                         <div className="flex items-center gap-1.5 mb-1">
@@ -231,6 +247,15 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
             );
           })}
         </div>
+
+        {!showAll && claims.length > INITIAL_LIMIT && (
+          <button
+            onClick={() => setShowAll(true)}
+            className="w-full mt-3 py-2.5 text-xs font-medium text-primary hover:text-primary/80 hover:bg-primary/5 rounded-lg border border-border/40 transition-colors"
+          >
+            Show all {claims.length} claims
+          </button>
+        )}
       </div>
     </TooltipProvider>
   );

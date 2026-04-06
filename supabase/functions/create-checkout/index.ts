@@ -17,13 +17,16 @@ const ONE_TIME_PRICES = new Set([
 
 // Subscription prices (recurring)
 const SUBSCRIPTION_PRICES = new Set([
-  "price_1TEEvt89MyCOs8yv7SV1TeUJ", // The Signal (Pro) $19/mo
-  "price_1TF2Wd89MyCOs8yv0GXHpkUE", // The Signal annual $182/yr
-  "price_1TF2WU89MyCOs8yvobpafjEl", // The Analyst $49/mo
+  "price_1TEEvt89MyCOs8yv7SV1TeUJ", // Pro $19/mo
+  "price_1TF2Wd89MyCOs8yv0GXHpkUE", // Pro annual $182/yr
+  "price_1TF2WU89MyCOs8yvobpafjEl", // The Signal $49/mo
+  "price_1TIKsT89MyCOs8yvTWfkAMcd", // The Signal annual $399/yr
   "price_1TF2WU89MyCOs8yvfUHZOfuD", // The Analyst annual $470/yr
   "price_1TF2WU89MyCOs8yvodXAgyVX", // The Brief $99/mo
   "price_1TF2WU89MyCOs8yvS5zZrwjy", // The Brief annual $950/yr
   "price_1TEEw589MyCOs8yvQI8FpHJx", // The Executive $999/yr
+  "price_1TIKsR89MyCOs8yvT0Mogipj", // The Match $149/mo
+  "price_1TIKsW89MyCOs8yvXnrcKZwZ", // The Match annual $1199/yr
 ]);
 
 serve(async (req: Request) => {
@@ -44,6 +47,15 @@ serve(async (req: Request) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
 
     const { priceId } = await req.json();
+
+    // Validate priceId against allowlist — reject unknown IDs
+    const ALLOWED_PRICES = new Set([...ONE_TIME_PRICES, ...SUBSCRIPTION_PRICES]);
+    if (!priceId || typeof priceId !== "string" || !ALLOWED_PRICES.has(priceId)) {
+      return new Response(JSON.stringify({ error: "Invalid or unknown price ID" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");

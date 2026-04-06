@@ -78,7 +78,7 @@ export function EvaluationBar() {
             </Link>
           )}
           {activeOffer && (
-            <Link to="/offer-check" className="text-primary hover:underline">
+            <Link to="/check" className="text-primary hover:underline">
               Offer
             </Link>
           )}

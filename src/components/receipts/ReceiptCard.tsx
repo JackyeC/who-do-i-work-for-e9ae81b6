@@ -12,12 +12,12 @@ interface ReceiptCardProps {
   featured?: boolean;
   onPosterClick?: (article: ReceiptArticle) => void;
   onRequestEmailCapture?: () => void;
+  isUnlocked?: boolean;
 }
 
-export function ReceiptCard({ article, featured = false, onPosterClick, onRequestEmailCapture }: ReceiptCardProps) {
+export function ReceiptCard({ article, featured = false, onPosterClick, onRequestEmailCapture, isUnlocked = false }: ReceiptCardProps) {
   const editorialCat = EDITORIAL_CATEGORIES[article.category ?? ""] || "THE DAILY GRIND";
   const isGated = article.spice_level >= 4;
-  const isUnlocked = () => localStorage.getItem("jrc-edit-unlocked") === "true";
   const catColor = EDITORIAL_CAT_COLORS[editorialCat] || "#94A3B8";
   const biasKey = getSourceBiasKey(article.source_name);
   const posterId = `p-${article?.id || "x"}-${featured ? "b" : "s"}`;
@@ -59,6 +59,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
       <div className={cn("mb-6", featured ? "flex justify-center" : "")}>
         <ReceiptPoster
           poster={article.poster_data}
+          posterUrl={article.poster_url}
           category={article.category}
           big={featured}
           id={posterId}
@@ -161,7 +162,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
       </div>
 
       {/* ── 9. Use This ── */}
-      {isGated && !isUnlocked() ? (
+      {isGated && !isUnlocked ? (
         <button
           onClick={() => onRequestEmailCapture?.()}
           className="w-full flex items-center justify-between p-5 rounded-lg border-2 border-primary gap-3 hover:bg-primary/10 active:scale-[0.98] transition-all mb-4 cursor-pointer"
@@ -231,18 +232,11 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
           <span className="text-base font-bold text-primary ml-auto">Look up employer →</span>
         </Link>
         <Link
-          to="/work-signal"
-          className="flex items-center gap-3 p-3 rounded-lg border border-border/30 no-underline hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] transition-all"
-        >
-          <span className="text-sm text-muted-foreground">Want the daily briefing?</span>
-          <span className="text-sm font-bold text-primary ml-auto">The Work Signal →</span>
-        </Link>
-        <Link
           to="/newsletter"
           className="flex items-center gap-3 p-3 rounded-lg border border-border/30 no-underline hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] transition-all"
         >
-          <span className="text-sm text-muted-foreground">Follow the money deeper?</span>
-          <span className="text-sm font-bold text-primary ml-auto">The Newsletter →</span>
+          <span className="text-sm text-muted-foreground">Want the full briefing?</span>
+          <span className="text-sm font-bold text-primary ml-auto">The Work Signal →</span>
         </Link>
       </div>
 

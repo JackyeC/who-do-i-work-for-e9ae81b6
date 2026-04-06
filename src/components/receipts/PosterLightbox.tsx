@@ -81,7 +81,7 @@ export function PosterLightbox({ article, onClose }: PosterLightboxProps) {
           </button>
         </div>
         <div className="flex justify-center mb-5">
-          <ReceiptPoster poster={article.poster_data} category={article.category} big id={lid} headline={article.headline} />
+          <ReceiptPoster poster={article.poster_data} posterUrl={article.poster_url} category={article.category} big id={lid} headline={article.headline} />
         </div>
         <h2 className="text-lg font-black text-foreground leading-tight mb-2.5">{article.headline}</h2>
         <div className="flex items-center gap-2.5 mb-4 flex-wrap">

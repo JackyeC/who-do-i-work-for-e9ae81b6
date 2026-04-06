@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { JACKYE_VOICE_INSTRUCTION } from "../_shared/jrc-edit-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,7 +16,9 @@ serve(async (req: Request) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const systemPrompt = `You are a career intelligence advisor. Generate 2-3 specific, strategic interview questions a candidate should ask based on the company signals provided. Questions should be professional, non-confrontational, and designed to surface real information about company culture, stability, and fairness. Do not include generic questions.`;
+    const systemPrompt = `${JACKYE_VOICE_INSTRUCTION}
+
+YOUR JOB: Generate 2-3 specific, strategic interview questions a candidate should ask based on the company signals provided. Questions should be professional, non-confrontational, and designed to surface real information about company culture, stability, and fairness. No generic questions.`;
 
     const userPrompt = `Job: ${jobTitle} at ${companyName}
 Salary disclosed: ${hasSalary ? "Yes" : "No"}

@@ -1,8 +1,12 @@
 import { useMemo, useState, useEffect } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
+import { DossierSEOContent } from "@/components/seo/DossierSEOContent";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNDMode } from "@/contexts/NDModeContext";
+import { NDDossierView } from "@/components/nd/NDDossierView";
+import { NDModeToggle } from "@/components/nd/NDModeToggle";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
@@ -57,11 +61,17 @@ import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCar
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
 import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
+import { CongressionalContextCard } from "@/components/dossier/CongressionalContextCard";
 import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
+import { CodeWordScanner } from "@/components/dossier/CodeWordScanner";
+import { MissionIntegrityCard } from "@/components/dossier/MissionIntegrityCard";
+import { useScanTracker } from "@/hooks/use-scan-tracker";
 
 export default function CompanyDossier() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { isNDMode, setNDMode } = useNDMode();
   const { isCompanyTracked } = useTrackedCompanies();
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
@@ -69,6 +79,13 @@ export default function CompanyDossier() {
   const [reportOpen, setReportOpen] = useState(false);
   const [reportCategory, setReportCategory] = useState<string | null>(null);
   const { setActiveCompany } = useEvaluation();
+
+  // Sync URL query param ?mode=nd
+  useEffect(() => {
+    if (searchParams.get("mode") === "nd" && !isNDMode) {
+      setNDMode(true);
+    }
+  }, [searchParams, isNDMode, setNDMode]);
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
@@ -88,6 +105,9 @@ export default function CompanyDossier() {
   const companyId = company?.id;
   const isTracked = companyId ? isCompanyTracked(companyId) : false;
 
+  // Track this view for "Your Recent Work"
+  useScanTracker(companyId, company?.name);
+
   // Set evaluation context when company loads
   useEffect(() => {
     if (company) {
@@ -103,15 +123,22 @@ export default function CompanyDossier() {
         employee_count: company.employee_count ?? undefined,
       });
     }
-  }, [company, setActiveCompany]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company?.id]);
   const { data: eeocCases } = useEEOCByCompanyName(company?.name);
 
   const seoCompanyName = company?.name ?? "Company";
   usePageSEO({
-    title: `${seoCompanyName} — Employer Intelligence Report | WDIWF`,
-    description: `Before you apply to ${seoCompanyName}, see the receipts. Leadership stability, labor record, political spending, and values alignment — all from public sources.`,
+    title: `Who Do You Work For at ${seoCompanyName}? — Employer Intelligence`,
+    description: `See who really influences ${seoCompanyName}. Compensation, leadership, political spending, and workplace signals. No bias. Just receipts.`,
     path: `/dossier/${id}`,
     image: getOGImageUrl({ type: "company", companyA: seoCompanyName }),
+    jsonLd: company ? {
+      "@type": "Article",
+      headline: `Who Do You Really Work For at ${seoCompanyName}?`,
+      author: { "@type": "Person", name: "Jackye Clayton" },
+      publisher: { "@type": "Organization", name: "Who Do I Work For?" },
+    } : undefined,
   });
 
   const { data: executives } = useQuery({
@@ -414,6 +441,22 @@ export default function CompanyDossier() {
     );
   }
 
+  // ND Mode: render alternate view
+  if (isNDMode) {
+    return (
+      <section className="container mx-auto px-4 py-8">
+        <NDDossierView
+          company={company}
+          companyId={companyId!}
+          executives={executives as any[]}
+          eeocCases={eeocCases as any[]}
+          issueSignals={issueSignals as any[]}
+          contracts={contracts as any[]}
+        />
+      </section>
+    );
+  }
+
   const influenceScore = company.employer_clarity_score || 0;
   const civicScore = company.civic_footprint_score ?? 0;
 
@@ -502,6 +545,11 @@ export default function CompanyDossier() {
   /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
+      {/* ── ND MODE TOGGLE ── */}
+      <div className="flex justify-end mb-4">
+        <NDModeToggle />
+      </div>
+
       {/* ── ABOVE THE FOLD: Verdict Header + Snapshot Cards ── */}
       <DossierVerdictHeader company={company} />
 
@@ -533,17 +581,19 @@ export default function CompanyDossier() {
       </div>
 
       {/* ── POWER & INFLUENCE ── */}
-      <PowerInfluenceView
-        companyName={company.name}
-        companyId={companyId!}
-        totalPacSpending={company.total_pac_spending ?? 0}
-        lobbyingSpend={company.lobbying_spend ?? 0}
-        candidates={(candidates || []) as any}
-        executives={(executives || []) as any}
-        boardMembers={(dossierBoardMembers || []) as any}
-        partyBreakdown={(partyBreakdown || []) as any}
-        evidenceRecords={evidenceRecords}
-      />
+      <div id="political-giving">
+        <PowerInfluenceView
+          companyName={company.name}
+          companyId={companyId!}
+          totalPacSpending={company.total_pac_spending ?? 0}
+          lobbyingSpend={company.lobbying_spend ?? 0}
+          candidates={(candidates || []) as any}
+          executives={(executives || []) as any}
+          boardMembers={(dossierBoardMembers || []) as any}
+          partyBreakdown={(partyBreakdown || []) as any}
+          evidenceRecords={evidenceRecords}
+        />
+      </div>
 
       <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
         This is a background check on the employer — built from public records, not opinions.
@@ -565,15 +615,31 @@ export default function CompanyDossier() {
         <OfferIntelligencePanel company={company} companyId={companyId!} />
       )}
 
+      {/* ── CULTURE SIGNAL SCANNER ── */}
+      {companyId && (
+        <div className="mb-6" id="workforce-signals">
+          <CodeWordScanner companyId={companyId} companyName={company.name} />
+        </div>
+      )}
+
+      {/* ── MISSION INTEGRITY ── */}
+      {companyId && (
+        <div className="mb-6">
+          <MissionIntegrityCard companyId={companyId} companyName={company.name} />
+        </div>
+      )}
+
       {/* ── THE ADVOCACY REPORT ── */}
-      <AdvocacyReport
-        company={{ ...company, id: companyId!, slug: company.slug } as any}
-        executives={executives as any}
-        contracts={contracts as any}
-        issueSignals={issueSignals as any}
-        publicStances={publicStances as any}
-        eeocCases={eeocCases as any}
-      />
+      <div id="leadership-signals">
+        <AdvocacyReport
+          company={{ ...company, id: companyId!, slug: company.slug } as any}
+          executives={executives as any}
+          contracts={contracts as any}
+          issueSignals={issueSignals as any}
+          publicStances={publicStances as any}
+          eeocCases={eeocCases as any}
+        />
+      </div>
 
       {/* ── WHAT THIS MEANS FOR YOU ── */}
       <WhatThisMeansForYou
@@ -705,6 +771,12 @@ export default function CompanyDossier() {
               <AccountabilitySignalsLayer companyId={companyId} companyName={company.name} />
             </DossierLayer>
           )}
+
+          {companyId && (
+            <DossierLayer title="Capitol Watch" subtitle="Congressional activity relevant to this employer" icon={Landmark} layerNumber={11}>
+              <CongressionalContextCard companyId={companyId} companyName={company.name} />
+            </DossierLayer>
+          )}
         </div>
       )}
     </>
@@ -743,7 +815,7 @@ export default function CompanyDossier() {
           {showSecondary && (
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Link
-                to="/offer-check"
+                to="/check"
                 className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
               >
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
@@ -777,6 +849,15 @@ export default function CompanyDossier() {
         companyName={company.name}
         records={evidenceRecords}
         initialCategory={reportCategory}
+      />
+
+      {/* SEO: Crawlable structured content for search engines and AI systems */}
+      <DossierSEOContent
+        company={company}
+        eeocCount={eeocCases?.length || 0}
+        executiveCount={(executives?.length || 0) + (dossierBoardMembers?.length || 0)}
+        lobbyingCount={lobbyingLinkages?.length || 0}
+        contractCount={contracts?.length || 0}
       />
     </section>
     </EvaluationView>
