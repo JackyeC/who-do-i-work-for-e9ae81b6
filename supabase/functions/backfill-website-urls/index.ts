@@ -39,7 +39,7 @@ Deno.serve(async (req: Request) => {
     if (companyId) {
       query = query.eq('id', companyId);
     } else {
-      query = query.not('description', 'is', null) // only companies with dossiers
+      query = query
         .order('name', { ascending: true })
         .limit(batchSize);
     }
@@ -98,7 +98,7 @@ Return ONLY a JSON object (no markdown, no explanation) with these fields:
 
 IMPORTANT: Only return "high" confidence if you are very sure. For companies you're less certain about, use "medium" or "low".`;
 
-        const aiResp = await fetch('https://ai.lovable.dev/api/generate', {
+        const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
