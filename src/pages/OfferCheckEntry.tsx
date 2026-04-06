@@ -634,6 +634,7 @@ export default function OfferCheckEntry() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
     </div>
   );
