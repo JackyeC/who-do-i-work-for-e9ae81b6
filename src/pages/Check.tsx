@@ -335,7 +335,7 @@ export default function Check() {
     queryFn: async () => {
       const [stancesRes, linkagesRes, darkRes, tradeRes, lobbyRes, signalsRes, companyRes, candidatesRes] = await Promise.all([
         supabase.from("company_public_stances").select("*").eq("company_id", selectedCompanyId!),
-        (supabase as any).from("entity_linkages").select("*").eq("company_id", selectedCompanyId!).limit(100),
+        (supabase as any).from("entity_linkages").select("*").eq("company_id", selectedCompanyId!).limit(500),
         supabase.from("company_dark_money").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_trade_associations").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_state_lobbying").select("*").eq("company_id", selectedCompanyId!),
