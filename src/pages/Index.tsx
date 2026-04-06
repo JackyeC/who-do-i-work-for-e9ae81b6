@@ -71,7 +71,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           style={{ background: "radial-gradient(ellipse, hsl(var(--primary) / 0.03) 0%, transparent 70%)" }}
         />
 
-        <div className="relative z-[1] max-w-[780px] mx-auto flex flex-col items-center text-center">
+        <div className="relative z-[1] max-w-[780px] mx-auto flex flex-col items-center text-center px-4">
           <p
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-5"
             style={{ animation: "heroFadeIn 0.5s ease 0.15s" }}

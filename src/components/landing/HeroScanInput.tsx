@@ -56,25 +56,27 @@ export function HeroScanInput() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4, duration: 0.5 }}
-      className="w-full max-w-[560px]"
+      className="w-full max-w-[560px] px-1"
     >
       <form onSubmit={handleSubmit} className="relative group">
         <div ref={containerRef} />
         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm" />
 
-        <div className="relative flex items-center bg-card border border-border focus-within:border-primary/40 transition-colors rounded-md">
-          <Search className="w-5 h-5 text-muted-foreground ml-4 shrink-0" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search any employer..."
-            className="flex-1 bg-transparent px-3 py-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none font-sans"
-          />
+        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-card border border-border focus-within:border-primary/40 transition-colors rounded-md">
+          <div className="flex items-center flex-1 min-w-0">
+            <Search className="w-5 h-5 text-muted-foreground ml-4 shrink-0" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search any employer..."
+              className="flex-1 min-w-0 bg-transparent px-3 py-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none font-sans"
+            />
+          </div>
           <button
             type="submit"
             disabled={verifying || !query.trim()}
-            className="mr-2 px-5 py-2.5 bg-primary text-primary-foreground font-mono text-sm tracking-wider uppercase font-semibold hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-2 disabled:opacity-50 rounded-md"
+            className="mx-2 mb-2 sm:mb-0 sm:my-0 px-5 py-2.5 bg-primary text-primary-foreground font-mono text-sm tracking-wider uppercase font-semibold hover:brightness-110 active:scale-[0.97] transition-all flex items-center justify-center gap-2 disabled:opacity-50 rounded-md whitespace-nowrap"
           >
             {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Run My Free Scan <ArrowRight className="w-4 h-4" /></>}
           </button>
@@ -82,7 +84,7 @@ export function HeroScanInput() {
       </form>
 
       {/* Try pills — populate input only, no navigation */}
-      <div className="flex items-center gap-2.5 mt-4">
+      <div className="flex flex-wrap items-center gap-2.5 mt-4">
         <span className="font-mono text-sm tracking-wider uppercase text-muted-foreground">Try:</span>
         {suggestions.map((s) => (
           <button
