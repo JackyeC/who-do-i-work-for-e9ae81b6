@@ -8,9 +8,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, ArrowRight, AlertTriangle, TrendingUp, Shield, Building2 } from "lucide-react";
+import { Search, ArrowRight, AlertTriangle, TrendingUp, Shield, Building2, Layers } from "lucide-react";
 import { useState } from "react";
 import { CredentialsSection } from "./SignalBadges";
+import { detectStandoutPatterns, detectAlertPattern } from "@/lib/pattern-signals";
 
 const anim = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
