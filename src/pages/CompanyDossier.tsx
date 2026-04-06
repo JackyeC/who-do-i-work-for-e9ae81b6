@@ -65,6 +65,7 @@ import { CongressionalContextCard } from "@/components/dossier/CongressionalCont
 import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
 import { CodeWordScanner } from "@/components/dossier/CodeWordScanner";
 import { MissionIntegrityCard } from "@/components/dossier/MissionIntegrityCard";
+import { ProxyIntelligenceCard } from "@/components/dossier/ProxyIntelligenceCard";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
 
 export default function CompanyDossier() {
@@ -607,6 +608,18 @@ export default function CompanyDossier() {
       {companyId && (
         <div className="mb-6" id="warn-filings">
           <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
+        </div>
+      )}
+
+      {/* ── PROXY INTELLIGENCE (SEC DEF 14A) ── */}
+      {companyId && (
+        <div className="mb-6" id="proxy-intelligence">
+          <ProxyIntelligenceCard
+            companyId={companyId}
+            companyName={company.name}
+            isPubliclyTraded={!!company.is_publicly_traded}
+            secCik={company.sec_cik}
+          />
         </div>
       )}
 
