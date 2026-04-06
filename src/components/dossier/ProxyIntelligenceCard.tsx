@@ -98,7 +98,7 @@ export function ProxyIntelligenceCard({
         .eq("company_id", companyId)
         .maybeSingle();
       if (error) throw error;
-      return data as ProxyData | null;
+      return (data as unknown as ProxyData) ?? null;
     },
     enabled: isPubliclyTraded && !!secCik,
   });
