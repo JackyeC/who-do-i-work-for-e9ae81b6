@@ -50,12 +50,12 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
 
       return {
         executives: (execs.data ?? []) as any[] as { name: string; title: string; total_donations: number; created_at: string }[],
-        warns: (warns.data ?? []) as any[] as { notice_date: string; employees_affected: number; event_type: string }[],
+        warns: (warns.data ?? []) as any[] as { notice_date: string; employees_affected: number; layoff_type: string }[],
         sentiments: (sentiment.data ?? []) as any[] as { sentiment: string; ai_summary: string | null; created_at: string }[],
-        stances: (stances.data ?? []) as any[] as { topic: string; gap: string; created_at: string }[],
-        darkMoney: (darkMoney.data ?? []) as any[] as { name: string; relationship: string; created_at: string }[],
+        stances: (stances.data ?? []) as any[] as { topic: string; gap: string }[],
+        darkMoney: (darkMoney.data ?? []) as any[] as { name: string; relationship: string }[],
         boardAffil: (boardAffil.data ?? []) as any[] as { name: string }[],
-        revolvingDoor: (revolvingDoor.data ?? []) as any[] as { person: string; prior_role: string; new_role: string; created_at: string }[],
+        revolvingDoor: (revolvingDoor.data ?? []) as any[] as { person: string; prior_role: string; new_role: string }[],
         activeJobs: jobs.count ?? 0,
         courtCases: courtCases.count ?? 0,
         courtCaseDate: ((courtCases.data ?? []) as any[])[0]?.created_at ?? null,
