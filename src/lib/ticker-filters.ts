@@ -193,8 +193,22 @@ export function isUSOrEmployerRelevant(
   const FOREIGN_LIFESTYLE = /\b(visa[s]?\s+(that|which|para|pour)|jobs?\s+abroad|work\s+abroad|move\s+to\s+(europe|portugal|spain|bali|dubai)|digital\s+nomad\s+(visa|life)|expat\s+(life|jobs)|empregos?\s+(a|em)|trabalhar\s+(no|em|na))\b/i;
   if (FOREIGN_LIFESTYLE.test(text)) return false;
 
-  // Pre-categorized items (e.g. work_news with category already set) pass after lifestyle check
-  if (preCategorized) return true;
+  // Hard reject: off-topic noise — sports, consumer gadgets, luxury, entertainment, gaming
+  const OFF_TOPIC_NOISE = /\b(premier league|champions league|bundesliga|serie a|la liga|eredivisie|ligue 1|uefa|fifa|nba |nfl |mlb |nhl |mls |f1 |formula (one|1)|grand prix|world cup|cricket|rugby|tennis|golf tournament|boxing|mma|ufc|wrestling|olympic|medal tally|playoffs?|semifinals?|quarterfinals?|relegation|transfer window|contract extension|hat[-\s]?trick|goal scor|match day|kick[-\s]?off|half[-\s]?time|full[-\s]?time|offside|penalty kick|free kick|var |red card|yellow card|stadium|goalkeeper|striker|midfielder|defender|winger|coach fired|manager sacked|world record|high[-\s]?end tv|displayport|hdmi 2\.\d|oled tv|qled|soundbar|bluetooth speaker|smart watch|fitness tracker|gaming console|playstation|xbox|nintendo|steam deck|gpu benchmark|cpu review|phone review|iphone \d|galaxy s\d|pixel \d|macbook|laptop review|tablet review|headphone|earbuds?|router review|mesh wifi|smart home|ring doorbell|roomba|air purifier|air fryer|instant pot|recipe|cookbook|restaurant review|michelin star|wine pair|cocktail|fashion week|runway show|designer handbag|luxury brand|logo.?exhaustion|haute couture|red carpet|grammy|oscar|emmy|tony award|billboard chart|box office|movie review|film festival|tv show review|streaming service|netflix original|celebrity|kardashian|royal family|prince harry|meghan markle|kate middleton|real estate market|housing prices|mortgage rate|home renovation|interior design|garden|landscaping|pet care|dog breed|cat breed|travel destination|hotel review|flight deal|cruise ship|vacation package|weather forecast|horoscope|astrology|crossword|sudoku|puzzle|trivia|lottery|bayern munich|manchester united|manchester city|liverpool|chelsea|arsenal|tottenham|real madrid|barcelona|juventus|inter milan|psg|dortmund|napoli|atletico)(\b|[\s,.])/i;
+  if (OFF_TOPIC_NOISE.test(text)) return false;
+
+  // Pre-categorized items still need keyword check to filter noise
+  // that was miscategorized by the ingestion pipeline
+  if (preCategorized) {
+    for (const kw of RELEVANCE_KEYWORDS) {
+      if (lower.includes(kw)) return true;
+    }
+    // Allow if it mentions a known company/source (not in reject list)
+    if (companyOrSource && companyOrSource.length > 2 && !NON_US_SOURCES.has(companyOrSource.toLowerCase())) {
+      return true;
+    }
+    return false;
+  }
 
   // Check for relevance keywords (US focus + AI/automation)
   for (const kw of RELEVANCE_KEYWORDS) {
