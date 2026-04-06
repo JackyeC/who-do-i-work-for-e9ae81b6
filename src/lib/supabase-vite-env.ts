@@ -1,6 +1,6 @@
 /**
  * Single place for Vite-exposed Supabase settings (browser bundle).
- * Dashboard "anon" / "publishable" key: accept both env names used across docs and Lovable output.
+ * Dashboard "anon" / "publishable" key: accept both env names used across docs.
  */
 export function getViteSupabaseUrl(): string {
   const u = import.meta.env.VITE_SUPABASE_URL as string | undefined;

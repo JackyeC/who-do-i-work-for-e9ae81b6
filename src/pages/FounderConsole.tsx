@@ -66,7 +66,7 @@ export default function FounderConsole() {
             <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
               <Link to="/admin/launch-health">Launch health</Link>
             </Button>
-            <a href="https://who-do-i-work-for.lovable.app" target="_blank" rel="noopener noreferrer">
+            <a href="https://wdiwf.jackyeclayton.com" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="sm" className="text-xs gap-1.5">
                 <ExternalLink className="w-3.5 h-3.5" /> View Live Site
               </Button>

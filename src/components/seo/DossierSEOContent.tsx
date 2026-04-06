@@ -75,7 +75,7 @@ export function DossierSEOContent({
         description: `Employer intelligence report for ${company.name}: leadership influence, political spending, workplace signals, and compensation transparency from public records.`,
         author: { "@type": "Person", name: "Jackye Clayton" },
         publisher: { "@type": "Organization", name: "Who Do I Work For?" },
-        url: `https://who-do-i-work-for.lovable.app/dossier/${company.slug}`,
+        url: `https://wdiwf.jackyeclayton.com/dossier/${company.slug}`,
         about: { "@type": "Organization", name: company.name },
       },
       // BreadcrumbList schema
@@ -83,9 +83,9 @@ export function DossierSEOContent({
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://who-do-i-work-for.lovable.app/" },
-          { "@type": "ListItem", position: 2, name: "Browse Companies", item: "https://who-do-i-work-for.lovable.app/browse" },
-          { "@type": "ListItem", position: 3, name: company.name, item: `https://who-do-i-work-for.lovable.app/dossier/${company.slug}` },
+          { "@type": "ListItem", position: 1, name: "Home", item: "https://wdiwf.jackyeclayton.com/" },
+          { "@type": "ListItem", position: 2, name: "Browse Companies", item: "https://wdiwf.jackyeclayton.com/browse" },
+          { "@type": "ListItem", position: 3, name: company.name, item: `https://wdiwf.jackyeclayton.com/dossier/${company.slug}` },
         ],
       },
     ];
