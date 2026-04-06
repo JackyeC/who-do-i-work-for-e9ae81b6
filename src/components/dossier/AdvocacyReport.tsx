@@ -1,4 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
+import { correctContractCategory } from "@/utils/contractCategorizer";
 import { Link } from "react-router-dom";
 import {
   AlertTriangle, DollarSign, Users, Eye, MessageSquare,
@@ -285,9 +286,13 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
   const signalsByCategory = useMemo(() => {
     const map: Record<string, typeof issueSignals> = {};
     for (const s of issueSignals) {
-      const cat = s.issue_category || "Other";
+      const cat = correctContractCategory(s.issue_category || "Other", {
+        description: s.description,
+        agency_name: (s as any).agency_name,
+        signal_type: s.signal_type,
+      });
       if (!map[cat]) map[cat] = [];
-      map[cat].push(s);
+      map[cat].push({ ...s, issue_category: cat });
     }
     return map;
   }, [issueSignals]);
