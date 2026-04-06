@@ -65,6 +65,7 @@ import { CongressionalContextCard } from "@/components/dossier/CongressionalCont
 import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
 import { CodeWordScanner } from "@/components/dossier/CodeWordScanner";
 import { MissionIntegrityCard } from "@/components/dossier/MissionIntegrityCard";
+import { ProxyIntelligenceCard } from "@/components/dossier/ProxyIntelligenceCard";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
 
 export default function CompanyDossier() {
