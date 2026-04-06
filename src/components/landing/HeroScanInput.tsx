@@ -62,34 +62,34 @@ export function HeroScanInput() {
         <div ref={containerRef} />
         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm" />
 
-        <div className="relative flex items-center bg-card border border-border focus-within:border-primary/40 transition-colors">
-          <Search className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
+        <div className="relative flex items-center bg-card border border-border focus-within:border-primary/40 transition-colors rounded-md">
+          <Search className="w-5 h-5 text-muted-foreground ml-4 shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search any employer..."
-            className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none font-sans"
+            className="flex-1 bg-transparent px-3 py-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none font-sans"
           />
           <button
             type="submit"
             disabled={verifying || !query.trim()}
-            className="mr-2 px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-1.5 disabled:opacity-50"
+            className="mr-2 px-5 py-2.5 bg-primary text-primary-foreground font-mono text-sm tracking-wider uppercase font-semibold hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-2 disabled:opacity-50 rounded-md"
           >
-            {verifying ? <Loader2 className="w-3 h-3 animate-spin" /> : <>Run My Free Scan <ArrowRight className="w-3 h-3" /></>}
+            {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Run My Free Scan <ArrowRight className="w-4 h-4" /></>}
           </button>
         </div>
       </form>
 
       {/* Try pills — populate input only, no navigation */}
-      <div className="flex items-center gap-2 mt-3">
-        <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground/60">Try:</span>
+      <div className="flex items-center gap-2.5 mt-4">
+        <span className="font-mono text-sm tracking-wider uppercase text-muted-foreground">Try:</span>
         {suggestions.map((s) => (
           <button
             key={s}
             type="button"
             onClick={() => setQuery(s)}
-            className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary active:scale-95 active:bg-primary/20 transition-all cursor-pointer rounded px-1 py-0.5"
+            className="font-mono text-sm tracking-wider text-muted-foreground hover:text-primary active:scale-95 active:bg-primary/20 transition-all cursor-pointer rounded px-1.5 py-0.5"
           >
             {s}
           </button>
@@ -98,7 +98,7 @@ export function HeroScanInput() {
 
       {/* Scan counter for non-authenticated users */}
       {!hasScansRemaining ? null : scansRemaining < FREE_SCAN_LIMIT && (
-        <p className="font-mono text-[10px] text-muted-foreground/60 mt-3 text-center tracking-wider">
+        <p className="font-mono text-xs text-muted-foreground mt-3 text-center tracking-wider">
           {scansRemaining} of {FREE_SCAN_LIMIT} free scans remaining
         </p>
       )}
