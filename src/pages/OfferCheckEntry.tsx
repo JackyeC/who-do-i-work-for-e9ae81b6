@@ -154,74 +154,294 @@ function buildSummary(company: CompanyResult, signals: Signal[]): string {
   return `${company.name} shows positive transparency signals. A full report would confirm whether this extends across all categories.`;
 }
 
-/* ─── Offer Upload Card (coming soon) ─── */
-function OfferUploadCard() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+/* ─── Offer Analysis Types ─── */
+interface OfferAnalysis {
+  company: string;
+  role: string;
+  summary: string;
+  red_flags: { flag: string; detail: string }[];
+  missing_terms: string[];
+  negotiate_these: { item: string; why: string }[];
+  green_flags: string[];
+  power_move: string;
+}
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
+/* ─── Offer Upload Card (wired to edge function) ─── */
+function OfferUploadCard() {
+  const { session } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<OfferAnalysis | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [showPasteFallback, setShowPasteFallback] = useState(false);
+  const [pastedText, setPastedText] = useState("");
+
+  const EDGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-offer-letter`;
+
+  const callAnalyze = async (body: FormData) => {
+    setAnalyzing(true);
+    setError(null);
+    setAnalysis(null);
     try {
-      await supabase.from("career_waitlist").insert({ email: email.trim(), reason: "offer_analysis" });
-    } catch {}
-    setSubmitted(true);
+      const headers: Record<string, string> = {};
+      if (session?.access_token) {
+        headers["Authorization"] = `Bearer ${session.access_token}`;
+      }
+      const res = await fetch(EDGE_URL, { method: "POST", headers, body });
+      if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error(errBody || `HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      if (!json.analysis) throw new Error("Unexpected response format");
+      setAnalysis(json.analysis as OfferAnalysis);
+    } catch (e: any) {
+      console.error("[OfferUpload] Analysis error:", e);
+      if (selectedFile?.type === "application/pdf" && !showPasteFallback) {
+        setError("PDF text couldn't be extracted automatically. Paste your offer text below:");
+        setShowPasteFallback(true);
+      } else {
+        setError("We couldn't analyze this offer. Try pasting the text directly below instead.");
+        setShowPasteFallback(true);
+      }
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    setShowPasteFallback(false);
+    setError(null);
+    setAnalysis(null);
+  };
+
+  const handleAnalyzeFile = () => {
+    if (!selectedFile) return;
+    const fd = new FormData();
+    fd.append("file", selectedFile);
+    callAnalyze(fd);
+  };
+
+  const handleAnalyzePasted = () => {
+    if (pastedText.trim().length < 50) {
+      setError("That doesn't look like a full offer letter. Paste the complete text for the best results.");
+      return;
+    }
+    const fd = new FormData();
+    fd.append("text", pastedText.trim());
+    callAnalyze(fd);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    setShowPasteFallback(false);
+    setError(null);
+    setAnalysis(null);
+  };
+
+  const reset = () => {
+    setSelectedFile(null);
+    setAnalysis(null);
+    setError(null);
+    setShowPasteFallback(false);
+    setPastedText("");
+  };
+
+  // ── Loading state ──
+  if (analyzing) {
+    return (
+      <div className="mt-auto space-y-3 py-4">
+        <p className="text-xs text-muted-foreground text-center animate-pulse">
+          Reading the fine print on your offer...
+        </p>
+        <Skeleton className="h-4 w-3/4 mx-auto" />
+        <Skeleton className="h-4 w-1/2 mx-auto" />
+        <Skeleton className="h-4 w-2/3 mx-auto" />
+      </div>
+    );
+  }
+
+  // ── Results state ──
+  if (analysis) {
+    return <OfferResults analysis={analysis} onReset={reset} />;
+  }
+
+  // ── Upload / paste input state ──
   return (
     <div className="mt-auto space-y-3">
+      {/* Drop zone */}
       <div
         className="border border-dashed border-border/60 rounded-lg p-5 text-center cursor-pointer hover:border-primary/40 transition-colors"
         onClick={() => fileInputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
       >
-        <Upload className="w-5 h-5 text-muted-foreground mx-auto mb-2" />
-        <p className="text-xs text-muted-foreground">
-          Drag & drop or <span className="text-primary font-medium">click to upload</span>
-        </p>
-        <p className="text-[10px] text-muted-foreground/60 mt-1">.pdf, .docx, .txt</p>
+        {selectedFile ? (
+          <div className="flex items-center justify-center gap-2">
+            <FileText className="w-4 h-4 text-primary" />
+            <span className="text-xs text-foreground truncate max-w-[180px]">{selectedFile.name}</span>
+            <button onClick={(e) => { e.stopPropagation(); reset(); }} className="text-muted-foreground hover:text-foreground">
+              <XCircle className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <>
+            <Upload className="w-5 h-5 text-muted-foreground mx-auto mb-2" />
+            <p className="text-xs text-muted-foreground">
+              Drag & drop or <span className="text-primary font-medium">click to upload</span>
+            </p>
+            <p className="text-[10px] text-muted-foreground/60 mt-1">.pdf, .docx, .txt</p>
+          </>
+        )}
         <input
           ref={fileInputRef}
           type="file"
           accept=".pdf,.docx,.txt"
           className="hidden"
-          onChange={() => {}}
+          onChange={handleFileChange}
         />
       </div>
 
-      {!submitted ? (
-        <form onSubmit={handleEmailSubmit} className="space-y-2">
-          <p className="text-[10px] text-muted-foreground text-center">
-            Offer analysis coming soon — drop your email to be first.
-          </p>
-          <div className="flex gap-2">
-            <Input
-              type="email"
-              placeholder="you@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-9 text-xs bg-background border-border flex-1"
-              required
-            />
-            <Button type="submit" size="sm" className="h-9 text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90 shrink-0">
-              <Mail className="w-3 h-3" /> Notify Me
-            </Button>
-          </div>
-        </form>
-      ) : (
-        <div className="flex items-center justify-center gap-2 py-2">
-          <CheckCircle className="w-4 h-4 text-primary" />
-          <p className="text-xs text-foreground font-medium">You're on the list. We'll reach out.</p>
+      {selectedFile && !showPasteFallback && (
+        <Button
+          onClick={handleAnalyzeFile}
+          className="w-full h-10 text-sm gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          <ShieldCheck className="w-4 h-4" /> Analyze My Offer
+        </Button>
+      )}
+
+      {error && (
+        <p className="text-xs text-amber-400 text-center">{error}</p>
+      )}
+
+      {showPasteFallback && (
+        <div className="space-y-2">
+          <Textarea
+            placeholder="Paste your offer letter text here..."
+            value={pastedText}
+            onChange={(e) => setPastedText(e.target.value)}
+            rows={6}
+            className="text-xs bg-background border-border"
+          />
+          <Button
+            onClick={handleAnalyzePasted}
+            className="w-full h-10 text-sm gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <ShieldCheck className="w-4 h-4" /> Analyze Pasted Text
+          </Button>
         </div>
       )}
     </div>
   );
 }
 
-/* ════════════════════════════════════════════ */
-/*                  PAGE                       */
-/* ════════════════════════════════════════════ */
+/* ─── Offer Results Display ─── */
+function OfferResults({ analysis, onReset }: { analysis: OfferAnalysis; onReset: () => void }) {
+  return (
+    <div className="space-y-4">
+      {/* Summary */}
+      <div className="bg-card border border-border rounded-lg p-4">
+        <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary mb-2">Offer Intelligence Brief</p>
+        <p className="text-sm font-semibold text-foreground">{analysis.company} — {analysis.role}</p>
+        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{analysis.summary}</p>
+      </div>
+
+      {/* Red Flags */}
+      {analysis.red_flags?.length > 0 && (
+        <div className="bg-card border border-amber-500/30 rounded-lg p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+            <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-amber-400">Red Flags</p>
+          </div>
+          <div className="space-y-2">
+            {analysis.red_flags.map((f, i) => (
+              <div key={i}>
+                <p className="text-xs font-semibold text-foreground">{f.flag}</p>
+                <p className="text-[11px] text-muted-foreground">{f.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Missing Terms */}
+      {analysis.missing_terms?.length > 0 && (
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <CircleMinus className="w-3.5 h-3.5 text-muted-foreground" />
+            <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground">What's Missing</p>
+          </div>
+          <ul className="space-y-1">
+            {analysis.missing_terms.map((t, i) => (
+              <li key={i} className="text-xs text-foreground flex items-start gap-1.5">
+                <span className="text-muted-foreground mt-0.5">•</span> {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Negotiate These */}
+      {analysis.negotiate_these?.length > 0 && (
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Handshake className="w-3.5 h-3.5 text-primary" />
+            <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary">Negotiate These</p>
+          </div>
+          <div className="space-y-2">
+            {analysis.negotiate_these.map((n, i) => (
+              <div key={i}>
+                <p className="text-xs font-semibold text-foreground">{n.item}</p>
+                <p className="text-[11px] text-muted-foreground">{n.why}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Green Flags */}
+      {analysis.green_flags?.length > 0 && (
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <ThumbsUp className="w-3.5 h-3.5 text-emerald-400" />
+            <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-emerald-400">What They Got Right</p>
+          </div>
+          <ul className="space-y-1">
+            {analysis.green_flags.map((g, i) => (
+              <li key={i} className="text-xs text-foreground flex items-start gap-1.5">
+                <CheckCircle className="w-3 h-3 text-emerald-400 mt-0.5 shrink-0" /> {g}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Power Move */}
+      {analysis.power_move && (
+        <div className="bg-card border-2 border-primary/40 rounded-lg p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Zap className="w-3.5 h-3.5 text-primary" />
+            <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-bold">Your Power Move</p>
+          </div>
+          <p className="text-xs text-foreground leading-relaxed">{analysis.power_move}</p>
+        </div>
+      )}
+
+      <Button variant="outline" size="sm" onClick={onReset} className="w-full text-xs">
+        Analyze Another Offer
+      </Button>
+    </div>
+  );
+}
+
 
 export default function OfferCheckEntry() {
   const navigate = useNavigate();
