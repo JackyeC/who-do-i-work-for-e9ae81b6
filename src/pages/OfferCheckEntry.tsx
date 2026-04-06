@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, ShieldCheck, AlertTriangle, XCircle, Lock,
   ExternalLink, ArrowRight, CheckCircle, Loader2,
+  Upload, FileText, Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
