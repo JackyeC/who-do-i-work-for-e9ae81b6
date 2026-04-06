@@ -75,7 +75,7 @@ export default function CompanyDossier() {
   const { isCompanyTracked } = useTrackedCompanies();
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
-  const [showSecondary, setShowSecondary] = useState(false);
+  
   const [reportOpen, setReportOpen] = useState(false);
   const [reportCategory, setReportCategory] = useState<string | null>(null);
   const { setActiveCompany } = useEvaluation();
