@@ -17,7 +17,7 @@ import {
   Search, ShieldCheck, AlertTriangle, XCircle, Lock,
   ExternalLink, ArrowRight, CheckCircle, Loader2,
   Upload, FileText, Mail, Zap, CircleAlert, CircleMinus,
-  Handshake, ThumbsUp,
+  Handshake, ThumbsUp, Search,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
