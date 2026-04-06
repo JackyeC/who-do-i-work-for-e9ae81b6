@@ -114,6 +114,8 @@ function ActionBar({
   activeJob: any;
   activeOffer: any;
 }) {
+  const location = useLocation();
+  const isOnDossier = location.pathname.startsWith("/dossier/");
   return (
     <div className="sticky bottom-0 z-40 border-t border-border/40 bg-card/95 backdrop-blur-sm">
       <div className="container mx-auto max-w-3xl px-4 py-3 flex items-center gap-3 flex-wrap">
