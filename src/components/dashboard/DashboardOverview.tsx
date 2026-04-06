@@ -18,6 +18,11 @@ import { YourJourney } from "./YourJourney";
 import { JackyeMessage } from "./JackyeMessage";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { HireToRetireCommandCenter } from "@/components/dashboard/HireToRetireCommandCenter";
+import { StreakBadge } from "./StreakBadge";
+import { InvestigatorRank } from "./InvestigatorRank";
+import { CareerReadinessRing } from "./CareerReadinessRing";
+import { DailyMission } from "./DailyMission";
+import { ReceiptBadges } from "./ReceiptBadges";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
@@ -169,6 +174,39 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       <DashboardHeartbeat onNavigate={onNavigate} />
 
       <HireToRetireCommandCenter onNavigate={onNavigate} />
+
+      {/* ═══ DOPAMINE LAYER ═══ */}
+      <motion.div {...anim(0)} className="space-y-4">
+        {/* Streak badge — small inline near top */}
+        <StreakBadge />
+
+        {/* Rank + Readiness side by side */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <InvestigatorRank />
+          <CareerReadinessRing onNavigate={onNavigate} />
+        </div>
+
+        {/* Daily Mission — full width */}
+        <DailyMission onNavigate={onNavigate} />
+
+        {/* Receipt Badges — collapsible */}
+        <Collapsible>
+          <CollapsibleTrigger className="w-full">
+            <div className="flex items-center justify-between rounded-xl px-5 py-3 border border-border/30 bg-card hover:bg-card/80 transition-all cursor-pointer">
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4 text-primary" />
+                <span className="text-[13px] font-semibold text-foreground">Receipt Badges</span>
+              </div>
+              <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="mt-2 rounded-xl border border-border/30 bg-card p-5">
+              <ReceiptBadges />
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </motion.div>
 
       {/* ═══ QUICK ACTIONS BAR ═══ */}
       <motion.div {...anim(0)}>
