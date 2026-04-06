@@ -110,20 +110,24 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <HeroScanInput />
           </div>
 
-          <p
-            className="font-mono text-xs text-muted-foreground mt-4 tracking-wide"
+          <div
+            className="mt-6 flex flex-col sm:flex-row items-center gap-3"
             style={{ animation: "heroFadeIn 0.4s ease 0.7s" }}
           >
-            Not sure where to start?{" "}
             <button
-              id="cta-work-dna-quiz"
               type="button"
-              onClick={() => navigate("/quiz")}
-              className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors font-semibold"
+              onClick={() => navigate("/intelligence-check")}
+              className="bg-primary text-primary-foreground px-7 py-3 font-sans text-sm font-semibold hover:brightness-110 transition-all rounded-md"
             >
-              Find your Work DNA first &rarr;
+              Check an Employer Before You Apply
             </button>
-          </p>
+            <Link
+              to="/dossier/amazon"
+              className="border border-border text-muted-foreground px-7 py-3 font-sans text-sm font-semibold hover:border-primary hover:text-primary transition-all rounded-md"
+            >
+              See a Real Company Example
+            </Link>
+          </div>
 
           <p
             className="font-mono text-xs text-muted-foreground/60 mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed"
@@ -290,7 +294,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               onClick={() => navigate("/intelligence-check")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all rounded-xl"
             >
-              Run My Free Scan
+              Check an Employer Before You Apply
             </button>
             <button
               type="button"
