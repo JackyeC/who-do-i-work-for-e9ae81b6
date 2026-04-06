@@ -80,49 +80,45 @@ serve(async (req) => {
         const aiData = await aiResp.json();
         console.log(`AI response structure for ${article.id}:`, JSON.stringify(aiData).slice(0, 500));
 
-        // Extract base64 image from response
+        // Extract base64 image from response - check message.images first (gateway format)
         const choice = aiData.choices?.[0];
-        const msgContent = choice?.message?.content;
+        const message = choice?.message;
+        const images = message?.images;
 
         let imageBase64: string | null = null;
         let mimeType = "image/png";
 
-        // Handle array-style content (multimodal response)
-        if (Array.isArray(msgContent)) {
-          for (const part of msgContent) {
-            if (part.type === "image_url" && part.image_url?.url) {
-              const dataUrl = part.image_url.url;
-              const match = dataUrl.match(/^data:(image\/[^;]+);base64,(.+)$/s);
-              if (match) {
-                mimeType = match[1];
-                imageBase64 = match[2];
-                break;
-              }
-            }
-            // Some models return inline_data
-            if (part.inline_data?.data) {
-              mimeType = part.inline_data.mime_type || "image/png";
-              imageBase64 = part.inline_data.data;
-              break;
+        if (images && images.length > 0) {
+          const imgUrl = images[0]?.image_url?.url;
+          if (imgUrl) {
+            if (imgUrl.startsWith("data:") && imgUrl.includes(";base64,")) {
+              const parts = imgUrl.split(";base64,");
+              mimeType = parts[0].replace("data:", "");
+              imageBase64 = parts[1];
+            } else {
+              imageBase64 = imgUrl;
             }
           }
         }
-        
-        // If content is string, check if the model returned a data URL directly
-        if (!imageBase64 && typeof msgContent === "string") {
-          const match = msgContent.match(/data:(image\/[^;]+);base64,([A-Za-z0-9+/=\s]+)/s);
-          if (match) {
-            mimeType = match[1];
-            imageBase64 = match[2].replace(/\s/g, "");
-          } else {
-            console.log(`Text-only response for ${article.id}, skipping. Content preview: ${msgContent.slice(0, 200)}`);
-            results.push({ id: article.id, poster_url: null, error: "text-only response" });
-            continue;
+
+        // Fallback: check content array
+        if (!imageBase64 && Array.isArray(message?.content)) {
+          for (const part of message.content) {
+            if (part.type === "image_url" && part.image_url?.url) {
+              const dataUrl = part.image_url.url;
+              if (dataUrl.includes(";base64,")) {
+                const parts = dataUrl.split(";base64,");
+                mimeType = parts[0].replace("data:", "");
+                imageBase64 = parts[1];
+                break;
+              }
+            }
           }
         }
 
         if (!imageBase64) {
-          console.error(`No image in response for ${article.id}`);
+          const preview = typeof message?.content === "string" ? message.content.slice(0, 200) : JSON.stringify(message).slice(0, 300);
+          console.log(`No image for ${article.id}. Response: ${preview}`);
           results.push({ id: article.id, poster_url: null, error: "no image in response" });
           continue;
         }
