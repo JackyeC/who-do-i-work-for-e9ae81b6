@@ -10,9 +10,10 @@ export function NDModeToggle({ compact }: NDModeToggleProps) {
   const { isNDMode, toggleNDMode } = useNDMode();
 
   return (
-    <button
+    <div
+      role="group"
+      className="flex items-center gap-2 px-3 py-1.5 border border-border/50 bg-card hover:bg-muted/30 transition-colors text-sm cursor-pointer"
       onClick={toggleNDMode}
-      className="flex items-center gap-2 px-3 py-1.5 border border-border/50 bg-card hover:bg-muted/30 transition-colors text-sm"
       aria-label={`ND Mode: ${isNDMode ? "On" : "Off"}`}
     >
       <Brain className="w-4 h-4 text-primary" />
@@ -23,6 +24,6 @@ export function NDModeToggle({ compact }: NDModeToggleProps) {
         className="scale-75"
         aria-label="Toggle ND Mode"
       />
-    </button>
+    </div>
   );
 }
