@@ -51,9 +51,9 @@ function getAlignmentLevel(score: number): { label: string; color: string } {
 }
 
 function getVerdictLabel(score: number): string {
-  if (score >= 70) return "Worth serious consideration";
-  if (score >= 40) return "Proceed with caution";
-  return "Protect your peace";
+  if (score >= 70) return "Strong signals — the record supports this";
+  if (score >= 40) return "Mixed signals — verify before you commit";
+  return "Significant risk signals — review the receipts";
 }
 
 export function ApplyDrawer({
