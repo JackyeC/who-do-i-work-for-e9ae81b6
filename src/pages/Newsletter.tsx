@@ -10,9 +10,8 @@ import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { EnforcementReceiptsTicker } from "@/components/work-signal/EnforcementReceiptsTicker";
 import { SourceBiasKey } from "@/components/work-signal/SourceBiasKey";
-import { ReceiptPoster } from "@/components/receipts/ReceiptPoster";
 import { getSourceBiasKey } from "@/components/receipts/BiasBar";
-import { CoverageBiasBar, BlindspotBadge } from "@/components/receipts/CoverageBiasBar";
+import { CoverageBiasBar } from "@/components/receipts/CoverageBiasBar";
 import { EDITORIAL_CATEGORIES, EDITORIAL_CAT_COLORS } from "@/components/receipts/heat-config";
 import { PosterLightbox } from "@/components/receipts/PosterLightbox";
 import { FloatingBubble } from "@/components/receipts/FloatingBubble";
@@ -68,26 +67,44 @@ const SORT_OPTIONS = [
 
 /* ── Poster pool: vintage 1950s ad posters per category ── */
 const POSTER_POOL: Record<string, string[]> = {
-  ai_workplace: ["/posters/poster-fewer-humans.png"],
-  future_of_work: ["/posters/poster-smile-more.png"],
-  worker_rights: ["/posters/poster-dei-rollback.png"],
-  regulation: ["/posters/poster-regulation.png"],
-  pay_equity: ["/posters/poster-pay-ratio.png"],
-  layoffs: ["/posters/poster-ghost-postings.png"],
-  legislation: ["/posters/poster-legislation.png"],
-  labor_organizing: ["/posters/poster-labor.png"],
-  general: ["/posters/poster-follow-money.png", "/posters/poster-right-friends.png"],
+  ai_workplace: ["/posters/poster-fewer-humans.jpg", "/posters/poster-ai-handshake.jpg", "/posters/poster-ai-screening.jpg"],
+  future_of_work: ["/posters/poster-smile-more.jpg", "/posters/poster-wfh-reality.jpg", "/posters/poster-open-office.jpg"],
+  worker_rights: ["/posters/poster-dei-rollback.jpg", "/posters/poster-the-handbook.jpg", "/posters/poster-pay-scale.jpg"],
+  regulation: ["/posters/poster-regulation.jpg", "/posters/poster-fine-print.jpg"],
+  pay_equity: ["/posters/poster-pay-ratio.jpg", "/posters/poster-ceo-lunch-v2.jpg", "/posters/poster-pay-scale.jpg"],
+  layoffs: ["/posters/poster-ghost-postings.jpg", "/posters/poster-the-box.jpg", "/posters/poster-the-pivot.jpg"],
+  legislation: ["/posters/poster-legislation.jpg", "/posters/poster-fine-print.jpg"],
+  labor_organizing: ["/posters/poster-labor.jpg", "/posters/poster-open-office.jpg"],
+  general: ["/posters/poster-follow-money.jpg", "/posters/poster-exit-interview.jpg", "/posters/poster-open-office.jpg", "/posters/poster-the-handbook.jpg"],
 };
+const ALL_POSTERS = [...new Set(Object.values(POSTER_POOL).flat())];
 
-function getPosterForArticle(article: ReceiptArticle): string | null {
-  const pool = POSTER_POOL[article.category ?? ""] || Object.values(POSTER_POOL).flat();
-  if (pool.length === 0) return null;
+function getPosterForArticle(article: ReceiptArticle): string {
+  const pool = POSTER_POOL[article.category ?? ""] || ALL_POSTERS;
   let h = 0;
-  const s = article.headline || "";
-  for (let i = 0; i < s.length; i++) {
-    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-  }
+  const s = article.headline || article.id || "";
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
   return pool[Math.abs(h) % pool.length];
+}
+
+/* ── Blind Spot Alert — Ground.news signature, top of poster ── */
+function BlindSpotAlert({ sourceName }: { sourceName: string | null }) {
+  const bias = getSourceBiasKey(sourceName);
+  let alert: { side: string; color: string; icon: string } | null = null;
+  if (bias === "left" || bias === "lean-left") {
+    alert = { side: "RIGHT", color: "#EF4444", icon: "🔴" };
+  } else if (bias === "right" || bias === "lean-right") {
+    alert = { side: "LEFT", color: "#3B82F6", icon: "🔵" };
+  }
+  if (!alert) return null;
+  return (
+    <div className="absolute top-0 left-0 right-0 z-10 flex items-center gap-2 px-3 py-1.5" style={{ background: `${alert.color}DD` }}>
+      <span className="text-sm">{alert.icon}</span>
+      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white font-mono">
+        BLIND SPOT — THE {alert.side} ISN'T COVERING THIS
+      </span>
+    </div>
+  );
 }
 
 /* ── Deep Investigations ── */
@@ -109,29 +126,47 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
       id={`story-${article.id}`}
       className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24 flex flex-col"
     >
-      {/* Thumbnail area */}
-      <button
-        type="button"
+      {/* ── TOPIC POSTER: vintage bg + headline + Jackye's voice ── */}
+      <div
+        className="relative w-full aspect-[16/9] overflow-hidden bg-muted/30 cursor-pointer"
         onClick={() => onPosterClick(article)}
-        className="relative w-full aspect-[16/9] overflow-hidden bg-muted/30 border-none cursor-pointer p-0"
+        style={{
+          backgroundImage: `url(${article.poster_url || getPosterForArticle(article)})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        <ReceiptPoster
-          poster={article.poster_data}
-          posterUrl={article.poster_url || getPosterForArticle(article)}
-          category={article.category}
-          headline={article.headline}
-          id={`poster-gn-${article.id}`}
-        />
-        {/* Blindspot badge overlay */}
-        <div className="absolute top-2 left-2">
-          <BlindspotBadge sourceName={article.source_name} />
+        {/* Dark gradient so text is always readable */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
+
+        {/* Blind Spot Alert — TOP, full-width, impossible to miss */}
+        <BlindSpotAlert sourceName={article.source_name} />
+
+        {/* Category stamp — top right */}
+        <div className="absolute top-2 right-2 z-10">
+          <CategoryBadge category={article.category} />
         </div>
-        {/* Source count badge */}
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-background/80 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-mono text-foreground/80">
-          <Newspaper className="w-3 h-3" />
-          1 source
+
+        {/* Content overlay — bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+          {/* Headline — Jackye's editorial voice, Playfair Display */}
+          <h3 className="text-white text-base font-black leading-snug line-clamp-3" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}>
+            {article.headline}
+          </h3>
+
+          {/* Jackye's Take — one-liner, the soul of the card */}
+          {article.jackye_take && (
+            <p className="text-white/80 text-xs italic mt-1.5 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              👑 "{article.jackye_take}"
+            </p>
+          )}
         </div>
-      </button>
+
+        {/* WhoDoIWorkFor.com watermark — subtle bottom-right */}
+        <span className="absolute bottom-1.5 right-2 text-[8px] text-white/30 font-mono z-10">
+          WhoDoIWorkFor.com
+        </span>
+      </div>
 
       {/* Content */}
       <div className="p-4 flex-1 flex flex-col">
@@ -204,24 +239,42 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
       className="rounded-xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24 col-span-full"
     >
       <div className="grid md:grid-cols-[1.2fr_1fr] gap-0">
-        {/* Left: thumbnail */}
-        <button
-          type="button"
+        {/* ── LEAD POSTER: vintage bg + headline + Jackye's voice ── */}
+        <div
+          className="relative w-full aspect-[16/10] md:aspect-auto overflow-hidden bg-muted/30 cursor-pointer"
           onClick={() => onPosterClick(article)}
-          className="relative w-full aspect-[16/10] md:aspect-auto overflow-hidden bg-muted/30 border-none cursor-pointer p-0"
+          style={{
+            backgroundImage: `url(${article.poster_url || getPosterForArticle(article)})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
         >
-          <ReceiptPoster
-            poster={article.poster_data}
-          posterUrl={article.poster_url || getPosterForArticle(article)}
-          category={article.category}
-          big
-            headline={article.headline}
-            id={`poster-lead-${article.id}`}
-          />
-          <div className="absolute top-3 left-3">
-            <BlindspotBadge sourceName={article.source_name} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
+
+          {/* Blind Spot Alert */}
+          <BlindSpotAlert sourceName={article.source_name} />
+
+          {/* Category — top right */}
+          <div className="absolute top-3 right-3 z-10">
+            <CategoryBadge category={article.category} />
           </div>
-        </button>
+
+          {/* Headline overlay — bigger for lead */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+            <h2 className="text-white text-xl md:text-2xl font-black leading-tight line-clamp-3" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}>
+              {article.headline}
+            </h2>
+            {article.jackye_take && (
+              <p className="text-white/80 text-sm italic mt-2 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                👑 "{article.jackye_take}"
+              </p>
+            )}
+          </div>
+
+          <span className="absolute bottom-2 right-3 text-[9px] text-white/30 font-mono z-10">
+            WhoDoIWorkFor.com
+          </span>
+        </div>
 
         {/* Right: content */}
         <div className="p-6 flex flex-col">

@@ -130,6 +130,12 @@ const NON_US_SOURCES = new Set([
   "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
   "liberation.fr", "20minutes.fr", "francetvinfo.fr",
   "handelsblatt.com", "faz.net", "sueddeutsche.de", "zeit.de",
+  "bbc.com", "telegraph.co.uk", "independent.co.uk", "mirror.co.uk",
+  "dailymail.co.uk", "metro.co.uk", "standard.co.uk", "sky.com", "itv.com",
+  "abc.net.au", "smh.com.au", "theaustralian.com.au", "stuff.co.nz",
+  "cbc.ca", "globalnews.ca", "thestar.com", "nationalpost.com",
+  "scmp.com", "straitstimes.com", "japantimes.co.jp", "hindustantimes.com",
+  "timesofindia.com", "ndtv.com", "aljazeera.com",
 ]);
 
 // Keywords that indicate US or employer relevance
@@ -193,8 +199,12 @@ export function isUSOrEmployerRelevant(
   const FOREIGN_LIFESTYLE = /\b(visa[s]?\s+(that|which|para|pour)|jobs?\s+abroad|work\s+abroad|move\s+to\s+(europe|portugal|spain|bali|dubai)|digital\s+nomad\s+(visa|life)|expat\s+(life|jobs)|empregos?\s+(a|em)|trabalhar\s+(no|em|na))\b/i;
   if (FOREIGN_LIFESTYLE.test(text)) return false;
 
+  // AMERICA FIRST — reject foreign political stories that don't impact US workers
+  const FOREIGN_POLITICS = /\b(prime minister(?!.*us |.*american|.*trade|.*tariff)|downing street|house of commons|house of lords|parliament(?!.*us |.*congress)|westminster|whitehall|tory|tories|labour party|lib dem|uk government|uk election|british people|britain|brexit|nhs |national health service|chancellor of the exchequer|home secretary|foreign secretary|bundestag|reichstag|assemblée nationale|european parliament|european commission|eu summit|eu regulation(?!.*us)|european council|macron|scholz|starmer|sunak|trudeau(?!.*tariff|.*trade)|canadian parliament|australian parliament|lok sabha|rajya sabha|diet of japan|knesset|duma|kremlin(?!.*sanction)|modi(?!.*trade)|bolsonaro|south korean president|mexican president(?!.*border|.*trade|.*tariff)|african union|asean summit(?!.*us)|commonwealth |royal assent|king's speech)\b/i;
+  if (FOREIGN_POLITICS.test(text)) return false;
+
   // Hard reject: off-topic noise — sports, consumer gadgets, luxury, entertainment, gaming
-  const OFF_TOPIC_NOISE = /\b(premier league|champions league|bundesliga|serie a|la liga|eredivisie|ligue 1|uefa|fifa|nba |nfl |mlb |nhl |mls |f1 |formula (one|1)|grand prix|world cup|cricket|rugby|tennis|golf tournament|boxing|mma|ufc|wrestling|olympic|medal tally|playoffs?|semifinals?|quarterfinals?|relegation|transfer window|contract extension|hat[-\s]?trick|goal scor|match day|kick[-\s]?off|half[-\s]?time|full[-\s]?time|offside|penalty kick|free kick|var |red card|yellow card|stadium|goalkeeper|striker|midfielder|defender|winger|coach fired|manager sacked|world record|high[-\s]?end tv|displayport|hdmi 2\.\d|oled tv|qled|soundbar|bluetooth speaker|smart watch|fitness tracker|gaming console|playstation|xbox|nintendo|steam deck|gpu benchmark|cpu review|phone review|iphone \d|galaxy s\d|pixel \d|macbook|laptop review|tablet review|headphone|earbuds?|router review|mesh wifi|smart home|ring doorbell|roomba|air purifier|air fryer|instant pot|recipe|cookbook|restaurant review|michelin star|wine pair|cocktail|fashion week|runway show|designer handbag|luxury brand|logo.?exhaustion|haute couture|red carpet|grammy|oscar|emmy|tony award|billboard chart|box office|movie review|film festival|tv show review|streaming service|netflix original|celebrity|kardashian|royal family|prince harry|meghan markle|kate middleton|real estate market|housing prices|mortgage rate|home renovation|interior design|garden|landscaping|pet care|dog breed|cat breed|travel destination|hotel review|flight deal|cruise ship|vacation package|weather forecast|horoscope|astrology|crossword|sudoku|puzzle|trivia|lottery|bayern munich|manchester united|manchester city|liverpool|chelsea|arsenal|tottenham|real madrid|barcelona|juventus|inter milan|psg|dortmund|napoli|atletico)(\b|[\s,.])/i;
+  const OFF_TOPIC_NOISE = /\b(premier league|champions league|bundesliga|serie a|la liga|uefa|fifa|nba |nfl |mlb |nhl |mls |f1 |formula (one|1)|grand prix|world cup|cricket|rugby|tennis|golf tournament|boxing|mma|ufc|wrestling|olympic|playoffs?|semifinals?|transfer window|contract extension|hat[-\s]?trick|goal scor|match day|stadium|goalkeeper|striker|midfielder|defender|winger|coach fired|manager sacked|high[-\s]?end tv|displayport|oled tv|qled|soundbar|gaming console|playstation|xbox|nintendo|gpu benchmark|phone review|iphone \d|galaxy s\d|laptop review|headphone|earbuds?|smart home|roomba|air fryer|instant pot|recipe|cookbook|restaurant review|michelin star|fashion week|runway show|designer handbag|luxury brand|logo.?exhaustion|haute couture|red carpet|grammy|oscar|emmy|billboard chart|box office|movie review|film festival|tv show review|netflix original|celebrity|kardashian|royal family|prince harry|meghan markle|real estate market|housing prices|mortgage rate|home renovation|interior design|pet care|dog breed|cat breed|travel destination|hotel review|cruise ship|vacation package|weather forecast|horoscope|astrology|crossword|lottery|bayern munich|manchester united|manchester city|liverpool|chelsea|arsenal|tottenham|real madrid|barcelona|juventus|inter milan|psg|dortmund|napoli|atletico)(\b|[\s,.])/i;
   if (OFF_TOPIC_NOISE.test(text)) return false;
 
   // Pre-categorized items still need keyword check to filter noise
