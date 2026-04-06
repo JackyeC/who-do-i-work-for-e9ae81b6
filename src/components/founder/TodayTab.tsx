@@ -37,18 +37,25 @@ function TriageCard({ title, icon: Icon, children, iconColor = "text-primary", b
   );
 }
 
-function MetricRow({ label, value, loading, highlight }: {
-  label: string; value: string | number; loading?: boolean; highlight?: boolean;
+function MetricRow({ label, value, loading, highlight, onClick }: {
+  label: string; value: string | number; loading?: boolean; highlight?: boolean; onClick?: () => void;
 }) {
+  const Wrapper = onClick ? "button" : "div";
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className={cn("text-muted-foreground", highlight && "text-amber-600 font-medium")}>{label}</span>
+    <Wrapper
+      className={cn(
+        "flex items-center justify-between text-sm w-full",
+        onClick && "hover:bg-muted/40 -mx-1 px-1 py-0.5 rounded cursor-pointer transition-colors text-left"
+      )}
+      onClick={onClick}
+    >
+      <span className={cn("text-muted-foreground", highlight && "text-amber-600 font-medium", onClick && "hover:underline")}>{label}</span>
       {loading ? (
         <Skeleton className="h-4 w-10" />
       ) : (
         <span className={cn("font-mono font-medium tabular-nums text-foreground", highlight && "text-amber-600")}>{value}</span>
       )}
-    </div>
+    </Wrapper>
   );
 }
 
