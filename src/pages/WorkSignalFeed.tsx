@@ -254,8 +254,7 @@ export default function WorkSignalFeed() {
                   {chip.label}
                 </button>
               );
-            }
-            ))}
+            })}
           </div>
 
           {/* Sort */}
