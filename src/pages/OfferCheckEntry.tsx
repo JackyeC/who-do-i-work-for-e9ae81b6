@@ -273,9 +273,9 @@ export default function OfferCheckEntry() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-4 py-12 md:py-20">
+      <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
 
-        {/* ═══ SECTION 1: HERO ═══ */}
+        {/* ═══ HERO HEADLINE ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -292,30 +292,69 @@ export default function OfferCheckEntry() {
           </p>
         </motion.div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 mb-12">
-          <Input
-            placeholder="Company name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            className="h-12 text-base bg-card border-border"
-            required
-          />
-          <Input
-            placeholder="Role (optional)"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="h-12 text-base bg-card border-border"
-          />
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full h-12 text-base gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
-            disabled={!companyName.trim() || isLoading}
+        {/* ═══ TWO-CARD ENTRY ═══ */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+
+          {/* PATH A — Search */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
+            className="bg-card border border-border rounded-xl p-6 flex flex-col"
           >
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            Check this company
-          </Button>
-        </form>
+            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-2">
+              Know before you apply
+            </p>
+            <h2 className="text-lg font-bold text-foreground mb-1">Search any employer</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-5">
+              See what the public record says before you waste time interviewing.
+            </p>
+            <form onSubmit={handleSubmit} className="mt-auto space-y-3">
+              <Input
+                placeholder="Company name..."
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                className="h-11 text-sm bg-background border-border"
+                required
+              />
+              <Button
+                type="submit"
+                className="w-full h-10 text-sm gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={!companyName.trim() || isLoading}
+              >
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                Run My Scan
+              </Button>
+            </form>
+          </motion.div>
+
+          {/* PATH B — Upload offer */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.4 }}
+            className="bg-card border border-primary/30 rounded-xl p-6 flex flex-col relative overflow-hidden"
+          >
+            <Badge
+              variant="outline"
+              className="absolute top-3 right-3 text-[9px] font-mono uppercase tracking-wider border-primary/40 text-primary bg-primary/5"
+            >
+              Most valuable step candidates skip
+            </Badge>
+
+            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-2">
+              Know before you sign
+            </p>
+            <h2 className="text-lg font-bold text-foreground mb-1">Upload your offer letter</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-5">
+              We'll tell you exactly what's missing, what's red-flagged, and what to negotiate.
+            </p>
+
+            <OfferUploadCard />
+          </motion.div>
+        </div>
+
+        {/* ═══ RESULTS (unchanged) ═══ */}
 
         {/* ═══ RESULTS ═══ */}
         <AnimatePresence mode="wait">
