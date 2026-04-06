@@ -406,11 +406,11 @@ export function TodayTab({ onNavigateTab }: { onNavigateTab?: (tab: string) => v
             <EmptyLine text="No urgent items right now. Queues are clear." />
           ) : (
             <>
-              {watchData.reviews.pendingReviews > 0 && <MetricRow label="Company reviews" value={watchData.reviews.pendingReviews} highlight={watchData.reviews.pendingReviews > 5} />}
-              {watchData.reviews.draftResearch > 0 && <MetricRow label="Draft research" value={watchData.reviews.draftResearch} />}
-              {watchData.reviews.certQueue > 0 && <MetricRow label="Certifications" value={watchData.reviews.certQueue} highlight={watchData.certsElevated} />}
-              {watchData.reviews.waitlist > 0 && <MetricRow label="Waitlist" value={watchData.reviews.waitlist} />}
-              {watchData.reviews.pendingJobs > 0 && <MetricRow label="Job posts" value={watchData.reviews.pendingJobs} />}
+              {watchData.reviews.pendingReviews > 0 && <MetricRow label="Company reviews" value={watchData.reviews.pendingReviews} highlight={watchData.reviews.pendingReviews > 5} onClick={() => onNavigateTab?.("queue")} />}
+              {watchData.reviews.draftResearch > 0 && <MetricRow label="Draft research" value={watchData.reviews.draftResearch} onClick={() => onNavigateTab?.("queue")} />}
+              {watchData.reviews.certQueue > 0 && <MetricRow label="Certifications" value={watchData.reviews.certQueue} highlight={watchData.certsElevated} onClick={() => onNavigateTab?.("queue")} />}
+              {watchData.reviews.waitlist > 0 && <MetricRow label="Waitlist" value={watchData.reviews.waitlist} onClick={() => onNavigateTab?.("users")} />}
+              {watchData.reviews.pendingJobs > 0 && <MetricRow label="Job posts" value={watchData.reviews.pendingJobs} onClick={() => onNavigateTab?.("queue")} />}
             </>
           )}
         </TriageCard>
