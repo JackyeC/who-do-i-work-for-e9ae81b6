@@ -10,6 +10,23 @@ function topicKey(headline: string): string {
   return headline.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 2 && !stop.has(w)).sort().slice(0, 5).join(" ");
 }
 
+/** Auto-tag articles by headline content when category is missing or generic */
+function inferCategory(headline: string, existing: string | null): string {
+  const h = headline.toLowerCase();
+  // If already well-categorized, keep it
+  if (existing && ["layoffs","worker_rights","ai_workplace","regulation","pay_equity","legislation","labor_organizing"].includes(existing)) return existing;
+  // Keyword matching
+  if (/layoff|laid off|cut jobs|job cuts|rif |downsiz|pink slip|workforce reduction|eliminat.*position/i.test(h)) return "layoffs";
+  if (/\bai\b|artificial intelligence|automat|machine learning|algorithm|robot|chatbot|gpt|copilot/i.test(h)) return "ai_workplace";
+  if (/dei|diversity|equity|inclusion|discriminat|civil rights|eeoc|racial|gender gap|lgbtq|disabilit/i.test(h)) return "worker_rights";
+  if (/pay gap|pay equity|wage|salary|compensation|ceo.*pay|pay ratio|equal pay|minimum wage|pay transparen/i.test(h)) return "pay_equity";
+  if (/regulat|osha|nlrb|ftc|sec |dol |department of labor|enforce|compliance|fine[sd]|penalt|violat|citation/i.test(h)) return "regulation";
+  if (/bill |law |legislat|congress|senate|executive order|policy|act of|passed|signed into law/i.test(h)) return "legislation";
+  if (/union|strike|organiz|collective bargain|picket|walkout|labor action|solidarity/i.test(h)) return "labor_organizing";
+  if (/remote|hybrid|return to office|rto|work from home|wfh|flexible work|four.day week/i.test(h)) return "future_of_work";
+  return existing || "general";
+}
+
 // US-first sort: American stories float to top, international below
 const NON_US_DOMAINS = new Set([
   "bbc.com","telegraph.co.uk","independent.co.uk","mirror.co.uk",
@@ -111,11 +128,15 @@ export function useReceiptsFeed() {
       // Deduplicate by headline — keep the newest entry
       const seen = new Set<string>();
       const unique = ((data ?? []) as unknown as ReceiptArticle[])
-        .map(a => ({
-          ...a,
-          headline: a.headline ? decodeEscapes(a.headline) : a.headline,
-          source_name: a.source_name ? decodeEscapes(a.source_name) : a.source_name,
-        }))
+        .map(a => {
+          const headline = a.headline ? decodeEscapes(a.headline) : a.headline;
+          return {
+            ...a,
+            headline,
+            source_name: a.source_name ? decodeEscapes(a.source_name) : a.source_name,
+            category: inferCategory(headline || "", a.category),
+          };
+        })
         .filter((a) => {
           const key = a.headline?.toLowerCase().trim();
           if (!key || seen.has(key)) return false;

@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
-import { EnforcementReceiptsTicker } from "@/components/work-signal/EnforcementReceiptsTicker";
+import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
 import { SourceBiasKey } from "@/components/work-signal/SourceBiasKey";
 import { getSourceBiasKey } from "@/components/receipts/BiasBar";
 import { CoverageBiasBar } from "@/components/receipts/CoverageBiasBar";
@@ -446,7 +446,7 @@ export default function Newsletter() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── Live Ticker ── */}
-      <EnforcementReceiptsTicker />
+      <WorkNewsTicker />
 
       {/* ── Compact Masthead (Ground News style) ── */}
       <header className="border-b border-border bg-card/50">
