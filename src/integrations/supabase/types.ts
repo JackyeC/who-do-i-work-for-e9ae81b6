@@ -8806,6 +8806,36 @@ export type Database = {
         }
         Relationships: []
       }
+      poster_pool: {
+        Row: {
+          archetype: string | null
+          category: string
+          created_at: string
+          headline_text: string | null
+          id: string
+          poster_url: string
+          subhead_text: string | null
+        }
+        Insert: {
+          archetype?: string | null
+          category: string
+          created_at?: string
+          headline_text?: string | null
+          id?: string
+          poster_url: string
+          subhead_text?: string | null
+        }
+        Update: {
+          archetype?: string | null
+          category?: string
+          created_at?: string
+          headline_text?: string | null
+          id?: string
+          poster_url?: string
+          subhead_text?: string | null
+        }
+        Relationships: []
+      }
       potential_duplicates: {
         Row: {
           company_a_id: string
@@ -12626,6 +12656,7 @@ export type Database = {
           category: string | null
           controversy_type: string | null
           created_at: string | null
+          drama_rating: number
           gdelt_url_hash: string | null
           headline: string
           id: string
@@ -12633,9 +12664,14 @@ export type Database = {
           jackye_take: string | null
           jackye_take_approved: boolean | null
           language: string | null
+          poster_url: string | null
           published_at: string | null
           sentiment_score: number | null
+          source_count_center: number
+          source_count_left: number
+          source_count_right: number
           source_name: string | null
+          source_total: number
           source_url: string | null
           themes: string[] | null
           tone_label: string | null
@@ -12645,6 +12681,7 @@ export type Database = {
           category?: string | null
           controversy_type?: string | null
           created_at?: string | null
+          drama_rating?: number
           gdelt_url_hash?: string | null
           headline: string
           id?: string
@@ -12652,9 +12689,14 @@ export type Database = {
           jackye_take?: string | null
           jackye_take_approved?: boolean | null
           language?: string | null
+          poster_url?: string | null
           published_at?: string | null
           sentiment_score?: number | null
+          source_count_center?: number
+          source_count_left?: number
+          source_count_right?: number
           source_name?: string | null
+          source_total?: number
           source_url?: string | null
           themes?: string[] | null
           tone_label?: string | null
@@ -12664,6 +12706,7 @@ export type Database = {
           category?: string | null
           controversy_type?: string | null
           created_at?: string | null
+          drama_rating?: number
           gdelt_url_hash?: string | null
           headline?: string
           id?: string
@@ -12671,9 +12714,14 @@ export type Database = {
           jackye_take?: string | null
           jackye_take_approved?: boolean | null
           language?: string | null
+          poster_url?: string | null
           published_at?: string | null
           sentiment_score?: number | null
+          source_count_center?: number
+          source_count_left?: number
+          source_count_right?: number
           source_name?: string | null
+          source_total?: number
           source_url?: string | null
           themes?: string[] | null
           tone_label?: string | null
