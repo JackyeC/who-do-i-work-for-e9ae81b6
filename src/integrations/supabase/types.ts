@@ -6653,6 +6653,36 @@ export type Database = {
           },
         ]
       }
+      interview_prep_briefs: {
+        Row: {
+          checklist: Json
+          company_name: string
+          created_at: string
+          id: string
+          intel_summary: string
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          checklist: Json
+          company_name: string
+          created_at?: string
+          id?: string
+          intel_summary: string
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          checklist?: Json
+          company_name?: string
+          created_at?: string
+          id?: string
+          intel_summary?: string
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ip_scan_jobs: {
         Row: {
           company_id: string
