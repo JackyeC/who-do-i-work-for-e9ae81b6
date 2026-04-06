@@ -194,21 +194,21 @@ function OfferUploadCard() {
       }
       const res = await fetch(EDGE_URL, { method: "POST", headers, body });
       if (!res.ok) {
-        const errBody = await res.text();
-        throw new Error(errBody || `HTTP ${res.status}`);
+        const errBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        if (errBody.error === "pdf_extraction_failed") {
+          setError(errBody.message || "PDF text couldn't be extracted. Paste your offer text below:");
+          setShowPasteFallback(true);
+          return;
+        }
+        throw new Error(errBody.error || errBody.message || `HTTP ${res.status}`);
       }
       const json = await res.json();
       if (!json.analysis) throw new Error("Unexpected response format");
       setAnalysis(json.analysis as OfferAnalysis);
     } catch (e: any) {
       console.error("[OfferUpload] Analysis error:", e);
-      if (selectedFile?.type === "application/pdf" && !showPasteFallback) {
-        setError("PDF text couldn't be extracted automatically. Paste your offer text below:");
-        setShowPasteFallback(true);
-      } else {
-        setError("We couldn't analyze this offer. Try pasting the text directly below instead.");
-        setShowPasteFallback(true);
-      }
+      setError("We couldn't analyze this offer. Try pasting the text directly below instead.");
+      setShowPasteFallback(true);
     } finally {
       setAnalyzing(false);
     }
