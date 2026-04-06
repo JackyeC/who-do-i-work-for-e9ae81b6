@@ -120,7 +120,7 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
   }
 
   // Financial / Structural
-  const financialDate = data.darkMoney[0]?.created_at ?? data.boardAffil.length > 0 ? data.darkMoney[0]?.created_at : null;
+  const financialDate = null;
   allDates.push(financialDate);
   if (data.darkMoney.length > 0 || data.boardAffil.length > 0) {
     const parts: string[] = [];
