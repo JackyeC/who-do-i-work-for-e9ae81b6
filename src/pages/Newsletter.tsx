@@ -66,16 +66,18 @@ const SORT_OPTIONS = [
 ];
 
 /* ── Poster pool: vintage 1950s ad posters per category ── */
+// IMPORTANT: Images hosted on GitHub — use absolute URLs so they load regardless of Lovable deploy state
+const CDN = "https://raw.githubusercontent.com/JackyeC/who-do-i-work-for-e9ae81b6/main/public/posters";
 const POSTER_POOL: Record<string, string[]> = {
-  ai_workplace: ["/posters/poster-fewer-humans.jpg", "/posters/poster-ai-handshake.jpg", "/posters/poster-ai-screening.jpg"],
-  future_of_work: ["/posters/poster-smile-more.jpg", "/posters/poster-wfh-reality.jpg", "/posters/poster-open-office.jpg"],
-  worker_rights: ["/posters/poster-dei-rollback.jpg", "/posters/poster-the-handbook.jpg", "/posters/poster-pay-scale.jpg"],
-  regulation: ["/posters/poster-regulation.jpg", "/posters/poster-fine-print.jpg"],
-  pay_equity: ["/posters/poster-pay-ratio.jpg", "/posters/poster-ceo-lunch-v2.jpg", "/posters/poster-pay-scale.jpg"],
-  layoffs: ["/posters/poster-ghost-postings.jpg", "/posters/poster-the-box.jpg", "/posters/poster-the-pivot.jpg"],
-  legislation: ["/posters/poster-legislation.jpg", "/posters/poster-fine-print.jpg"],
-  labor_organizing: ["/posters/poster-labor.jpg", "/posters/poster-open-office.jpg"],
-  general: ["/posters/poster-follow-money.jpg", "/posters/poster-exit-interview.jpg", "/posters/poster-open-office.jpg", "/posters/poster-the-handbook.jpg"],
+  ai_workplace: [`${CDN}/poster-fewer-humans.jpg`, `${CDN}/poster-ai-handshake.jpg`, `${CDN}/poster-ai-screening.jpg`],
+  future_of_work: [`${CDN}/poster-smile-more.jpg`, `${CDN}/poster-wfh-reality.jpg`, `${CDN}/poster-open-office.jpg`],
+  worker_rights: [`${CDN}/poster-dei-rollback.jpg`, `${CDN}/poster-the-handbook.jpg`, `${CDN}/poster-pay-scale.jpg`],
+  regulation: [`${CDN}/poster-regulation.jpg`, `${CDN}/poster-fine-print.jpg`],
+  pay_equity: [`${CDN}/poster-pay-ratio.jpg`, `${CDN}/poster-ceo-lunch-v2.jpg`, `${CDN}/poster-pay-scale.jpg`],
+  layoffs: [`${CDN}/poster-ghost-postings.jpg`, `${CDN}/poster-the-box.jpg`, `${CDN}/poster-the-pivot.jpg`],
+  legislation: [`${CDN}/poster-legislation.jpg`, `${CDN}/poster-fine-print.jpg`],
+  labor_organizing: [`${CDN}/poster-labor.jpg`, `${CDN}/poster-open-office.jpg`],
+  general: [`${CDN}/poster-follow-money.jpg`, `${CDN}/poster-exit-interview.jpg`, `${CDN}/poster-open-office.jpg`, `${CDN}/poster-the-handbook.jpg`],
 };
 const ALL_POSTERS = [...new Set(Object.values(POSTER_POOL).flat())];
 
