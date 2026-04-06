@@ -88,7 +88,7 @@ export function InfluencePolicyLayer({ politicalGiving, lobbyingActivity, govern
       {!hasData ? (
         <div className="text-center py-8">
           <Landmark className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
-          <p className="text-caption text-muted-foreground">No influence or policy signals detected yet. Run a scan to populate this section.</p>
+          <p className="text-caption text-muted-foreground">No influence or policy signals detected yet. This section updates automatically when new intelligence is detected.</p>
         </div>
       ) : (
         <div className="space-y-3">

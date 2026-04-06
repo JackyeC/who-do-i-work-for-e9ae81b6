@@ -20,7 +20,7 @@ export function ProductsPlatformsLayer({ products, companyName }: ProductsPlatfo
       <div className="text-center py-8">
         <Package className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
         <p className="text-caption text-muted-foreground">No product data available yet for {companyName}.</p>
-        <p className="text-micro text-muted-foreground mt-1">Product intelligence is enriched during company scans.</p>
+        <p className="text-micro text-muted-foreground mt-1">This section updates automatically when new intelligence is detected.</p>
       </div>
     );
   }
