@@ -9351,6 +9351,92 @@ export type Database = {
         }
         Relationships: []
       }
+      proxy_intelligence: {
+        Row: {
+          board_members: Json | null
+          ceo_bonus: number | null
+          ceo_is_chair: boolean | null
+          ceo_median_pay_ratio: string | null
+          ceo_name: string | null
+          ceo_other: number | null
+          ceo_salary: number | null
+          ceo_stock: number | null
+          ceo_total_comp: number | null
+          comp_interpretation: string | null
+          company_id: string
+          confidence_score: number | null
+          created_at: string
+          filing_date: string | null
+          filing_url: string | null
+          governance_notes: string | null
+          governance_rating: string | null
+          id: string
+          power_concentration: string | null
+          provider_used: string | null
+          raw_filing_text: string | null
+          shareholder_proposals: Json | null
+          updated_at: string
+        }
+        Insert: {
+          board_members?: Json | null
+          ceo_bonus?: number | null
+          ceo_is_chair?: boolean | null
+          ceo_median_pay_ratio?: string | null
+          ceo_name?: string | null
+          ceo_other?: number | null
+          ceo_salary?: number | null
+          ceo_stock?: number | null
+          ceo_total_comp?: number | null
+          comp_interpretation?: string | null
+          company_id: string
+          confidence_score?: number | null
+          created_at?: string
+          filing_date?: string | null
+          filing_url?: string | null
+          governance_notes?: string | null
+          governance_rating?: string | null
+          id?: string
+          power_concentration?: string | null
+          provider_used?: string | null
+          raw_filing_text?: string | null
+          shareholder_proposals?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          board_members?: Json | null
+          ceo_bonus?: number | null
+          ceo_is_chair?: boolean | null
+          ceo_median_pay_ratio?: string | null
+          ceo_name?: string | null
+          ceo_other?: number | null
+          ceo_salary?: number | null
+          ceo_stock?: number | null
+          ceo_total_comp?: number | null
+          comp_interpretation?: string | null
+          company_id?: string
+          confidence_score?: number | null
+          created_at?: string
+          filing_date?: string | null
+          filing_url?: string | null
+          governance_notes?: string | null
+          governance_rating?: string | null
+          id?: string
+          power_concentration?: string | null
+          provider_used?: string | null
+          raw_filing_text?: string | null
+          shareholder_proposals?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proxy_intelligence_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       receipts_enriched: {
         Row: {
           category: string | null
