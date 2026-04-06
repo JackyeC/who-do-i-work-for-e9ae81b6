@@ -19,7 +19,7 @@ import { getOGImageUrl } from "@/lib/social-share";
 import {
   Building2, Loader2, Sparkles, Users, Heart, FileSearch, FileText,
   BarChart3, Landmark, Eye, AlertTriangle, ChevronDown, ArrowRight,
-  ShieldCheck, XCircle as XCircleIcon,
+  ShieldCheck, XCircle as XCircleIcon, Search,
 } from "lucide-react";
 import { SourceLabel, type SourceTier } from "@/components/ui/source-label";
 import { supabase } from "@/integrations/supabase/client";
