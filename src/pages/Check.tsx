@@ -146,6 +146,19 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
   const pollingCountRef = useRef(0);
   const [shouldPoll, setShouldPoll] = useState(true);
 
+  const { data: companyMeta } = useQuery({
+    queryKey: ["check-company-careers-url", companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("careers_url, website_url")
+        .eq("id", companyId)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["check-open-roles", companyId],
     queryFn: async () => {
