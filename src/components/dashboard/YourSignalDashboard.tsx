@@ -8,9 +8,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, ArrowRight, AlertTriangle, TrendingUp, Shield, Building2 } from "lucide-react";
+import { Search, ArrowRight, AlertTriangle, TrendingUp, Shield, Building2, Layers } from "lucide-react";
 import { useState } from "react";
 import { CredentialsSection } from "./SignalBadges";
+import { detectStandoutPatterns, detectAlertPattern } from "@/lib/pattern-signals";
 
 const anim = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
@@ -164,6 +165,20 @@ export function YourSignalDashboard() {
     });
   }
 
+  // ── Pattern Signal layer: detect cross-company trends ──
+  const alertSignals = alerts.map((a: any) => ({
+    company_id: a.company_id || "",
+    signal_category: a.signal_category || "",
+    signal_type: a.change_type || a.signal_category || "",
+  }));
+  const patternInsights = detectStandoutPatterns(alertSignals);
+  for (const pi of patternInsights) {
+    insights.push({
+      icon: <Layers className="w-4 h-4 text-primary/70" />,
+      text: pi.text,
+    });
+  }
+
   return (
     <div className="space-y-6 max-w-[800px] mx-auto pb-8">
 
@@ -312,6 +327,7 @@ export function YourSignalDashboard() {
             <div className="space-y-2">
               {alerts.map((a: any, i: number) => {
                 const sev = alertSeverity(a.signal_category);
+                const patternLine = detectAlertPattern(a, alerts);
                 return (
                   <motion.div
                     key={a.id}
@@ -327,6 +343,9 @@ export function YourSignalDashboard() {
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-bold text-foreground">{a.company_name}</p>
                         <p className="text-xs text-muted-foreground leading-snug mt-0.5">{a.change_description}</p>
+                        {patternLine && (
+                          <p className="text-[11px] text-primary/70 leading-snug mt-1 italic">{patternLine}</p>
+                        )}
                         <span className="text-[10px] text-muted-foreground/50 font-mono mt-1 block">
                           {a.date_detected ? new Date(a.date_detected).toLocaleDateString() : ""}
                         </span>
