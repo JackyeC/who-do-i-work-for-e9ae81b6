@@ -82,15 +82,15 @@ export function useWorkNewsTicker() {
   return useQuery({
     queryKey: ["work-news-ticker"],
     queryFn: async () => {
+      // Pull from receipts_enriched (same as newsletter) for freshest stories
       const { data, error } = await supabase
-        .from("work_news")
+        .from("receipts_enriched")
         .select("id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take")
-        .eq("language", "en")
         .not("source_url", "is", null)
         .order("published_at", { ascending: false })
-        .limit(40);
+        .limit(60);
       if (error) throw error;
-      return ((data ?? []) as Pick<WorkNewsArticle, "id" | "headline" | "source_name" | "source_url" | "category" | "is_controversy" | "published_at">[])
+      return ((data ?? []) as any[])
         .map(item => ({
           ...item,
           headline: decodeEscapes(item.headline),
@@ -103,7 +103,8 @@ export function useWorkNewsTicker() {
         .filter((item, idx, arr) => arr.findIndex(a => a.headline === item.headline) === idx)
         .slice(0, 20);
     },
-    staleTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 5, // refresh every 5 min
   });
 }
 

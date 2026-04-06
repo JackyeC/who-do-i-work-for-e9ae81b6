@@ -133,20 +133,20 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
       id={`story-${article.id}`}
       className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24 flex flex-col"
     >
-      {/* ── TOPIC POSTER: vintage bg + headline + Jackye's voice ── */}
+      {/* ── TOPIC POSTER: vintage bg + headline + Jackye's one-liner ── */}
       <div
-        className="relative w-full aspect-[16/9] overflow-hidden bg-muted/30 cursor-pointer"
+        className="relative w-full aspect-[4/5] overflow-hidden bg-muted/30 cursor-pointer"
         onClick={() => onPosterClick(article)}
         style={{
           backgroundImage: `url(${article.poster_url || getPosterForArticle(article)})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center top",
         }}
       >
         {/* Dark gradient so text is always readable */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-        {/* Blind Spot Alert — TOP, full-width, impossible to miss */}
+        {/* Blind Spot Alert — TOP */}
         <BlindSpotAlert sourceName={article.source_name} />
 
         {/* Category stamp — top right */}
@@ -156,63 +156,47 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
 
         {/* Content overlay — bottom */}
         <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-          {/* Headline — Jackye's editorial voice, Playfair Display */}
-          <h3 className="text-white text-base font-black leading-snug line-clamp-3" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}>
-            {article.headline}
+          {/* Headline */}
+          <h3 className="text-white text-sm font-black leading-snug line-clamp-3" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}>
+            {article.source_url ? (
+              <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="text-white no-underline hover:text-primary transition-colors">
+                {article.headline}
+              </a>
+            ) : article.headline}
           </h3>
 
-          {/* Jackye's Take — one-liner, the soul of the card */}
+          {/* Jackye's Take — FIRST SENTENCE ONLY, punchy */}
           {article.jackye_take && (
-            <p className="text-white/80 text-xs italic mt-1.5 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              👑 "{article.jackye_take}"
+            <p className="text-primary/90 text-xs font-bold mt-2 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              👑 {article.jackye_take.split(/(?<=[.!?])\s/)[0]}
             </p>
           )}
         </div>
 
-        {/* WhoDoIWorkFor.com watermark — subtle bottom-right */}
-        <span className="absolute bottom-1.5 right-2 text-[8px] text-white/30 font-mono z-10">
-          WhoDoIWorkFor.com
-        </span>
+        {/* Brand strip — bottom bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-6 bg-[#0A0A0E]/90 flex items-center px-2 z-20">
+          <span className="text-[9px] font-bold text-primary font-mono tracking-wider">W?</span>
+          <span className="text-[8px] text-[#F0EBE0]/60 font-mono ml-1.5">WhoDoIWorkFor.com</span>
+          <span className="text-[8px] text-[#F0EBE0]/40 font-mono ml-auto">by Jackye Clayton</span>
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 flex-1 flex flex-col">
-        {/* Meta row */}
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <CategoryBadge category={article.category} />
-          <span className="text-[10px] text-muted-foreground/50 font-mono ml-auto">{timeAgo(article.published_at)}</span>
-        </div>
-
-        {/* Headline */}
-        <h3 className="text-[15px] font-bold text-foreground leading-snug mb-2 group-hover:text-primary transition-colors flex-1">
-          {article.source_url ? (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="no-underline text-foreground group-hover:text-primary">
-              {article.headline}
-            </a>
-          ) : article.headline}
-        </h3>
-
-        {/* Jackye's Take — compact inline */}
-        {article.jackye_take && (
-          <div className="flex items-start gap-1.5 mb-3 py-2 px-2.5 rounded-lg" style={{ background: "hsl(var(--primary) / 0.04)" }}>
-            <Crown className="w-3 h-3 text-primary shrink-0 mt-0.5" />
-            <p className="text-xs text-foreground/80 leading-relaxed italic line-clamp-2">
-              {article.jackye_take}
-            </p>
-          </div>
-        )}
-
-        {/* Coverage Bias Bar — full width, Ground News signature */}
-        <div className="mt-auto pt-2">
+      {/* Content — NO headline repeat, just bias bar + source + share */}
+      <div className="p-3 flex-1 flex flex-col">
+        {/* Coverage Bias Bar */}
+        <div className="mb-2">
           <CoverageBiasBar sourceName={article.source_name} />
         </div>
 
-        {/* Source + share footer */}
-        <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/20">
-          <span className="text-[11px] font-medium text-foreground/60 font-mono truncate">
-            {article.source_name || "Source"}
-          </span>
+        {/* Source + time + share footer */}
+        <div className="flex items-center justify-between mt-auto pt-1.5 border-t border-border/20">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium text-foreground/60 font-mono uppercase tracking-widest truncate">
+              {article.source_name || "Source"}
+            </span>
+            <span className="text-[9px] text-muted-foreground/40">·</span>
+            <span className="text-[9px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+          </div>
           <div className="flex items-center gap-2 shrink-0">
             <SharePastiche headline={article.headline} articleId={article.id} />
             {article.source_url && (
