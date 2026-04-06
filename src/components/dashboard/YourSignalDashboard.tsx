@@ -165,6 +165,20 @@ export function YourSignalDashboard() {
     });
   }
 
+  // ── Pattern Signal layer: detect cross-company trends ──
+  const alertSignals = alerts.map((a: any) => ({
+    company_id: a.company_id || "",
+    signal_category: a.signal_category || "",
+    signal_type: a.change_type || a.signal_category || "",
+  }));
+  const patternInsights = detectStandoutPatterns(alertSignals);
+  for (const pi of patternInsights) {
+    insights.push({
+      icon: <Layers className="w-4 h-4 text-primary/70" />,
+      text: pi.text,
+    });
+  }
+
   return (
     <div className="space-y-6 max-w-[800px] mx-auto pb-8">
 
