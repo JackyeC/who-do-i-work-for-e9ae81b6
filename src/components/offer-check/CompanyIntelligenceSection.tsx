@@ -43,7 +43,7 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
         (supabase.from("company_public_stances" as any) as any).select("topic, gap").eq("company_id", companyId).limit(5),
         supabase.from("company_dark_money").select("name, relationship").eq("company_id", companyId).limit(3),
         supabase.from("company_board_affiliations").select("name").eq("company_id", companyId).limit(5),
-        (supabase.from("company_revolving_door" as any) as any).select("person, prior_role, new_role, created_at").eq("company_id", companyId).limit(3),
+        (supabase.from("company_revolving_door" as any) as any).select("person, prior_role, new_role").eq("company_id", companyId).limit(3),
         supabase.from("company_jobs").select("id", { count: "exact", head: true }).eq("company_id", companyId).eq("is_active", true),
         supabase.from("company_court_cases").select("id, created_at", { count: "exact" }).eq("company_id", companyId).limit(1),
       ]);
