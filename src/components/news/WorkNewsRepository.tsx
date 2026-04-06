@@ -30,7 +30,7 @@ const CATEGORY_CONFIG: Record<string, { label: string }> = {
 };
 
 /* ── Adapt WorkNewsArticle → SignalStory for poster cards ── */
-function toSignalStory(a: WorkNewsArticle): SignalStory {
+function toSignalStory(a: WorkNewsArticle): SignalStory & { poster_url: string | null; poster_pool_url: string | null; source_count_left: number; source_count_center: number; source_count_right: number; source_total: number } {
   const catMap: Record<string, SignalCategory> = {
     layoffs: "c_suite",
     worker_rights: "fine_print",
