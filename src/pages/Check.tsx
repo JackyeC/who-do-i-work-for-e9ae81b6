@@ -146,6 +146,19 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
   const pollingCountRef = useRef(0);
   const [shouldPoll, setShouldPoll] = useState(true);
 
+  const { data: companyMeta } = useQuery({
+    queryKey: ["check-company-careers-url", companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("careers_url, website_url")
+        .eq("id", companyId)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["check-open-roles", companyId],
     queryFn: async () => {
@@ -249,9 +262,14 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
           <div className="flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-semibold font-display text-foreground">Open Roles</h3>
-            <Badge variant="secondary" className="text-xs">{jobs.length}</Badge>
+            <Badge variant="secondary" className="text-xs">{jobs.length} sampled</Badge>
           </div>
         </div>
+
+        <p className="text-xs text-muted-foreground">
+          We surfaced {jobs.length} roles from {companyName}'s careers page. They likely have many more openings across locations and departments.
+        </p>
+
         <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
           {jobs.map((job) => (
             <a
@@ -301,6 +319,19 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
             </a>
           ))}
         </div>
+
+        {/* CTA to full careers page */}
+        {(companyMeta?.careers_url || companyMeta?.website_url) && (
+          <a
+            href={companyMeta.careers_url || `${companyMeta.website_url}/careers`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary text-sm font-medium transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            View all {companyName} jobs
+          </a>
+        )}
       </CardContent>
     </Card>
   );
