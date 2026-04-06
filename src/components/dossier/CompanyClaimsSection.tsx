@@ -80,6 +80,7 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
         .select("*")
         .eq("company_id", companyId)
         .eq("is_active", true)
+        .order("event_date", { ascending: false, nullsFirst: false })
         .order("confidence_score", { ascending: false })
         .limit(50);
       if (error) throw error;
