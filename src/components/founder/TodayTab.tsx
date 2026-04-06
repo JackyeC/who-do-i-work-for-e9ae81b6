@@ -82,7 +82,7 @@ function ProgressBar({ label, value, color }: { label: string; value: number; co
 
 type AlertItem = { label: string; count: number; tab: string; severity: "critical" | "data_gap" };
 
-export function TodayTab() {
+export function TodayTab({ onNavigateTab }: { onNavigateTab?: (tab: string) => void }) {
   const navigate = useNavigate();
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
