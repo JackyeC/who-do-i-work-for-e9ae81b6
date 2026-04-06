@@ -175,7 +175,7 @@ serve(async (req: Request) => {
     }
 
     // Call Gemini via Lovable AI proxy
-    const aiRes = await fetch("https://ai.lovable.dev/api/generate", {
+    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
