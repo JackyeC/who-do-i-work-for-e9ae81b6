@@ -136,7 +136,7 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
   }
 
   // Revolving door
-  const rdDate = data.revolvingDoor[0]?.created_at ?? null;
+  const rdDate = null;
   allDates.push(rdDate);
   if (data.revolvingDoor.length > 0) {
     const rd = data.revolvingDoor[0];
@@ -151,7 +151,7 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
   }
 
   // Public stance gaps
-  const stanceDate = data.stances[0]?.created_at ?? null;
+  const stanceDate = null;
   allDates.push(stanceDate);
   const conflicts = data.stances.filter(s => s.gap === "direct-conflict" || s.gap === "mixed");
   if (conflicts.length > 0) {
