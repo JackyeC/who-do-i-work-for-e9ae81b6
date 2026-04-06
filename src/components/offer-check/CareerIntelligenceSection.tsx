@@ -56,7 +56,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         activeJobs: jobs.count ?? 0,
         jobTitles: (jobs.data ?? []).map((j: any) => j.title as string),
         latestJobDate: (jobs.data ?? [])[0]?.created_at ?? null,
-        compensation: (compensation.data ?? []) as any[] as { role_title: string; salary_range_min: number; salary_range_max: number; source_type: string; created_at: string }[],
+        compensation: (compensation.data ?? []) as any[] as { median_total_compensation_usd: number | null; top_roles: any; source_summary: string | null; created_at: string }[],
         execTurnover: execTurnover.count ?? 0,
         careerPaths: (careerPaths.data ?? []) as { role_title: string; next_role: string; success_rate_pct: number | null; created_at: string }[],
       };
