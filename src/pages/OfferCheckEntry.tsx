@@ -188,6 +188,9 @@ function OfferUploadCard() {
       const headers: Record<string, string> = {};
       if (session?.access_token) {
         headers["Authorization"] = `Bearer ${session.access_token}`;
+      } else {
+        // Use anon key when not authenticated
+        headers["apikey"] = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       }
       const res = await fetch(EDGE_URL, { method: "POST", headers, body });
       if (!res.ok) {
