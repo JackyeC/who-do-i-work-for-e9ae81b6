@@ -66,8 +66,8 @@ const SORT_OPTIONS = [
 ];
 
 /* ── Poster pool: vintage 1950s ad posters per category ── */
-// IMPORTANT: Images hosted on GitHub — use absolute URLs so they load regardless of Lovable deploy state
-const CDN = "https://raw.githubusercontent.com/JackyeC/who-do-i-work-for-e9ae81b6/main/public/posters";
+// Poster images served from /public/posters/ in the build output
+const CDN = "/posters";
 const POSTER_POOL: Record<string, string[]> = {
   ai_workplace: [`${CDN}/poster-fewer-humans.jpg`, `${CDN}/poster-ai-handshake.jpg`, `${CDN}/poster-ai-screening.jpg`, `${CDN}/poster-tech-stack.jpg`, `${CDN}/poster-robot-helper.jpg`, `${CDN}/poster-surveillance.jpg`],
   tech_stack: [`${CDN}/poster-tech-stack.jpg`, `${CDN}/poster-robot-helper.jpg`, `${CDN}/poster-ai-screening.jpg`, `${CDN}/poster-surveillance.jpg`],
@@ -366,7 +366,7 @@ export default function Newsletter() {
   usePageSEO({
     title: "The Work Signal by Jackye Clayton — Who Do I Work For?",
     description: "We pull stories from across the political spectrum so you see the full picture. Every source is tagged for lean. WDIWF always gives you the centrist, evidence-first view. By Jackye Clayton.",
-    image: `${CDN}/poster-jackye-throne.jpg`,
+    image: "https://wdiwf.jackyeclayton.com/posters/poster-jackye-throne.jpg",
     path: "/newsletter",
     jsonLd: {
       "@type": "WebPage",
