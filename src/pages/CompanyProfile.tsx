@@ -163,7 +163,7 @@ export default function CompanyProfile() {
   const { data: dbIssueSignals } = useQuery({
     queryKey: ["company-issue-signals", dbCompanyId],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("issue_signals").select("issue_category, signal_type, description, amount, confidence_score, source_url").eq("entity_id", dbCompanyId!).order("amount", { ascending: false });
+      const { data } = await (supabase as any).from("issue_signals").select("issue_category, signal_type, description, amount, confidence_score, source_url").eq("entity_id", dbCompanyId!).neq("signal_type", "keyword_match").order("amount", { ascending: false });
       return data || [];
     },
     enabled: !!dbCompanyId, refetchInterval: pollInterval,

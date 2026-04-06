@@ -216,7 +216,7 @@ export default function CompanyDossier() {
   const { data: issueSignals } = useQuery({
     queryKey: ["dossier-issue-signals", companyId],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("issue_signals").select("issue_category, signal_type, description, amount, confidence_score, source_url, transaction_date").eq("entity_id", companyId!);
+      const { data } = await (supabase as any).from("issue_signals").select("issue_category, signal_type, description, amount, confidence_score, source_url, transaction_date").eq("entity_id", companyId!).neq("signal_type", "keyword_match");
       return data || [];
     },
     enabled: !!companyId,
