@@ -21,7 +21,7 @@ const BIAS_COLUMNS = [
   },
   {
     color: "#F0C040",
-    label: "♛ WDIWF View",
+    label: "W? WDIWF View",
     desc: "Our take. Always centrist. Always grounded in public record. Never partisan.",
     glow: true,
   },

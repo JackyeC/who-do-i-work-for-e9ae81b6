@@ -442,7 +442,7 @@ function WelcomeBackInterstitial({
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="text-center max-w-[400px] px-6"
       >
-        <div className="text-4xl mb-4">♕</div>
+        <div className="text-4xl mb-4 font-black">W?</div>
         <h2 className="text-xl font-bold mb-2" style={{ color: "#f5f0e8" }}>
           Welcome back, {profileName}.
         </h2>

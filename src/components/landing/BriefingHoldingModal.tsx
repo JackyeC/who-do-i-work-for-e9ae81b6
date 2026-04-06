@@ -86,7 +86,7 @@ export function BriefingHoldingModal({ open, onClose }: BriefingHoldingModalProp
               >
                 {/* DNA badge */}
                 <div className="flex items-center gap-2 mb-5">
-                  <span className="text-xl">♕</span>
+                  <span className="text-xl font-black">W?</span>
                   <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-primary font-bold">
                     DIWF Intelligence
                   </span>
@@ -94,7 +94,7 @@ export function BriefingHoldingModal({ open, onClose }: BriefingHoldingModalProp
 
                 {/* Profile type pill */}
                 <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1.5 text-xs font-mono tracking-wider uppercase mb-4">
-                  <span>♕</span>
+                  <span className="font-black">W?</span>
                   {dnaLabel} Profile
                 </div>
 
@@ -103,7 +103,7 @@ export function BriefingHoldingModal({ open, onClose }: BriefingHoldingModalProp
                 </h3>
 
                 <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  Your ♕DIWF briefing — personalized to your{" "}
+                  Your W?DIWF briefing — personalized to your{" "}
                   <span className="text-foreground font-medium">{dnaLabel}</span>{" "}
                   profile — is being built. Be the first to get it.
                 </p>

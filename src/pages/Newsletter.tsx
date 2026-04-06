@@ -181,12 +181,20 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
         </div>
       </div>
 
-      {/* Content — NO headline repeat, just bias bar + source + share */}
+      {/* Content — bias bar + company link + source + share */}
       <div className="p-3 flex-1 flex flex-col">
         {/* Coverage Bias Bar */}
         <div className="mb-2">
           <CoverageBiasBar sourceName={article.source_name} coverage={article.coverage} />
         </div>
+
+        {/* Pull the receipts — link to company on WDIWF */}
+        <a
+          href={`/check?q=${encodeURIComponent(article.headline.split(/\s+/).slice(0, 3).join(" "))}`}
+          className="text-[10px] font-bold text-primary hover:text-primary/80 font-mono uppercase tracking-wider mb-2 no-underline"
+        >
+          Pull the receipts →
+        </a>
 
         {/* Source + time + share footer */}
         <div className="flex items-center justify-between mt-auto pt-1.5 border-t border-border/20">
