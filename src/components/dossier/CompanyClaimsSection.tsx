@@ -150,7 +150,7 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
         </p>
 
         <div className="space-y-2">
-          {claims.map((claim: any) => {
+          {(showAll ? claims : claims.slice(0, INITIAL_LIMIT)).map((claim: any) => {
             const evidenceConf = EVIDENCE_CONFIG[claim.evidence_type as keyof typeof EVIDENCE_CONFIG] || EVIDENCE_CONFIG.inferred;
             const EvidenceIcon = evidenceConf.icon;
             const TypeIcon = CLAIM_TYPE_ICONS[claim.claim_type] || FileText;
@@ -197,7 +197,6 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
 
                 {isExpanded && (
                   <div className="px-3 pb-3 pt-0 border-t border-border/30">
-                    {/* Decision Context */}
                     {claim.decision_impact && (
                       <div className="mt-2 rounded-md border-l-2 border-primary/40 bg-primary/5 px-3 py-2">
                         <div className="flex items-center gap-1.5 mb-1">
@@ -248,6 +247,15 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
             );
           })}
         </div>
+
+        {!showAll && claims.length > INITIAL_LIMIT && (
+          <button
+            onClick={() => setShowAll(true)}
+            className="w-full mt-3 py-2.5 text-xs font-medium text-primary hover:text-primary/80 hover:bg-primary/5 rounded-lg border border-border/40 transition-colors"
+          >
+            Show all {claims.length} claims
+          </button>
+        )}
       </div>
     </TooltipProvider>
   );
