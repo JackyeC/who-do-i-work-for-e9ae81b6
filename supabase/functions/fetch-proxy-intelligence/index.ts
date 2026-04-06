@@ -260,7 +260,7 @@ ${truncated}`;
       shareholder_proposals: parsed.shareholder_proposals,
       governance_rating: parsed.governance_rating,
       governance_notes: parsed.governance_notes,
-      provider_used: "gemini-2.5-flash",
+      provider_used: providerUsed,
       confidence_score: 0.8,
       updated_at: new Date().toISOString(),
     };
