@@ -95,11 +95,22 @@ export default function IntelligenceCheck() {
               We're generating your employer intelligence snapshot now. Check your inbox at{" "}
               <span className="font-medium text-foreground">{form.email}</span> — it should arrive within a few minutes.
             </p>
+            <p className="text-sm text-muted-foreground mb-6">
+              While you wait, see what we already know:
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button onClick={() => window.location.href = `/offer-check?q=${encodeURIComponent(form.employer_name)}`} className="gap-2">
+                View {form.employer_name} Dossier <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" onClick={() => window.location.href = "/ask-jackye"} className="gap-2">
+                Ask Jackye About This Company
+              </Button>
+            </div>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-xs text-muted-foreground/70"
+              className="text-xs text-muted-foreground/70 mt-6"
             >
               Jackyé also gets a copy and may follow up with additional insights.
             </motion.p>
@@ -131,9 +142,22 @@ export default function IntelligenceCheck() {
             >
               Would you work here?
             </h1>
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-[50ch] mx-auto mb-6">
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-[50ch] mx-auto mb-4">
               We'll scan layoffs, lawsuits, political spending, and more from the public record.
             </p>
+            {/* Step indicators */}
+            <div className="flex items-center justify-center gap-6 mb-6">
+              {[
+                { num: "1", label: "Name the employer" },
+                { num: "2", label: "We pull public records" },
+                { num: "3", label: "You see the receipts" },
+              ].map((s) => (
+                <div key={s.num} className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">{s.num}</span>
+                  <span className="text-xs text-muted-foreground">{s.label}</span>
+                </div>
+              ))}
+            </div>
             <div className="max-w-[400px] mx-auto">
               <div className="relative focus-within:ring-1 focus-within:ring-primary/30 rounded-lg transition-all">
                 <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
