@@ -151,6 +151,71 @@ function buildSummary(company: CompanyResult, signals: Signal[]): string {
   return `${company.name} shows positive transparency signals. A full report would confirm whether this extends across all categories.`;
 }
 
+/* ─── Offer Upload Card (coming soon) ─── */
+function OfferUploadCard() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    try {
+      await supabase.from("career_waitlist").insert({ email: email.trim(), reason: "offer_analysis" });
+    } catch {}
+    setSubmitted(true);
+  };
+
+  return (
+    <div className="mt-auto space-y-3">
+      <div
+        className="border border-dashed border-border/60 rounded-lg p-5 text-center cursor-pointer hover:border-primary/40 transition-colors"
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+      >
+        <Upload className="w-5 h-5 text-muted-foreground mx-auto mb-2" />
+        <p className="text-xs text-muted-foreground">
+          Drag & drop or <span className="text-primary font-medium">click to upload</span>
+        </p>
+        <p className="text-[10px] text-muted-foreground/60 mt-1">.pdf, .docx, .txt</p>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.docx,.txt"
+          className="hidden"
+          onChange={() => {}}
+        />
+      </div>
+
+      {!submitted ? (
+        <form onSubmit={handleEmailSubmit} className="space-y-2">
+          <p className="text-[10px] text-muted-foreground text-center">
+            Offer analysis coming soon — drop your email to be first.
+          </p>
+          <div className="flex gap-2">
+            <Input
+              type="email"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-9 text-xs bg-background border-border flex-1"
+              required
+            />
+            <Button type="submit" size="sm" className="h-9 text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90 shrink-0">
+              <Mail className="w-3 h-3" /> Notify Me
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <div className="flex items-center justify-center gap-2 py-2">
+          <CheckCircle className="w-4 h-4 text-primary" />
+          <p className="text-xs text-foreground font-medium">You're on the list. We'll reach out.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ════════════════════════════════════════════ */
 /*                  PAGE                       */
 /* ════════════════════════════════════════════ */
