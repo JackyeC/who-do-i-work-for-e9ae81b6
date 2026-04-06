@@ -185,9 +185,9 @@ export function EvaluationProvider({ children }: { children: ReactNode }) {
 
     let verdict = "";
     if (civic === 0 && clarity === 0) verdict = "Under review — we're pulling records";
-    else if (jobAlignment >= 70 && offerRisk < 40) verdict = "Strong signals — the record supports this";
-    else if (jobAlignment >= 40 || offerRisk < 60) verdict = "Mixed signals — verify before you commit";
-    else verdict = "Significant risk signals — review the receipts";
+    else if (jobAlignment >= 70 && offerRisk < 40) verdict = "Based on what you said matters — the record lines up";
+    else if (jobAlignment >= 40 || offerRisk < 60) verdict = "Based on what you said matters — the signals are mixed";
+    else verdict = "Based on what you said matters — the record raises flags";
 
     return { alignmentScore: jobAlignment, riskScore: offerRisk, verdictText: verdict, verdictReasons: reasons };
   }, [activeCompany, activeJob, activeOffer, userPriorities]);
