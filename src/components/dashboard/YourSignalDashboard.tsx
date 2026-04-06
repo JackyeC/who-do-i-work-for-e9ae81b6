@@ -327,6 +327,7 @@ export function YourSignalDashboard() {
             <div className="space-y-2">
               {alerts.map((a: any, i: number) => {
                 const sev = alertSeverity(a.signal_category);
+                const patternLine = detectAlertPattern(a, alerts);
                 return (
                   <motion.div
                     key={a.id}
@@ -342,6 +343,9 @@ export function YourSignalDashboard() {
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-bold text-foreground">{a.company_name}</p>
                         <p className="text-xs text-muted-foreground leading-snug mt-0.5">{a.change_description}</p>
+                        {patternLine && (
+                          <p className="text-[11px] text-primary/70 leading-snug mt-1 italic">{patternLine}</p>
+                        )}
                         <span className="text-[10px] text-muted-foreground/50 font-mono mt-1 block">
                           {a.date_detected ? new Date(a.date_detected).toLocaleDateString() : ""}
                         </span>
