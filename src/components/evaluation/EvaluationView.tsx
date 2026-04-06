@@ -3,7 +3,7 @@ import { useEvaluation } from "@/contexts/EvaluationContext";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, AlertTriangle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 interface EvaluationViewProps {
