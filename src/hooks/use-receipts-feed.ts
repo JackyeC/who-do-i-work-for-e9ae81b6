@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
 import { getSourceProfile } from "@/lib/source-bias-map";
+import { getCoverageForTopics, registerSource, type StoryCoverage } from "@/lib/coverage-client";
 
 /** Extract significant keywords from a headline for topic matching */
 function topicKey(headline: string): string {
@@ -178,6 +179,32 @@ export function useReceiptsFeed() {
         const best = group.sort((x, y) => (y.spice_level || 0) - (x.spice_level || 0))[0];
         deduped.push(best);
       }
+
+      // Register all articles as sources in the coverage DB (fire and forget)
+      for (const a of deduped) {
+        const tk = topicKey(a.headline);
+        const bias = getSourceProfile(a.source_name);
+        registerSource(tk, a.headline, a.source_name || "Unknown", a.source_url || "", bias.bias, a.published_at || new Date().toISOString()).catch(() => {});
+      }
+
+      // Fetch real coverage data from the coverage DB
+      const allTopicKeys = deduped.map(a => topicKey(a.headline));
+      try {
+        const coverageMap = await getCoverageForTopics([...new Set(allTopicKeys)]);
+        for (const a of deduped) {
+          const tk = topicKey(a.headline);
+          const cov = coverageMap.get(tk);
+          if (cov && cov.total_sources > 0) {
+            a.coverage = {
+              total: cov.total_sources,
+              left: cov.left_count,
+              center: cov.center_count,
+              right: cov.right_count,
+              sources: cov.source_names || [],
+            };
+          }
+        }
+      } catch {}
 
       // US-first sort: American stories at top, then international
       deduped.sort((a, b) => {
