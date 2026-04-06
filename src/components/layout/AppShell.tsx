@@ -14,7 +14,7 @@ interface AppShellProps {
  * The homepage renders its own nav inline (returned from Index.tsx) so we skip the shell nav.
  * Pricing previously had its own nav — now uses MarketingNav via this shell.
  */
-const MARKETING_PAGES = ["/about", "/how-it-works", "/for-employers", "/contact", "/pricing", "/submit-tip", "/newsletter", "/methodology", "/data-ethics", "/privacy", "/terms", "/values", "/community", "/would-you-work-here", "/policy", "/ask-jackye", "/check", "/palette", "/no-regrets"];
+const MARKETING_PAGES = ["/about", "/how-it-works", "/for-employers", "/contact", "/pricing", "/offer-check", "/submit-tip", "/newsletter", "/methodology", "/data-ethics", "/privacy", "/terms", "/values", "/community", "/policy", "/ask-jackye", "/check", "/palette", "/no-regrets"];
 const NO_SHELL_ROUTES = ["/interview", "/recruiter", "/peoplepuzzles/embed", "/trail", "/no-regrets-game"];
 
 export function AppShell({ children }: AppShellProps) {

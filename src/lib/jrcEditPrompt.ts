@@ -3,6 +3,7 @@
  * ═════════════════════════════════
  * Categories, heat levels, labels, and mappings for UI components.
  * The full system prompts live in supabase/functions/_shared/jrc-edit-prompt.ts
+ * (composed with WDIWF doctrine in supabase/functions/_shared/wdiwf-voice.ts).
  */
 
 // ── Categories ──────────────────────────────────────────

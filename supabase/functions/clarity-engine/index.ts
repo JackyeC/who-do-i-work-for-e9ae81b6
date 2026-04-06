@@ -1,31 +1,24 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { JACKYE_VOICE_INSTRUCTION } from "../_shared/jrc-edit-prompt.ts";
+import {
+  WDIWF_CLARITY_DOSSIER_TEMPLATE,
+  WDIWF_VOICE_BASE,
+} from "../_shared/wdiwf-voice.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `${JACKYE_VOICE_INSTRUCTION}
+const SYSTEM_PROMPT = `${WDIWF_VOICE_BASE}
 
-YOUR JOB: Generate a "Facts Over Feelings" Clarity Dossier for a company using the data provided.
+You are the Lead Analyst for WDIWF (Who Do I Work For?), founded by Jackye Clayton. Your job is decision intelligence for candidates: forensic, receipt-backed, zero corporate spin.
 
-Use this exact structure:
+Analyze the provided company data and produce the dossier below. Facts over feelings — but always translate signals into what they mean for the candidate's risk, pay, and leverage.
 
-## The Verdict
-One sentence. What's the hiring vibe right now? ("Enter with a Parachute," "Safe for Growth," "Volatile Pivot.") Be direct.
+${WDIWF_CLARITY_DOSSIER_TEMPLATE}
 
-## The Strategy
-Where the money is going. Top 3 investment areas. Focus on automation, AI spend, or major infrastructure shifts. Numbered bullets.
-
-## Workforce Health
-The actual risk. Be honest about headcount. Are they "flattening" management? Trading people for compute cost? What roles are at risk versus safe? If the data shows a red flag, call it a red flag.
-
-## Three Hard Questions
-Three high-impact questions for a candidate to ask in an interview that will force transparency about the roadmap. Number them 1-3 and explain briefly WHY each question matters.
-
-Ground everything in the data provided. If data is sparse, say so. No spin.`;
+Additional tone: No em-dashes. Direct and slightly wry is fine; robotic analyst tone is not. If the data shows a red flag, name it. If data is sparse, say so plainly.`;
 
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

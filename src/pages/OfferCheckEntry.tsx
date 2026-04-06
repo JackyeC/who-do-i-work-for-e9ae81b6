@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -156,10 +156,16 @@ function buildSummary(company: CompanyResult, signals: Signal[]): string {
 
 export default function OfferCheckEntry() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [companyName, setCompanyName] = useState("");
   const [role, setRole] = useState("");
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const [resolvedCompanyId, setResolvedCompanyId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const q = searchParams.get("q")?.trim() || searchParams.get("company")?.trim();
+    if (q) setCompanyName(q);
+  }, [searchParams]);
 
   usePageSEO({
     title: "Check a Company — Should You Take This Job?",
@@ -339,6 +345,9 @@ export default function OfferCheckEntry() {
                     "rounded-2xl border p-6 text-center",
                     verdict!.bg, verdict!.border
                   )}>
+                    <p className="text-xs text-muted-foreground mb-3 max-w-[42ch] mx-auto leading-relaxed">
+                      Risk band from public-record signals — not a moral judgment on the company. Use it to decide whether to move forward or pause and read the receipts.
+                    </p>
                     <div className="flex items-center justify-center gap-2 mb-2">
                       {(() => { const VIcon = verdict!.icon; return <VIcon className={cn("w-5 h-5", verdict!.color)} />; })()}
                       <Badge variant="outline" className={cn("text-sm font-semibold px-3 py-0.5", verdict!.color, verdict!.border)}>
@@ -352,8 +361,9 @@ export default function OfferCheckEntry() {
 
                   {/* ═══ SECTION 3: TOP SIGNALS (free: max 3) ═══ */}
                   <div>
+                    <p className="text-xs text-muted-foreground mb-1">What you&apos;re looking at</p>
                     <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">
-                      Top Signals
+                      Public-record signals
                     </h3>
                     {signals.length === 0 ? (
                       <div className="bg-card border border-border rounded-xl p-4">
@@ -412,6 +422,7 @@ export default function OfferCheckEntry() {
                   {/* ═══ SECTION 4: SUMMARY ═══ */}
                   {summary && (
                     <div className="bg-card border border-border rounded-xl p-4">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Why this might matter to you</p>
                       <p className="text-sm text-foreground leading-relaxed">{summary}</p>
                     </div>
                   )}
@@ -477,6 +488,13 @@ export default function OfferCheckEntry() {
                         Full reports include verified sources, evidence chains, and decision-ready analysis.
                       </p>
                     </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-border/60">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">What to do next</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Open the full dossier for sources and depth, bookmark the company, or come back when you have an offer in hand.
+                    </p>
                   </div>
 
                   {/* ═══ OFFER CHECKLIST — Phase 1 ═══ */}

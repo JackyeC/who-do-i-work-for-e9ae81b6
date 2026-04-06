@@ -44,8 +44,8 @@ Upload or paste a job offer letter for comprehensive analysis:
 - Negotiation guidance with specific talking points
 - Red flag detection for concerning contract terms
 
-### 3. Would You Work Here?
-**URL**: https://wdiwf.jackyeclayton.com/would-you-work-here
+### 3. Offer check (shareable employer reality check)
+**URL**: https://wdiwf.jackyeclayton.com/offer-check
 
 Free employer intelligence check that provides:
 - Employer Clarity Score (transparency grade)
@@ -213,7 +213,7 @@ Jackye Clayton offers advisory services:
 | Browse Companies | https://wdiwf.jackyeclayton.com/browse |
 | Offer Check | https://wdiwf.jackyeclayton.com/check |
 | Ask Jackye | https://wdiwf.jackyeclayton.com/ask-jackye |
-| Would You Work Here? | https://wdiwf.jackyeclayton.com/would-you-work-here |
+| Offer check | https://wdiwf.jackyeclayton.com/offer-check |
 | Strategic Offer Review | https://wdiwf.jackyeclayton.com/strategic-offer-review |
 | EVP Reality Check | https://wdiwf.jackyeclayton.com/evp-reality-check |
 | Employer Receipt | https://wdiwf.jackyeclayton.com/employer-receipt |

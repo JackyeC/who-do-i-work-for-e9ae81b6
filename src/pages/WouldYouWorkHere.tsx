@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search, ArrowRight, Users, Eye, DollarSign, Landmark, HeartHandshake,
-  Twitter, Linkedin, Link2, Check, MessageCircle, CircleHelp, Target,
-  Briefcase, BarChart3, ChevronRight, AlertTriangle, ShieldCheck
+  Twitter, Linkedin, Link2, Check, MessageCircle, CircleHelp,
+  ChevronRight, AlertTriangle, ShieldCheck
 } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import {
@@ -43,12 +43,6 @@ const DEMO_RED_FLAGS: RedFlags = {
 };
 
 const DEMO_COVERAGE = 58;
-
-const AUDIENCE_USES = [
-  { role: "Candidates", icon: Target, desc: "Evaluate an employer before accepting an offer or attending an interview." },
-  { role: "HR / Recruiters", icon: Briefcase, desc: "Benchmark your employer brand against what candidates can already see." },
-  { role: "Sales / Strategy", icon: BarChart3, desc: "Understand a prospect's workforce stability and influence risk before outreach." },
-];
 
 /* ── Share Buttons ── */
 function ShareButtons() {
@@ -133,7 +127,7 @@ function VerdictSection({ result }: { result: VerdictOutput }) {
       <div className="mx-6 mb-4 p-5 border-l-2 border-primary bg-primary/[0.04]">
         <div className="flex items-center gap-2 mb-3">
           <MessageCircle className="w-4 h-4 text-primary" strokeWidth={1.5} />
-          <span className="font-mono text-[0.65rem] tracking-widest uppercase text-primary">Intelligence Assessment</span>
+          <span className="font-mono text-[0.65rem] tracking-widest uppercase text-primary">Alignment & risk read</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -153,9 +147,9 @@ function VerdictSection({ result }: { result: VerdictOutput }) {
           <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-civic-red/5 border border-civic-red/20">
             <AlertTriangle className="w-3.5 h-3.5 text-civic-red shrink-0" strokeWidth={1.5} />
             <span className="text-xs text-civic-red font-semibold">
-              {result.redFlagCount} red flag{result.redFlagCount > 1 ? "s" : ""} detected
+              {result.redFlagCount} risk signal{result.redFlagCount > 1 ? "s" : ""} on the record
             </span>
-            <span className="text-[0.65rem] text-muted-foreground">— verdict adjusted accordingly</span>
+            <span className="text-[0.65rem] text-muted-foreground">— weighted into the read below</span>
           </div>
         )}
 
@@ -220,14 +214,14 @@ export default function WouldYouWorkHere() {
   });
 
   const handleSearch = () => {
-    if (search.trim()) navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    if (search.trim()) navigate(`/offer-check?q=${encodeURIComponent(search.trim())}`);
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* ── Hero ── */}
       <section className="px-6 lg:px-16 pt-20 pb-12 lg:pt-28 lg:pb-16 max-w-[800px] mx-auto">
-        <div className="font-mono text-[0.7rem] uppercase text-primary tracking-[0.2em] mb-4">Employer Intelligence Check</div>
+        <div className="font-mono text-[0.7rem] uppercase text-primary tracking-[0.2em] mb-4">Sample employer audit</div>
         <h1
           className="font-sans text-foreground leading-[1.08] mb-5"
           style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)", fontWeight: 800, letterSpacing: "-1px" }}
@@ -238,7 +232,7 @@ export default function WouldYouWorkHere() {
           A simple question. A much smarter answer. See what five transparency signals reveal about any employer — before you apply.
         </p>
         <p className="text-xs text-muted-foreground/60 mb-8 max-w-[520px] leading-relaxed">
-          This is a sample report. Search a company below to run a live check, or <a href="/browse" className="text-primary hover:underline">browse the full directory</a>.
+          This is a sample report. Enter a company below to run the real audit on the public record — alignment and risk, with sources.
         </p>
         <div className="flex max-w-[500px] border border-border bg-card">
           <div className="flex items-center px-4 text-muted-foreground"><Search className="w-4 h-4" /></div>
@@ -283,37 +277,19 @@ export default function WouldYouWorkHere() {
         </div>
       </section>
 
-      {/* ── Audience ── */}
-      <section className="px-6 lg:px-16 py-12 max-w-[840px] mx-auto w-full">
-        <div className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground mb-5 text-center">Who This Is For</div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {AUDIENCE_USES.map(a => (
-            <div key={a.role} className="bg-card border border-border p-5 text-center">
-              <a.icon className="w-5 h-5 text-primary mx-auto mb-3" strokeWidth={1.5} />
-              <div className="text-sm font-semibold text-foreground mb-1">{a.role}</div>
-              <p className="text-xs text-muted-foreground leading-relaxed">{a.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ── CTA ── */}
       <section className="border-t border-border px-6 lg:px-16 py-16 text-center">
-        <h2 className="text-xl font-bold mb-3 text-foreground">Get the full picture.</h2>
+        <h2 className="text-xl font-bold mb-3 text-foreground">Run the full company audit.</h2>
         <p className="text-sm text-muted-foreground mb-8 max-w-[440px] mx-auto leading-relaxed">
-          Run a full employer intelligence scan, upload an offer letter, or ask the Advisor directly.
+          The demo above is a snapshot. Check any real employer on the public record — same facts-over-feelings voice, with live data and sources.
         </p>
-        <div className="flex gap-3 justify-center flex-wrap">
-          <button onClick={() => navigate("/browse")} className="bg-primary text-primary-foreground px-7 py-3 font-mono text-[0.7rem] font-semibold tracking-wider uppercase hover:brightness-110 transition-all flex items-center gap-2">
-            Run Employer Scan <ArrowRight className="w-4 h-4" />
-          </button>
-          <button onClick={() => navigate("/check")} className="border border-border text-muted-foreground px-7 py-3 font-mono text-[0.7rem] tracking-wider uppercase hover:border-primary hover:text-primary transition-all">
-            Upload an Offer
-          </button>
-          <button onClick={() => navigate("/ask-jackye")} className="border border-border text-muted-foreground px-7 py-3 font-mono text-[0.7rem] tracking-wider uppercase hover:border-primary hover:text-primary transition-all flex items-center gap-2">
-            <MessageCircle className="w-3.5 h-3.5" /> Ask the Advisor
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => navigate("/offer-check")}
+          className="bg-primary text-primary-foreground px-7 py-3 font-mono text-[0.7rem] font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2"
+        >
+          Check this company in WDIWF <ArrowRight className="w-4 h-4" />
+        </button>
       </section>
     </div>
   );

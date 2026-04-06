@@ -5,7 +5,7 @@ import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
-import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio, FileSearch, CreditCard } from "lucide-react";
+import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio, CreditCard, Building2, FileSearch } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaChip } from "@/components/PersonaChip";
 import { LogoMark } from "@/components/brand/LogoMark";
@@ -17,9 +17,9 @@ import { IntelligenceTicker } from "@/components/layout/IntelligenceTicker";
 export const MAIN_SECTIONS = [
   {
     id: "audit",
-    label: "Scan a Company",
-    path: "/browse",
-    matchPaths: ["/browse", "/search", "/company/", "/dossier/", "/add-company", "/values-search", "/intelligence", "/what-am-i-supporting"],
+    label: "Check a Company",
+    path: "/offer-check",
+    matchPaths: ["/offer-check", "/browse", "/search", "/company/", "/dossier/", "/add-company", "/values-search", "/intelligence", "/what-am-i-supporting"],
     subItems: [],
   },
   {
@@ -73,7 +73,7 @@ export const MAIN_SECTIONS = [
     matchPaths: [
       "/check", "/offer-check", "/offer-review", "/strategic-offer-review", "/offer-clarity",
       "/job-board", "/jobs", "/ask-jackye", "/methodology",
-      "/would-you-work-here", "/employer-receipt", "/employer-promise-check", "/follow-the-money", "/compare", "/site-map",
+      "/offer-check", "/employer-receipt", "/employer-promise-check", "/follow-the-money", "/compare", "/site-map",
       "/about", "/for-employers", "/contact",
     ],
     subItems: [
@@ -81,7 +81,7 @@ export const MAIN_SECTIONS = [
       { label: "For Companies", path: "/for-employers" },
       { label: "Contact", path: "/contact" },
       { label: "Job Board", path: "/job-board" },
-      { label: "Offer Analysis", path: "/check" },
+      { label: "Offer analysis (advanced)", path: "/check" },
       { label: "Compare Companies", path: "/compare" },
       { label: "Follow the Money", path: "/follow-the-money" },
       { label: "Recruiter Brief", path: "/recruiter-brief" },
@@ -114,7 +114,7 @@ export function TopBar() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/offer-check?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
     }
   };
@@ -137,6 +137,7 @@ export function TopBar() {
 
   /* Primary nav items (desktop) */
   const PRIMARY_NAV = [
+    { id: "check", label: "Check a Company", icon: Building2, path: "/offer-check", matchPaths: ["/offer-check"] },
     { id: "work-signal", label: "The Work Signal", icon: FileSearch, path: "/newsletter", matchPaths: ["/newsletter"] },
     { id: "intelligence", label: "My Intel", icon: BarChart3, onClick: handleMyIntelligence, matchPaths: ["/dashboard"] },
     { id: "signals", label: "Signals", icon: Radio, path: "/signal-alerts", matchPaths: ["/signal-alerts"] },
@@ -146,6 +147,7 @@ export function TopBar() {
 
   /* Secondary nav items (More dropdown) */
   const SECONDARY_NAV = [
+    { label: "The Receipts", path: "/receipts" },
     { label: "About", path: "/about" },
     { label: "For Companies", path: "/for-employers" },
     { label: "Contact", path: "/contact" },
@@ -306,10 +308,10 @@ export function TopBar() {
 
           {/* Audit CTA */}
           <Link
-            to="/browse"
+            to="/offer-check"
             className="hidden sm:inline-flex items-center whitespace-nowrap font-sans transition-all hover:brightness-110 bg-primary text-primary-foreground rounded-full px-5 py-2 text-btn"
           >
-            Scan a Company →
+            Check a company →
           </Link>
 
           {/* Mobile hamburger */}
@@ -337,8 +339,8 @@ export function TopBar() {
           </form>
 
           {/* Primary */}
-          <Link to="/newsletter" className="block px-3 py-3 font-sans text-nav text-primary font-semibold hover:text-foreground transition-colors">
-            Receipts
+          <Link to="/offer-check" className="block px-3 py-3 font-sans text-nav text-primary font-semibold hover:text-foreground transition-colors">
+            Check a Company
           </Link>
           <button
             onClick={() => { setMobileMenuOpen(false); handleMyIntelligence(); }}
