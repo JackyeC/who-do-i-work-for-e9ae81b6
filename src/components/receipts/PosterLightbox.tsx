@@ -1,8 +1,24 @@
 import { useEffect, useCallback } from "react";
-import { ReceiptPoster } from "./ReceiptPoster";
 import { Linkedin, Facebook, Twitter, X } from "lucide-react";
 import { BiasBar, getSourceBiasKey } from "./BiasBar";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
+
+// Poster pool for lightbox — matches Newsletter.tsx
+const CDN = "/posters";
+const ALL_POSTERS = [
+  `${CDN}/poster-jackye-throne.jpg`, `${CDN}/poster-jackye-receipts.jpg`, `${CDN}/poster-jackye-broadcast.jpg`,
+  `${CDN}/poster-boardroom.jpg`, `${CDN}/poster-golden-parachute.jpg`, `${CDN}/poster-ghost-jobs.jpg`,
+  `${CDN}/poster-water-cooler.jpg`, `${CDN}/poster-supply-chain.jpg`, `${CDN}/poster-rto-commute.jpg`,
+  `${CDN}/poster-surveillance.jpg`, `${CDN}/poster-tech-stack.jpg`, `${CDN}/poster-robot-helper.jpg`,
+  `${CDN}/poster-fewer-humans.jpg`, `${CDN}/poster-follow-money.jpg`, `${CDN}/poster-exit-interview.jpg`,
+  `${CDN}/poster-dei-rollback.jpg`, `${CDN}/poster-smile-more.jpg`, `${CDN}/poster-pay-ratio.jpg`,
+];
+function getPosterForArticle(article: ReceiptArticle): string {
+  const s = article.headline || article.id || "";
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return ALL_POSTERS[Math.abs(h) % ALL_POSTERS.length];
+}
 
 const CAT_COLORS: Record<string, string> = {
   ai_workplace: "#38BDF8",
@@ -61,8 +77,8 @@ export function PosterLightbox({ article, onClose }: PosterLightboxProps) {
     } catch {}
   };
 
-  const txt = encodeURIComponent(`"${article.headline}" — via The Receipts by Jackye Clayton`);
-  const shareUrl = encodeURIComponent("https://wdiwf.jackyeclayton.com/receipts");
+  const txt = encodeURIComponent(`"${article.headline}" — Jackye's Take: ${(article.jackye_take || "").split(/(?<=[.!?])\s/)[0]}\n\n\u{1F4F0} via \u{265B}DIWF by Jackye Clayton`);
+  const shareUrl = encodeURIComponent("https://wdiwf.jackyeclayton.com/newsletter");
 
   return (
     <div
@@ -81,9 +97,33 @@ export function PosterLightbox({ article, onClose }: PosterLightboxProps) {
           </button>
         </div>
         <div className="flex justify-center mb-5">
-          <ReceiptPoster poster={article.poster_data} posterUrl={article.poster_url} category={article.category} big id={lid} headline={article.headline} />
+          <div
+            id={lid}
+            className="relative w-full max-w-[480px] aspect-[3/4] rounded-lg overflow-hidden"
+            style={{
+              backgroundImage: `url(${article.poster_url || getPosterForArticle(article)})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center top",
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+              <h2 className="text-white text-lg font-black leading-snug" style={{ fontFamily: "'Playfair Display', serif" }}>
+                {article.headline}
+              </h2>
+              {article.jackye_take && (
+                <p className="text-primary/90 text-sm font-bold mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                  👑 {article.jackye_take.split(/(?<=[.!?])\s/)[0]}
+                </p>
+              )}
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-7 bg-[#0A0A0E]/90 flex items-center px-3 z-20">
+              <span className="text-[10px] font-bold text-primary font-mono tracking-wider">W?</span>
+              <span className="text-[9px] text-[#F0EBE0]/60 font-mono ml-2">WhoDoIWorkFor.com</span>
+              <span className="text-[9px] text-[#F0EBE0]/40 font-mono ml-auto">by Jackye Clayton</span>
+            </div>
+          </div>
         </div>
-        <h2 className="text-lg font-black text-foreground leading-tight mb-2.5">{article.headline}</h2>
         <div className="flex items-center gap-2.5 mb-4 flex-wrap">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: catColor }}>
             {article.category?.replace("_", " ") || "NEWS"}
