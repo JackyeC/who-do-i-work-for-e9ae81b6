@@ -16,8 +16,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, ShieldCheck, AlertTriangle, XCircle, Lock,
   ExternalLink, ArrowRight, CheckCircle, Loader2,
-  Upload, FileText, Mail,
+  Upload, FileText, Mail, Zap, CircleAlert, CircleMinus,
+  Handshake, ThumbsUp,
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 /* ─── Types ─── */
