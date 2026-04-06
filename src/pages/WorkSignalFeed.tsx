@@ -238,22 +238,23 @@ export default function WorkSignalFeed() {
         <div className="max-w-3xl mx-auto px-4 py-3 space-y-3">
           {/* Category chips */}
           <div className="flex items-center gap-2 flex-wrap">
-            {CATEGORY_CHIPS.map(chip => (
-              <button
-                key={chip.key}
-                onClick={() => { setCategoryFilter(chip.key); setVisibleCount(PAGE_SIZE); }}
-                className="px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide transition-all border"
-                style={
-                  categoryFilter === chip.key
-                    ? { background: "#F0C040", color: "#2c1a00", borderColor: "#F0C040" }
-                    : undefined
-                }
-                {...(categoryFilter !== chip.key && {
-                  className: "px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide transition-all border bg-transparent text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground",
-                })}
-              >
-                {chip.label}
-              </button>
+            {CATEGORY_CHIPS.map(chip => {
+              const isActive = categoryFilter === chip.key;
+              return (
+                <button
+                  key={chip.key}
+                  onClick={() => { setCategoryFilter(chip.key); setVisibleCount(PAGE_SIZE); }}
+                  className={`px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide transition-all border ${
+                    isActive
+                      ? "border-transparent"
+                      : "bg-transparent text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground"
+                  }`}
+                  style={isActive ? { background: "#F0C040", color: "#2c1a00" } : undefined}
+                >
+                  {chip.label}
+                </button>
+              );
+            }
             ))}
           </div>
 
