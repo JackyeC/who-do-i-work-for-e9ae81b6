@@ -40,7 +40,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         (supabase.from("company_warn_notices" as any) as any).select("employees_affected, notice_date").eq("company_id", companyId),
         supabase.from("company_worker_sentiment").select("sentiment, created_at").eq("company_id", companyId),
         supabase.from("company_jobs").select("id, title, created_at", { count: "exact" }).eq("company_id", companyId).eq("is_active", true).limit(5),
-        (supabase.from("compensation_data" as any) as any).select("role_title, salary_range_min, salary_range_max, source_type, created_at").eq("company", companyId).limit(5),
+        (supabase.from("compensation_data" as any) as any).select("median_total_compensation_usd, top_roles, source_summary, created_at").eq("company", companyId).limit(5),
         supabase.from("company_executives").select("id, created_at", { count: "exact", head: true }).eq("company_id", companyId).not("departed_at", "is", null),
         supabase.from("career_paths").select("role_title, next_role, success_rate_pct, created_at").eq("company_id", companyId).limit(3),
       ]);
@@ -56,7 +56,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         activeJobs: jobs.count ?? 0,
         jobTitles: (jobs.data ?? []).map((j: any) => j.title as string),
         latestJobDate: (jobs.data ?? [])[0]?.created_at ?? null,
-        compensation: (compensation.data ?? []) as any[] as { role_title: string; salary_range_min: number; salary_range_max: number; source_type: string; created_at: string }[],
+        compensation: (compensation.data ?? []) as any[] as { median_total_compensation_usd: number | null; top_roles: any; source_summary: string | null; created_at: string }[],
         execTurnover: execTurnover.count ?? 0,
         careerPaths: (careerPaths.data ?? []) as { role_title: string; next_role: string; success_rate_pct: number | null; created_at: string }[],
       };
@@ -104,26 +104,17 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
   const compDate = data.compensation[0]?.created_at ?? null;
   allDates.push(compDate);
   if (data.compensation.length > 0) {
-    const relevant = role
-      ? data.compensation.find(c => c.role_title?.toLowerCase().includes(role.toLowerCase()))
-      : data.compensation[0];
-    if (relevant) {
-      insights.push({
-        icon: DollarSign,
-        title: "Compensation Signals",
-        detail: `${relevant.role_title}: $${(relevant.salary_range_min ?? 0).toLocaleString()}–$${(relevant.salary_range_max ?? 0).toLocaleString()}. Source: ${relevant.source_type || "reported"}.`,
-        tier: "multi_source",
-        freshness: getSignalFreshness(relevant.created_at),
-      });
-    } else {
-      insights.push({
-        icon: DollarSign,
-        title: "Compensation Signals",
-        detail: `${data.compensation.length} salary data point(s) on file. No exact match for "${role ?? "your role"}" yet.`,
-        tier: "inferred",
-        freshness: getSignalFreshness(compDate),
-      });
-    }
+    const c = data.compensation[0];
+    const median = c.median_total_compensation_usd;
+    insights.push({
+      icon: DollarSign,
+      title: "Compensation Signals",
+      detail: median
+        ? `Median total compensation: $${median.toLocaleString()}. ${c.source_summary || ""}`
+        : `Compensation data on file. ${c.source_summary || ""}`,
+      tier: "multi_source",
+      freshness: getSignalFreshness(c.created_at),
+    });
   } else {
     insights.push({
       icon: DollarSign,

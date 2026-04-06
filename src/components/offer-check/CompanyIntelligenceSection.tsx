@@ -38,24 +38,24 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
         courtCases,
       ] = await Promise.all([
         supabase.from("company_executives").select("name, title, total_donations, created_at").eq("company_id", companyId).order("total_donations", { ascending: false }).limit(5),
-        (supabase.from("company_warn_notices" as any) as any).select("notice_date, employees_affected, event_type").eq("company_id", companyId).order("notice_date", { ascending: false }).limit(5),
+        (supabase.from("company_warn_notices" as any) as any).select("notice_date, employees_affected, layoff_type").eq("company_id", companyId).order("notice_date", { ascending: false }).limit(5),
         supabase.from("company_worker_sentiment").select("sentiment, ai_summary, created_at").eq("company_id", companyId).limit(10),
-        (supabase.from("company_public_stances" as any) as any).select("topic, gap, created_at").eq("company_id", companyId).limit(5),
-        supabase.from("company_dark_money").select("name, relationship, created_at").eq("company_id", companyId).limit(3),
+        (supabase.from("company_public_stances" as any) as any).select("topic, gap").eq("company_id", companyId).limit(5),
+        supabase.from("company_dark_money").select("name, relationship").eq("company_id", companyId).limit(3),
         supabase.from("company_board_affiliations").select("name").eq("company_id", companyId).limit(5),
-        (supabase.from("company_revolving_door" as any) as any).select("person, prior_role, new_role, created_at").eq("company_id", companyId).limit(3),
+        (supabase.from("company_revolving_door" as any) as any).select("person, prior_role, new_role").eq("company_id", companyId).limit(3),
         supabase.from("company_jobs").select("id", { count: "exact", head: true }).eq("company_id", companyId).eq("is_active", true),
         supabase.from("company_court_cases").select("id, created_at", { count: "exact" }).eq("company_id", companyId).limit(1),
       ]);
 
       return {
         executives: (execs.data ?? []) as any[] as { name: string; title: string; total_donations: number; created_at: string }[],
-        warns: (warns.data ?? []) as any[] as { notice_date: string; employees_affected: number; event_type: string }[],
+        warns: (warns.data ?? []) as any[] as { notice_date: string; employees_affected: number; layoff_type: string }[],
         sentiments: (sentiment.data ?? []) as any[] as { sentiment: string; ai_summary: string | null; created_at: string }[],
-        stances: (stances.data ?? []) as any[] as { topic: string; gap: string; created_at: string }[],
-        darkMoney: (darkMoney.data ?? []) as any[] as { name: string; relationship: string; created_at: string }[],
+        stances: (stances.data ?? []) as any[] as { topic: string; gap: string }[],
+        darkMoney: (darkMoney.data ?? []) as any[] as { name: string; relationship: string }[],
         boardAffil: (boardAffil.data ?? []) as any[] as { name: string }[],
-        revolvingDoor: (revolvingDoor.data ?? []) as any[] as { person: string; prior_role: string; new_role: string; created_at: string }[],
+        revolvingDoor: (revolvingDoor.data ?? []) as any[] as { person: string; prior_role: string; new_role: string }[],
         activeJobs: jobs.count ?? 0,
         courtCases: courtCases.count ?? 0,
         courtCaseDate: ((courtCases.data ?? []) as any[])[0]?.created_at ?? null,
@@ -120,7 +120,7 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
   }
 
   // Financial / Structural
-  const financialDate = data.darkMoney[0]?.created_at ?? data.boardAffil.length > 0 ? data.darkMoney[0]?.created_at : null;
+  const financialDate = null;
   allDates.push(financialDate);
   if (data.darkMoney.length > 0 || data.boardAffil.length > 0) {
     const parts: string[] = [];
@@ -136,7 +136,7 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
   }
 
   // Revolving door
-  const rdDate = data.revolvingDoor[0]?.created_at ?? null;
+  const rdDate = null;
   allDates.push(rdDate);
   if (data.revolvingDoor.length > 0) {
     const rd = data.revolvingDoor[0];
@@ -151,7 +151,7 @@ export default function CompanyIntelligenceSection({ companyId, companyName }: P
   }
 
   // Public stance gaps
-  const stanceDate = data.stances[0]?.created_at ?? null;
+  const stanceDate = null;
   allDates.push(stanceDate);
   const conflicts = data.stances.filter(s => s.gap === "direct-conflict" || s.gap === "mixed");
   if (conflicts.length > 0) {
