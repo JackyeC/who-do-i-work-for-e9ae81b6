@@ -611,6 +611,18 @@ export default function CompanyDossier() {
         </div>
       )}
 
+      {/* ── PROXY INTELLIGENCE (SEC DEF 14A) ── */}
+      {companyId && (
+        <div className="mb-6" id="proxy-intelligence">
+          <ProxyIntelligenceCard
+            companyId={companyId}
+            companyName={company.name}
+            isPubliclyTraded={!!company.is_publicly_traded}
+            secCik={company.sec_cik}
+          />
+        </div>
+      )}
+
       {/* No-data fallback */}
       {hasNoData && (
         <OfferIntelligencePanel company={company} companyId={companyId!} />
