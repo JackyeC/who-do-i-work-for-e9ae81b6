@@ -69,6 +69,8 @@ interface CompanyClaimsSectionProps {
 
 export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSectionProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const INITIAL_LIMIT = 10;
 
   const { data: rawClaims, isLoading } = useQuery({
     queryKey: ["company-claims", companyId],
