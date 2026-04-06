@@ -127,11 +127,13 @@ function ActionBar({
                 Should I apply?
               </Button>
             </Link>
-            <Link to={`/dossier/${activeCompany.slug}`}>
-              <Button size="sm" variant="outline" className="text-xs h-8">
-                View full dossier
-              </Button>
-            </Link>
+            {!isOnDossier && (
+              <Link to={`/dossier/${activeCompany.slug}`}>
+                <Button size="sm" variant="outline" className="text-xs h-8">
+                  View full dossier
+                </Button>
+              </Link>
+            )}
           </>
         )}
 
