@@ -2,36 +2,25 @@
 
 ## Problem
 
-When a user searches for a company, the verdict instantly shows **"High Risk"** (red) because both `civic_footprint_score` and `employer_clarity_score` default to `0` in the database. The current logic treats `0` as `< 35` → "High Risk." But a score of 0 means **no data yet**, not high risk. The system should show a neutral "Researching" or "Under Review" state until there's enough signal to make a call.
+"Protect your peace" is a feelings-based verdict that contradicts the WDIWF brand ("facts over feelings," "receipts over opinions"). It appears in two places as the fallback verdict for low-scoring companies.
 
 ## Fix
 
-Update the verdict logic in **two files** to add a fourth tier for unknown/insufficient data:
+Replace the verdict tier labels across **2 files** with evidence-based, signal-first language:
 
-### 1. `src/pages/CompanyDossier.tsx` (~line 464-470)
+### New verdict labels
 
-Add a check: if both scores are 0 or null, show a neutral verdict instead of "High Risk."
+| Current | New |
+|---|---|
+| "Protect your peace" | "Significant risk signals — review the receipts" |
+| "Proceed with caution" | "Mixed signals — verify before you commit" |
+| "Worth serious consideration" | "Strong signals — the record supports this" |
+| "Under review — we're pulling records" | *(keep as-is)* |
 
-```
-Investigating → score is 0 or null (gray/blue, Search icon)
-Low Risk      → verdictScore >= 60 (green)
-Medium Risk   → verdictScore >= 35 (yellow)  
-High Risk     → verdictScore < 35 but > 0 (red)
-```
+### Files to change
 
-New neutral tier:
-- Label: **"Under Review"**
-- Icon: `Search` or `FileSearch`
-- Color: muted blue/gray (`text-civic-blue`)
-- Copy: "We're still pulling records on this company. Check back or dig into the signals below."
+1. **`src/contexts/EvaluationContext.tsx`** (lines 186-190) — update the three verdict strings
+2. **`src/components/applications/ApplyDrawer.tsx`** (lines 54-56) — same three verdict strings
 
-### 2. `src/pages/OfferCheckEntry.tsx` (~line 48-53)
-
-Same fix to `deriveVerdict()` — if score is 0, return an "Under Review" state instead of "High Risk."
-
-### What stays the same
-- No other pages touched
-- No database changes
-- No edge function changes
-- The actual scoring/data pipeline is unchanged — this only affects the **label** shown when data hasn't been gathered yet
+No other files or pages affected. No schema changes.
 
