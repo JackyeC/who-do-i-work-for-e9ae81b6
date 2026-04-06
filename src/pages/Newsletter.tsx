@@ -67,6 +67,7 @@ const SORT_OPTIONS = [
 
 /* ── Poster pool: shared single source of truth ── */
 import { getPosterForArticle } from "@/lib/poster-pool";
+import { jackyeVoice, jackyeVoiceFull } from "@/lib/jackye-voice";
 
 /* ── Blind Spot Alert — Ground.news signature, top of poster ── */
 function BlindSpotAlert({ sourceName }: { sourceName: string | null }) {
@@ -142,7 +143,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
           {/* Jackye's Take — FIRST SENTENCE ONLY, punchy */}
           {article.jackye_take && (
             <p className="text-primary/90 text-xs font-bold mt-2 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              👑 {article.jackye_take.split(/(?<=[.!?])\s/)[0]}
+              👑 {jackyeVoice(article.jackye_take)}
             </p>
           )}
         </div>
@@ -239,7 +240,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
             </h2>
             {article.jackye_take && (
               <p className="text-white/80 text-sm italic mt-2 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                👑 "{article.jackye_take}"
+                👑 {jackyeVoice(article.jackye_take)}
               </p>
             )}
           </div>
@@ -272,7 +273,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
               <div>
                 <span className="text-[10px] font-bold text-primary tracking-[0.12em] uppercase font-mono">Jackye's Take</span>
                 <p className="text-sm text-foreground/85 leading-relaxed italic mt-1">
-                  "{article.jackye_take}"
+                  "{jackyeVoiceFull(article.jackye_take)}"
                 </p>
               </div>
             </div>

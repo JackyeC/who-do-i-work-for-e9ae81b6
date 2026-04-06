@@ -4,6 +4,7 @@ import { BiasBar, getSourceBiasKey } from "./BiasBar";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
 
 import { getPosterForArticle } from "@/lib/poster-pool";
+import { jackyeVoice } from "@/lib/jackye-voice";
 
 const CAT_COLORS: Record<string, string> = {
   ai_workplace: "#38BDF8",
@@ -98,7 +99,7 @@ export function PosterLightbox({ article, onClose }: PosterLightboxProps) {
               </h2>
               {article.jackye_take && (
                 <p className="text-primary/90 text-sm font-bold mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                  👑 {article.jackye_take.split(/(?<=[.!?])\s/)[0]}
+                  👑 {jackyeVoice(article.jackye_take)}
                 </p>
               )}
             </div>
