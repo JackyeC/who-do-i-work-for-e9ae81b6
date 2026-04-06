@@ -40,7 +40,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         (supabase.from("company_warn_notices" as any) as any).select("employees_affected, notice_date").eq("company_id", companyId),
         supabase.from("company_worker_sentiment").select("sentiment, created_at").eq("company_id", companyId),
         supabase.from("company_jobs").select("id, title, created_at", { count: "exact" }).eq("company_id", companyId).eq("is_active", true).limit(5),
-        (supabase.from("compensation_data" as any) as any).select("role_title, salary_range_min, salary_range_max, source_type, created_at").eq("company", companyId).limit(5),
+        (supabase.from("compensation_data" as any) as any).select("median_total_compensation_usd, top_roles, source_summary, created_at").eq("company", companyId).limit(5),
         supabase.from("company_executives").select("id, created_at", { count: "exact", head: true }).eq("company_id", companyId).not("departed_at", "is", null),
         supabase.from("career_paths").select("role_title, next_role, success_rate_pct, created_at").eq("company_id", companyId).limit(3),
       ]);
