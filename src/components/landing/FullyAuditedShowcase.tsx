@@ -40,12 +40,12 @@ export function FullyAuditedShowcase() {
   if (!companies || companies.length === 0) return null;
 
   return (
-    <section className="px-6 lg:px-16 py-16 lg:py-20 bg-card/30 border-y border-border/30">
+    <section className="px-6 lg:px-16 py-20 lg:py-28 bg-card/30 border-y border-border/30">
       <div className="max-w-[1100px] mx-auto">
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <ShieldCheck className="w-5 h-5 text-[hsl(var(--civic-green))]" />
-            <p className="font-mono text-xs tracking-[0.15em] uppercase text-[hsl(var(--civic-green))]">
+            <ShieldCheck className="w-4 h-4 text-[hsl(var(--civic-green))]/60" />
+            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-[hsl(var(--civic-green))]/60">
               Fully Audited
             </p>
           </div>
