@@ -73,7 +73,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
         <div className="relative z-[1] max-w-[780px] mx-auto flex flex-col items-center text-center px-4">
           <p
-            className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-5"
+            className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground/60 mb-5"
             style={{ animation: "heroFadeIn 0.5s ease 0.15s" }}
           >
             Audit before you say yes
@@ -144,16 +144,18 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         .animate-scroll-left { animation: scroll-left 40s linear infinite; }
       `}</style>
 
-      <Suspense fallback={<div className="h-[36px] bg-background border-b border-border/10" />}>
-        <LiveIntelligenceTicker />
-      </Suspense>
+      <div className="pt-6 lg:pt-10">
+        <Suspense fallback={<div className="h-[36px] bg-background border-b border-border/10" />}>
+          <LiveIntelligenceTicker />
+        </Suspense>
+      </div>
 
       <FullyAuditedShowcase />
 
       {/* 2 - HOW IT WORKS */}
-      <section className="bg-muted/40 border-y border-border px-6 lg:px-16 py-20 lg:py-28">
+      <section className="bg-muted/40 border-y border-border px-6 lg:px-16 py-24 lg:py-36">
         <div className="max-w-[900px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">How It Works</p>
+          <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 mb-4 text-center">How It Works</p>
           <h2 className="text-h1 text-foreground text-center mb-2">We say the quiet part out loud.</h2>
           <p className="text-base text-muted-foreground text-center mb-14">We already looked. You decide what to do next.</p>
 
@@ -204,9 +206,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* 3 - PRODUCT MODULES */}
-      <section className="px-6 lg:px-16 py-20 lg:py-28 bg-card/80 border-y border-border">
+      <section className="px-6 lg:px-16 py-24 lg:py-36 bg-card/80 border-y border-border">
         <div className="max-w-[1100px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">The Platform</p>
+          <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 mb-3 text-center">The Platform</p>
           <h2 className="text-h1 text-foreground text-center mb-4">Built for the part nobody talks about.</h2>
           <p className="text-body-lg text-center max-w-[52ch] mx-auto mb-14">
             The due diligence between &quot;I&apos;m interested&quot; and &quot;I accept.&quot; All public record. All yours.
@@ -277,13 +279,13 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* 4 - FINAL CTA */}
-      <section className="px-6 lg:px-16 py-24 lg:py-32 text-center relative overflow-hidden border-t border-border bg-muted/30">
+      <section className="px-6 lg:px-16 py-28 lg:py-40 text-center relative overflow-hidden border-t border-border bg-muted/30">
         <div
           className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[60%] pointer-events-none"
           style={{ background: "radial-gradient(ellipse, hsl(var(--primary) / 0.04) 0%, transparent 70%)" }}
         />
         <div className="relative z-[1] max-w-[600px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Know before you go.</p>
+          <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 mb-4">Know before you go.</p>
           <h2 className="text-h1 text-foreground mb-4">Your next move deserves receipts.</h2>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-[46ch] mx-auto mb-8">
             Every company you&apos;re considering has a public record. Now you know where to read it.
