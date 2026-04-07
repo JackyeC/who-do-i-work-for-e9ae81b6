@@ -39,10 +39,65 @@ const NON_US_DOMAINS = new Set([
   "lemonde.fr","elpais.com","spiegel.de","corriere.it","repubblica.it",
   "bbc.co.uk","hcamag.com","channelnewsasia.com",
 ]);
-function isUSSource(sourceName: string | null): boolean {
+
+/** TLDs that are definitively non-US */
+const NON_US_TLDS = new Set([
+  ".co.uk",".org.uk",".ac.uk",".gov.uk",
+  ".com.au",".net.au",".org.au",
+  ".ca",".co.nz",".co.jp",".co.kr",".co.in",
+  ".cn",".jp",".kr",".in",".ru",".br",".mx",
+  ".de",".fr",".it",".es",".nl",".se",".fi",".no",".dk",".pt",
+  ".pl",".cz",".hu",".ro",".bg",".hr",".rs",".ua",
+  ".ph",".sg",".my",".th",".vn",".id",".pk",".bd",".lk",
+  ".gr",".tr",".il",".za",".ng",".ke",".eg",".ar",".cl",".co",".pe",
+]);
+
+/** TLDs that are likely US (or global/neutral enough to count as US) */
+const US_TLDS = new Set([".com", ".org", ".net", ".gov", ".mil", ".edu", ".us", ".io"]);
+
+/**
+ * Extract domain from a URL string, stripping www. prefix.
+ * Returns null if the URL is invalid.
+ */
+function extractDomain(url: string): string | null {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Determine if a source is US-based. Checks source_url domain first
+ * (more reliable), then falls back to source_name matching.
+ *
+ * Priority:
+ * 1. source_url domain → check against NON_US_DOMAINS, NON_US_TLDS, US_TLDS
+ * 2. source_name       → check against NON_US_DOMAINS (legacy fallback)
+ */
+function isUSSource(sourceName: string | null, sourceUrl?: string | null): boolean {
+  // Try URL-based detection first (more reliable)
+  if (sourceUrl) {
+    const domain = extractDomain(sourceUrl);
+    if (domain) {
+      // Exact domain match against known non-US sources
+      if (NON_US_DOMAINS.has(domain)) return false;
+      // Check TLD — try compound TLDs first (e.g. .co.uk before .uk)
+      for (const tld of NON_US_TLDS) {
+        if (domain.endsWith(tld)) return false;
+      }
+      // If domain has a US-associated TLD, it's US
+      for (const tld of US_TLDS) {
+        if (domain.endsWith(tld)) return true;
+      }
+      // Unknown TLD — fall through to source_name check
+    }
+  }
+
+  // Fallback: check source_name against known non-US domains
   if (!sourceName) return true;
-  const domain = sourceName.toLowerCase().replace(/^www\./, "");
-  return !NON_US_DOMAINS.has(domain);
+  const nameLower = sourceName.toLowerCase().replace(/^www\./, "");
+  return !NON_US_DOMAINS.has(nameLower);
 }
 
 export interface CoverageStats {
@@ -208,8 +263,8 @@ export function useReceiptsFeed() {
 
       // US-first sort: American stories at top, then international
       deduped.sort((a, b) => {
-        const aUS = isUSSource(a.source_name) ? 0 : 1;
-        const bUS = isUSSource(b.source_name) ? 0 : 1;
+        const aUS = isUSSource(a.source_name, a.source_url) ? 0 : 1;
+        const bUS = isUSSource(b.source_name, b.source_url) ? 0 : 1;
         if (aUS !== bUS) return aUS - bUS;
         // Within same group, keep chronological (newest first)
         const aTime = a.published_at ? new Date(a.published_at).getTime() : 0;
