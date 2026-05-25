@@ -29,9 +29,32 @@ export default function Methodology() {
           >
             How We Verify Company Intelligence
           </h1>
-          <p className="text-sm text-muted-foreground mb-14 leading-relaxed max-w-[54ch]">
-            How we collect, classify, verify, and present data — and what our limitations are.
+          <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-[54ch]">
+            How we collect, classify, verify, and present data, and what our limitations are.
           </p>
+
+          <div className="mb-14 rounded-xl border border-border bg-card/60 p-5">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-2">Share the methodology</p>
+            <p className="text-sm text-foreground mb-4 leading-relaxed">
+              Download the full methodology to share with reporters, partners, or candidates evaluating our work.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a href="/methodology/WDIWF-Methodology.pdf" download
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition active:scale-[0.97] hover:opacity-90">
+                Download PDF
+              </a>
+              <a href="/methodology/WDIWF-Methodology.docx" download
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition active:scale-[0.97] hover:bg-muted">
+                Download DOCX
+              </a>
+              <a href="/methodology/WDIWF-Methodology.md" download
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition active:scale-[0.97] hover:bg-muted">
+                Markdown
+              </a>
+            </div>
+          </div>
+
+
 
           <div className="space-y-14">
             {/* ───── The Receipts Framework ───── */}
