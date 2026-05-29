@@ -501,5 +501,6 @@ export default function Methodology() {
         </aside>
       </div>
     </div>
+  </div>
   );
 }
