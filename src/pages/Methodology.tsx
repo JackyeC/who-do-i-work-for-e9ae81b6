@@ -58,7 +58,7 @@ export default function Methodology() {
 
           <div className="space-y-14">
             {/* ───── The Receipts Framework ───── */}
-            <section>
+            <section id="receipts-framework">
               <h2 className="text-title text-foreground mb-5">The Receipts Framework</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Every company investigation is structured around four pillars. Together, they form a complete picture
@@ -107,7 +107,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Source Hierarchy ───── */}
-            <section>
+            <section id="source-hierarchy">
               <h2 className="text-title text-foreground mb-5">Source Hierarchy (Tiers 1–5)</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Not all sources are equal. Every claim on our platform is scored based on the authority of its source.
@@ -138,7 +138,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Revolving Door & Influence Intelligence ───── */}
-            <section>
+            <section id="revolving-door">
               <h2 className="text-title text-foreground mb-5">Revolving Door &amp; Influence Intelligence</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 We track the movement of individuals between government and the private sector — the "revolving door" —
@@ -187,7 +187,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Extremism & Affiliation Transparency ───── */}
-            <section>
+            <section id="extremism-affiliation">
               <h2 className="text-title text-foreground mb-5">Extremism &amp; Affiliation Transparency</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Using only verified, publicly documented data, we surface connections to organizations flagged by
@@ -240,7 +240,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Evidence Quality Scoring ───── */}
-            <section>
+            <section id="evidence-quality">
               <h2 className="text-title text-foreground mb-5">Evidence Quality Scoring</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Every section on a company report displays an Evidence Quality score (0–100) computed from four factors:
