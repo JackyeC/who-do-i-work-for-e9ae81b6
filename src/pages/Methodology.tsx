@@ -1,9 +1,9 @@
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import MethodologyTOC from "@/components/ticker/MethodologyTOC";
 import { TIER_LABELS, TIER_COLORS } from "@/lib/evidenceQualityScore";
 import type { SourceTier } from "@/lib/evidenceQualityScore";
-
 export default function Methodology() {
   usePageSEO({
     title: "Methodology — How We Verify Company Intelligence",
@@ -20,19 +20,19 @@ export default function Methodology() {
 
   return (
     <div className="flex-1">
-      <div className="max-w-[900px] mx-auto px-6 lg:px-16 pt-20 pb-16">
-        <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">Methodology</p>
-          <h1
-            className="font-sans text-foreground leading-[1.08] mb-4"
-            style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px" }}
-          >
-            How We Verify Company Intelligence
-          </h1>
-          <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-[54ch]">
-            How we collect, classify, verify, and present data, and what our limitations are.
-          </p>
-
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-16 pt-20 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-12">
+          <div className="max-w-3xl">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">Methodology</p>
+            <h1
+              className="font-sans text-foreground leading-[1.08] mb-4"
+              style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px" }}
+            >
+              How We Verify Company Intelligence
+            </h1>
+            <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-[54ch]">
+              How we collect, classify, verify, and present data, and what our limitations are.
+            </p>
           <div className="mb-14 rounded-xl border border-border bg-card/60 p-5">
             <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-2">Share the methodology</p>
             <p className="text-sm text-foreground mb-4 leading-relaxed">
@@ -58,7 +58,7 @@ export default function Methodology() {
 
           <div className="space-y-14">
             {/* ───── The Receipts Framework ───── */}
-            <section>
+            <section id="receipts-framework">
               <h2 className="text-title text-foreground mb-5">The Receipts Framework</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Every company investigation is structured around four pillars. Together, they form a complete picture
@@ -107,7 +107,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Source Hierarchy ───── */}
-            <section>
+            <section id="source-hierarchy">
               <h2 className="text-title text-foreground mb-5">Source Hierarchy (Tiers 1–5)</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Not all sources are equal. Every claim on our platform is scored based on the authority of its source.
@@ -138,7 +138,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Revolving Door & Influence Intelligence ───── */}
-            <section>
+            <section id="revolving-door">
               <h2 className="text-title text-foreground mb-5">Revolving Door &amp; Influence Intelligence</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 We track the movement of individuals between government and the private sector — the "revolving door" —
@@ -187,7 +187,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Extremism & Affiliation Transparency ───── */}
-            <section>
+            <section id="extremism-affiliation">
               <h2 className="text-title text-foreground mb-5">Extremism &amp; Affiliation Transparency</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Using only verified, publicly documented data, we surface connections to organizations flagged by
@@ -240,7 +240,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Evidence Quality Scoring ───── */}
-            <section>
+            <section id="evidence-quality">
               <h2 className="text-title text-foreground mb-5">Evidence Quality Scoring</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Every section on a company report displays an Evidence Quality score (0–100) computed from four factors:
@@ -278,7 +278,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Entity Matching ───── */}
-            <section>
+            <section id="entity-resolution">
               <h2 className="text-title text-foreground mb-5">Entity Resolution</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Matching the right legal entity is one of the most important — and most error-prone — parts of corporate intelligence.
@@ -307,7 +307,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Verification Badges ───── */}
-            <section>
+            <section id="verification-badges">
               <h2 className="text-title text-foreground mb-5">Verification Badges</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Every claim is labeled with a verification status so you know exactly how solid the evidence is.
@@ -329,7 +329,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Media Bias Transparency ───── */}
-            <section>
+            <section id="media-bias">
               <h2 className="text-title text-foreground mb-5">Media Bias Transparency</h2>
               <div className="space-y-4 text-body text-muted-foreground leading-relaxed">
                 <p>
@@ -360,7 +360,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Refresh Cadence ───── */}
-            <section>
+            <section id="refresh-cadence">
               <h2 className="text-title text-foreground mb-5">Refresh Cadence</h2>
               <Card>
                 <CardContent className="p-0">
@@ -399,7 +399,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Employer Clarity Score ───── */}
-            <section>
+            <section id="employer-clarity">
               <h2 className="text-title text-foreground mb-5">The Employer Clarity Score</h2>
               <div className="space-y-4 text-body text-muted-foreground leading-relaxed">
                 <p>
@@ -429,7 +429,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Known Limitations ───── */}
-            <section>
+            <section id="known-limitations">
               <h2 className="text-title text-foreground mb-5">Known Limitations</h2>
               <div className="space-y-3">
                 {[
@@ -450,7 +450,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Corrections & Disputes ───── */}
-            <section>
+            <section id="corrections-disputes">
               <h2 className="text-title text-foreground mb-5">Corrections &amp; Disputes</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 We take accuracy seriously. If you believe information on this platform is incorrect, incomplete, 
@@ -470,7 +470,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Our Standard ───── */}
-            <section>
+            <section id="our-standard">
               <Card className="border-primary/20">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-3">
@@ -484,7 +484,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Legal Disclaimer ───── */}
-            <section className="border-t border-border/60 pt-10">
+            <section id="legal-disclaimer" className="border-t border-border/60 pt-10">
               <p className="text-caption text-muted-foreground leading-relaxed">
                 Who Do I Work For reports publicly available data and does not provide character assessments, legal advice, or employment recommendations.
                 All signals are sourced from public records and verified watchdog databases (SPLC, ADL, FEC, SEC, BLS, EPA, OSHA, NLRB, CourtListener). 
@@ -494,7 +494,13 @@ export default function Methodology() {
             </section>
           </div>
         </div>
+
+        {/* Table of Contents Sidebar */}
+        <aside className="hidden lg:block">
+          <MethodologyTOC />
+        </aside>
       </div>
     </div>
+  </div>
   );
 }
