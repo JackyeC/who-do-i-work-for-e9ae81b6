@@ -20,19 +20,19 @@ export default function Methodology() {
 
   return (
     <div className="flex-1">
-      <div className="max-w-[900px] mx-auto px-6 lg:px-16 pt-20 pb-16">
-        <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">Methodology</p>
-          <h1
-            className="font-sans text-foreground leading-[1.08] mb-4"
-            style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px" }}
-          >
-            How We Verify Company Intelligence
-          </h1>
-          <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-[54ch]">
-            How we collect, classify, verify, and present data, and what our limitations are.
-          </p>
-
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-16 pt-20 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-12">
+          <div className="max-w-3xl">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">Methodology</p>
+            <h1
+              className="font-sans text-foreground leading-[1.08] mb-4"
+              style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px" }}
+            >
+              How We Verify Company Intelligence
+            </h1>
+            <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-[54ch]">
+              How we collect, classify, verify, and present data, and what our limitations are.
+            </p>
           <div className="mb-14 rounded-xl border border-border bg-card/60 p-5">
             <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-2">Share the methodology</p>
             <p className="text-sm text-foreground mb-4 leading-relaxed">
