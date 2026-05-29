@@ -494,7 +494,14 @@ export default function Methodology() {
             </section>
           </div>
         </div>
+
+        {/* ───── Table of Contents Sidebar ───── */}
+        <aside className="hidden lg:block">
+          <MethodologyTOC />
+        </aside>
       </div>
     </div>
+  );
+}
   );
 }
