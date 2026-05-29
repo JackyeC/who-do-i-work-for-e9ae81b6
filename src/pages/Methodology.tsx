@@ -1,9 +1,9 @@
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import MethodologyTOC from "@/components/ticker/MethodologyTOC";
 import { TIER_LABELS, TIER_COLORS } from "@/lib/evidenceQualityScore";
 import type { SourceTier } from "@/lib/evidenceQualityScore";
-
 export default function Methodology() {
   usePageSEO({
     title: "Methodology — How We Verify Company Intelligence",
