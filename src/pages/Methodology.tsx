@@ -429,7 +429,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Known Limitations ───── */}
-            <section>
+            <section id="known-limitations">
               <h2 className="text-title text-foreground mb-5">Known Limitations</h2>
               <div className="space-y-3">
                 {[
@@ -450,7 +450,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Corrections & Disputes ───── */}
-            <section>
+            <section id="corrections-disputes">
               <h2 className="text-title text-foreground mb-5">Corrections &amp; Disputes</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 We take accuracy seriously. If you believe information on this platform is incorrect, incomplete, 
@@ -470,7 +470,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Our Standard ───── */}
-            <section>
+            <section id="our-standard">
               <Card className="border-primary/20">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-3">
@@ -484,7 +484,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Legal Disclaimer ───── */}
-            <section className="border-t border-border/60 pt-10">
+            <section id="legal-disclaimer" className="border-t border-border/60 pt-10">
               <p className="text-caption text-muted-foreground leading-relaxed">
                 Who Do I Work For reports publicly available data and does not provide character assessments, legal advice, or employment recommendations.
                 All signals are sourced from public records and verified watchdog databases (SPLC, ADL, FEC, SEC, BLS, EPA, OSHA, NLRB, CourtListener). 
