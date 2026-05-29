@@ -278,7 +278,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Entity Matching ───── */}
-            <section>
+            <section id="entity-resolution">
               <h2 className="text-title text-foreground mb-5">Entity Resolution</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Matching the right legal entity is one of the most important — and most error-prone — parts of corporate intelligence.
@@ -307,7 +307,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Verification Badges ───── */}
-            <section>
+            <section id="verification-badges">
               <h2 className="text-title text-foreground mb-5">Verification Badges</h2>
               <p className="text-body text-muted-foreground mb-5 leading-relaxed">
                 Every claim is labeled with a verification status so you know exactly how solid the evidence is.
@@ -329,7 +329,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Media Bias Transparency ───── */}
-            <section>
+            <section id="media-bias">
               <h2 className="text-title text-foreground mb-5">Media Bias Transparency</h2>
               <div className="space-y-4 text-body text-muted-foreground leading-relaxed">
                 <p>
@@ -360,7 +360,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Refresh Cadence ───── */}
-            <section>
+            <section id="refresh-cadence">
               <h2 className="text-title text-foreground mb-5">Refresh Cadence</h2>
               <Card>
                 <CardContent className="p-0">
@@ -399,7 +399,7 @@ export default function Methodology() {
             </section>
 
             {/* ───── Employer Clarity Score ───── */}
-            <section>
+            <section id="employer-clarity">
               <h2 className="text-title text-foreground mb-5">The Employer Clarity Score</h2>
               <div className="space-y-4 text-body text-muted-foreground leading-relaxed">
                 <p>
