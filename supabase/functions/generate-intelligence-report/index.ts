@@ -462,7 +462,13 @@ If we have limited data, say so clearly and explain what that means for the cand
         },
         { status: "completed", completed_at: new Date().toISOString(), error_type: null, error_message: null },
       );
-      return json({ success: false, error: "Report generated, but notification failed" }, 502);
+      return json({
+        success: true,
+        companyFound: !!company,
+        reportReady: true,
+        notificationDelivered: false,
+        notificationError: "Notification failed",
+      });
     }
 
     // --- 7. Notify Jackyé ---
