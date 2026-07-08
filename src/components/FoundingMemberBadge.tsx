@@ -26,7 +26,7 @@ export function FoundingMemberBadge({
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(true);
 
   const BASE_URL = "https://wdiwf.jackyeclayton.com";
   const displayNumber = memberNumber
@@ -53,17 +53,14 @@ export function FoundingMemberBadge({
   useEffect(() => {
     const imgs = [logoSquare, logoNav];
     let loaded = 0;
+    const done = () => {
+      loaded++;
+      if (loaded === imgs.length) setImagesLoaded(true);
+    };
     imgs.forEach((src) => {
       const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        loaded++;
-        if (loaded === imgs.length) setImagesLoaded(true);
-      };
-      img.onerror = () => {
-        loaded++;
-        if (loaded === imgs.length) setImagesLoaded(true);
-      };
+      img.onload = done;
+      img.onerror = done;
       img.src = src;
     });
   }, []);
@@ -209,7 +206,6 @@ export function FoundingMemberBadge({
                 <img
                   src={logoSquare}
                   alt="W?"
-                  crossOrigin="anonymous"
                   style={{
                     width: 52,
                     height: 52,
