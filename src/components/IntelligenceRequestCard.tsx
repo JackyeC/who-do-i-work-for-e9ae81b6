@@ -51,11 +51,12 @@ export function IntelligenceRequestCard({ companyName, companyId, onDiscovered }
     if (!email.includes("@") || !email.includes(".")) return;
     setSubmittingEmail(true);
     try {
-      await supabase.from("scan_notify_requests").insert({
-        email,
-        company_id: companyId || null,
-        company_name: companyName,
+      const { error } = await (supabase as any).rpc("create_or_join_scan_notify_request", {
+        p_email: email.trim().toLowerCase(),
+        p_company_id: companyId || null,
+        p_company_name: companyName,
       });
+      if (error) throw error;
       setEmailSubmitted(true);
       toast.success("You'll be notified when this dossier is ready.");
     } catch {

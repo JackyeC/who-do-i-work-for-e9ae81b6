@@ -26,6 +26,33 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
+async function updateRequestAndJob(
+  supabase: ReturnType<typeof createClient>,
+  requestId: string | undefined,
+  fields: Record<string, unknown>,
+  jobFields?: Record<string, unknown>,
+) {
+  if (!requestId) return;
+
+  const { data: request } = await supabase
+    .from("intelligence_requests")
+    .select("scan_job_id")
+    .eq("id", requestId)
+    .maybeSingle();
+
+  await supabase
+    .from("intelligence_requests")
+    .update({ ...fields, updated_at: new Date().toISOString() })
+    .eq("id", requestId);
+
+  if (request?.scan_job_id && jobFields) {
+    await supabase
+      .from("scan_jobs")
+      .update(jobFields)
+      .eq("id", request.scan_job_id);
+  }
+}
+
 Deno.serve(async (req: Request) => {
 
   if (req.method === "OPTIONS") {
@@ -41,9 +68,12 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Method not allowed" }, 405);
   }
 
+  let requestIdForStatus: string | undefined;
+
   try {
     const { employer_name, role_title, email, location, concern, request_id } =
       await req.json();
+    requestIdForStatus = request_id;
 
     if (!employer_name || !role_title || !email) {
       return json({ error: "Missing required fields" }, 400);
@@ -58,6 +88,13 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabase = createClient(supabaseUrl, serviceKey);
+
+    await updateRequestAndJob(
+      supabase,
+      request_id,
+      { status: "processing", workflow_status: "processing", notification_status: "not_ready" },
+      { status: "processing", started_at: new Date().toISOString(), last_heartbeat_at: new Date().toISOString() },
+    );
 
     // --- 1. Find the company ---
     const searchName = employer_name.trim().toLowerCase();
@@ -324,11 +361,47 @@ If we have limited data, say so clearly and explain what that means for the cand
       console.error("AI generation failed:", aiResponse.status, errText);
 
       if (aiResponse.status === 429) {
+        await updateRequestAndJob(
+          supabase,
+          request_id,
+          {
+            status: "queued",
+            workflow_status: "queued",
+            dossier_outcome: "unknown",
+            outcome_reason: "AI service busy",
+            notification_status: "not_ready",
+          },
+          { status: "queued", error_type: "provider_busy", error_message: "AI service busy", last_error_at: new Date().toISOString() },
+        );
         return json({ error: "AI service is busy. Please try again shortly." }, 429);
       }
       if (aiResponse.status === 402) {
+        await updateRequestAndJob(
+          supabase,
+          request_id,
+          {
+            status: "queued",
+            workflow_status: "queued",
+            dossier_outcome: "unknown",
+            outcome_reason: "AI credits exhausted",
+            notification_status: "not_ready",
+          },
+          { status: "queued", error_type: "provider_credits", error_message: "AI credits exhausted", last_error_at: new Date().toISOString() },
+        );
         return json({ error: "AI credits exhausted." }, 402);
       }
+      await updateRequestAndJob(
+        supabase,
+        request_id,
+        {
+          status: "failed",
+          workflow_status: "failed",
+          dossier_outcome: "failed",
+          outcome_reason: "Report generation failed",
+          notification_status: "not_ready",
+        },
+        { status: "failed", error_type: "provider_error", error_message: "Failed to generate report", last_error_at: new Date().toISOString() },
+      );
       return json({ error: "Failed to generate report" }, 500);
     }
 
@@ -359,7 +432,7 @@ If we have limited data, say so clearly and explain what that means for the cand
 
     const requesterText = `Employer Intelligence Snapshot: ${employer_name}\nRole: ${role_title}\n\n${reportMarkdown}\n\n---\nThis snapshot was generated using publicly available data. WDIWF provides career intelligence and education, not legal or financial advice.`;
 
-    await fetch("https://email.lovable.dev/v1/send", {
+    const requesterEmailResponse = await fetch("https://email.lovable.dev/v1/send", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${lovableApiKey}`,
@@ -372,6 +445,25 @@ If we have limited data, say so clearly and explain what that means for the cand
         text: requesterText,
       }),
     });
+
+    if (!requesterEmailResponse.ok) {
+      const emailError = await requesterEmailResponse.text();
+      await updateRequestAndJob(
+        supabase,
+        request_id,
+        {
+          status: "report_ready",
+          workflow_status: "completed",
+          dossier_outcome: company ? "ready" : "partial",
+          outcome_reason: company ? null : "Company has limited canonical data",
+          notification_status: "failed",
+          notification_attempts: 1,
+          notification_last_error: emailError.slice(0, 500),
+        },
+        { status: "completed", completed_at: new Date().toISOString(), error_type: null, error_message: null },
+      );
+      return json({ success: false, error: "Report generated, but notification failed" }, 502);
+    }
 
     // --- 7. Notify Jackyé ---
     const jackyeHtml = `
@@ -405,16 +497,51 @@ If we have limited data, say so clearly and explain what that means for the cand
     });
 
     // --- 8. Update request status ---
-    if (request_id) {
-      await supabase
-        .from("intelligence_requests")
-        .update({ status: "report_sent" })
-        .eq("id", request_id);
-    }
+    await updateRequestAndJob(
+      supabase,
+      request_id,
+      {
+        status: "report_sent",
+        workflow_status: "completed",
+        dossier_outcome: company ? "ready" : "partial",
+        outcome_reason: company ? null : "Company has limited canonical data",
+        notification_status: "sent",
+        notification_attempts: 1,
+        notification_last_error: null,
+        notified_at: new Date().toISOString(),
+      },
+      { status: "completed", completed_at: new Date().toISOString(), error_type: null, error_message: null },
+    );
 
     return json({ success: true, companyFound: !!company });
   } catch (error) {
     console.error("generate-intelligence-report error:", error);
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL");
+      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (supabaseUrl && serviceKey) {
+        const supabase = createClient(supabaseUrl, serviceKey);
+        await updateRequestAndJob(
+          supabase,
+          requestIdForStatus,
+          {
+            status: "failed",
+            workflow_status: "failed",
+            dossier_outcome: "failed",
+            outcome_reason: error instanceof Error ? error.message.slice(0, 500) : "Unknown error",
+            notification_status: "not_ready",
+          },
+          {
+            status: "failed",
+            error_type: "runner_error",
+            error_message: error instanceof Error ? error.message.slice(0, 500) : "Unknown error",
+            last_error_at: new Date().toISOString(),
+          },
+        );
+      }
+    } catch (statusError) {
+      console.error("Failed to update request status after report error:", statusError);
+    }
     return json(
       {
         error:
