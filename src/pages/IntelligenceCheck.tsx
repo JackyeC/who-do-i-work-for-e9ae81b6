@@ -14,6 +14,13 @@ import { toast } from "sonner";
 export default function IntelligenceCheck() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [requestReceipt, setRequestReceipt] = useState<{
+    requestId?: string;
+    companySlug?: string;
+    workflowStatus?: string;
+    dossierOutcome?: string;
+    notificationStatus?: string;
+  } | null>(null);
   const [form, setForm] = useState({
     employer_name: "",
     role_title: "",
@@ -32,31 +39,16 @@ export default function IntelligenceCheck() {
 
     setSubmitting(true);
     try {
-      // Insert with a known ID so we can pass it to the report generator
-      const requestId = crypto.randomUUID();
-      const { error } = await (supabase as any).from("intelligence_requests").insert({
-        id: requestId,
-        employer_name: form.employer_name.trim(),
-        role_title: form.role_title.trim(),
-        location: form.location.trim() || null,
-        job_posting_url: form.job_posting_url.trim() || null,
-        concerns: form.concerns.trim() || null,
-        email: form.email.trim().toLowerCase(),
+      const { data, error } = await (supabase as any).rpc("create_or_join_dossier_request", {
+        p_employer_name: form.employer_name.trim(),
+        p_role_title: form.role_title.trim(),
+        p_email: form.email.trim().toLowerCase(),
+        p_location: form.location.trim() || null,
+        p_job_posting_url: form.job_posting_url.trim() || null,
+        p_concerns: form.concerns.trim() || null,
       });
       if (error) throw error;
-
-      // Auto-generate intelligence report + email it (fire-and-forget)
-      supabase.functions.invoke("generate-intelligence-report", {
-        body: {
-          employer_name: form.employer_name.trim(),
-          role_title: form.role_title.trim(),
-          email: form.email.trim().toLowerCase(),
-          location: form.location.trim() || null,
-          concern: form.concerns.trim() || null,
-          request_id: requestId,
-        },
-      }).catch((err: Error) => console.error("Report generation failed:", err));
-
+      setRequestReceipt(data || null);
       setSubmitted(true);
     } catch (err) {
       console.error("Intelligence request submission failed:", err);
@@ -90,18 +82,20 @@ export default function IntelligenceCheck() {
             >
               <Mail className="w-8 h-8 text-primary" />
             </motion.div>
-            <h1 className="text-foreground font-sans text-2xl font-bold mb-4">Your snapshot is on the way.</h1>
+            <h1 className="text-foreground font-sans text-2xl font-bold mb-4">Your request is saved.</h1>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              We're generating your employer intelligence snapshot now. Check your inbox at{" "}
-              <span className="font-medium text-foreground">{form.email}</span> — it should arrive within a few minutes.
+              We attached your request for <span className="font-medium text-foreground">{form.employer_name}</span> to a durable build queue.
+              We will email <span className="font-medium text-foreground">{form.email}</span> when the employer file is ready or needs human review.
             </p>
-            <p className="text-sm text-muted-foreground mb-6">
-              While you wait, see what we already know:
+            <p className="text-xs font-mono uppercase tracking-widest text-primary mb-6">
+              {requestReceipt?.workflowStatus || "queued"} · {requestReceipt?.dossierOutcome || "under review"} · {requestReceipt?.notificationStatus || "not ready"}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={() => window.location.href = `/offer-check?q=${encodeURIComponent(form.employer_name)}`} className="gap-2">
-                View {form.employer_name} Dossier <ArrowRight className="w-4 h-4" />
-              </Button>
+              {requestReceipt?.companySlug ? (
+                <Button onClick={() => window.location.href = `/dossier/${requestReceipt.companySlug}`} className="gap-2">
+                  View employer file <ArrowRight className="w-4 h-4" />
+                </Button>
+              ) : null}
               <Button variant="outline" onClick={() => window.location.href = "/ask-jackye"} className="gap-2">
                 Ask Jackye About This Company
               </Button>
@@ -112,7 +106,7 @@ export default function IntelligenceCheck() {
               transition={{ delay: 0.6 }}
               className="text-xs text-muted-foreground/70 mt-6"
             >
-              Jackyé also gets a copy and may follow up with additional insights.
+              Jackyé also gets a copy and may follow up with additional context.
             </motion.p>
           </motion.div>
         </main>

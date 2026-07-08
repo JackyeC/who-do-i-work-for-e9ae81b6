@@ -58,21 +58,7 @@ Deno.serve(async (req: Request) => {
       const hoursSinceLastScan = (Date.now() - lastScan) / (1000 * 60 * 60);
 
       if (hoursSinceLastScan > 48) {
-        console.log(`Triggering background job-scrape for stale company: ${existing.slug}`);
-        fetch(`${supabaseUrl}/functions/v1/job-scrape`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            companyName: companyDetail?.name || name,
-            companyId: existing.id,
-            careersUrl: companyDetail?.careers_url || null,
-          }),
-        }).catch(e => console.error('Background job-scrape (existing) failed:', e));
-
-        // Update last_scan_attempted to prevent duplicate triggers
+        console.log(`Queueing stale company refresh marker: ${existing.slug}`);
         await supabase.from('companies').update({
           last_scan_attempted: new Date().toISOString(),
         }).eq('id', existing.id);
@@ -217,45 +203,9 @@ ${searchContent ? `Search results:\n${searchContent}` : 'Use your knowledge.'}`,
 
     await supabase.from('companies').update(updateFields).eq('id', newCompany.id);
 
-    // Step 5: Trigger company-research + job-scrape in background (fire-and-forget)
-    // NOTE: Do NOT trigger company-intelligence-scan here — the profile page's
-    // useROIPipeline hook auto-triggers it when it detects empty data, avoiding double invocation.
-    try {
-      fetch(`${supabaseUrl}/functions/v1/company-research`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ companyName: identityData.official_name || name, companyId: newCompany.id, enrichExisting: true }),
-      }).catch(e => console.error('Background company-research failed:', e));
-    } catch (e: any) {
-      console.error('Failed to trigger company-research:', e);
-    }
-
-    // Step 5b: Trigger job-scrape if we have a careers URL
-    const careersUrl = identityData.careers_url || null;
-    try {
-      console.log(`Triggering job-scrape for new company: ${newCompany.id} (careers: ${careersUrl || 'none'})`);
-      fetch(`${supabaseUrl}/functions/v1/job-scrape`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          companyName: identityData.official_name || name,
-          companyId: newCompany.id,
-          careersUrl,
-        }),
-      }).catch(e => console.error('Background job-scrape failed:', e));
-    } catch (e: any) {
-      console.error('Failed to trigger job-scrape:', e);
-    }
-
-    // Update status to research in progress
+    // Mark as queued for durable research. Do not fire-and-forget downstream work from discovery.
     await supabase.from('companies').update({
-      record_status: 'research_in_progress',
+      record_status: 'discovered',
       last_scan_attempted: new Date().toISOString(),
     }).eq('id', newCompany.id);
 
@@ -269,7 +219,7 @@ ${searchContent ? `Search results:\n${searchContent}` : 'Use your knowledge.'}`,
         verified: identityData.confidence === 'high' || identityData.confidence === 'medium',
         multipleMatches: identityData.multiple_matches || false,
       },
-      status: 'research_in_progress',
+      status: 'queued',
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error: any) {

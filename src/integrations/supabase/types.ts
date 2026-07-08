@@ -6572,45 +6572,90 @@ export type Database = {
       }
       intelligence_requests: {
         Row: {
+          company_id: string | null
           concerns: string | null
           created_at: string
+          dossier_outcome: string
           email: string
           employer_name: string
           id: string
           job_posting_url: string | null
           location: string | null
+          notification_attempts: number
+          notification_last_error: string | null
+          notification_status: string
+          notified_at: string | null
+          outcome_reason: string | null
+          requester_token: string
           role_title: string
+          scan_job_id: string | null
           status: string
           updated_at: string
           user_id: string | null
+          workflow_status: string
         }
         Insert: {
+          company_id?: string | null
           concerns?: string | null
           created_at?: string
+          dossier_outcome?: string
           email: string
           employer_name: string
           id?: string
           job_posting_url?: string | null
           location?: string | null
+          notification_attempts?: number
+          notification_last_error?: string | null
+          notification_status?: string
+          notified_at?: string | null
+          outcome_reason?: string | null
+          requester_token?: string
           role_title: string
+          scan_job_id?: string | null
           status?: string
           updated_at?: string
           user_id?: string | null
+          workflow_status?: string
         }
         Update: {
+          company_id?: string | null
           concerns?: string | null
           created_at?: string
+          dossier_outcome?: string
           email?: string
           employer_name?: string
           id?: string
           job_posting_url?: string | null
           location?: string | null
+          notification_attempts?: number
+          notification_last_error?: string | null
+          notification_status?: string
+          notified_at?: string | null
+          outcome_reason?: string | null
+          requester_token?: string
           role_title?: string
+          scan_job_id?: string | null
           status?: string
           updated_at?: string
           user_id?: string | null
+          workflow_status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "intelligence_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intelligence_requests_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "scan_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       interview_flinch_signals: {
         Row: {
@@ -10319,46 +10364,76 @@ export type Database = {
       }
       scan_jobs: {
         Row: {
+          attempt_count: number
           company_id: string
           completed_at: string | null
+          completed_stages: string[]
           created_at: string
           duration_ms: number | null
           error_message: string | null
           error_type: string | null
           id: string
+          job_type: string
+          last_error_at: string | null
+          last_heartbeat_at: string | null
+          lease_expires_at: string | null
+          lease_owner: string | null
+          max_attempts: number
           provider_fallback_chain: string[] | null
           provider_used: string | null
+          queued_reason: string | null
           section_type: string | null
+          stage_state: Json
           started_at: string | null
           status: string
           triggered_by: string
         }
         Insert: {
+          attempt_count?: number
           company_id: string
           completed_at?: string | null
+          completed_stages?: string[]
           created_at?: string
           duration_ms?: number | null
           error_message?: string | null
           error_type?: string | null
           id?: string
+          job_type?: string
+          last_error_at?: string | null
+          last_heartbeat_at?: string | null
+          lease_expires_at?: string | null
+          lease_owner?: string | null
+          max_attempts?: number
           provider_fallback_chain?: string[] | null
           provider_used?: string | null
+          queued_reason?: string | null
           section_type?: string | null
+          stage_state?: Json
           started_at?: string | null
           status?: string
           triggered_by?: string
         }
         Update: {
+          attempt_count?: number
           company_id?: string
           completed_at?: string | null
+          completed_stages?: string[]
           created_at?: string
           duration_ms?: number | null
           error_message?: string | null
           error_type?: string | null
           id?: string
+          job_type?: string
+          last_error_at?: string | null
+          last_heartbeat_at?: string | null
+          lease_expires_at?: string | null
+          lease_owner?: string | null
+          max_attempts?: number
           provider_fallback_chain?: string[] | null
           provider_used?: string | null
+          queued_reason?: string | null
           section_type?: string | null
+          stage_state?: Json
           started_at?: string | null
           status?: string
           triggered_by?: string
@@ -10380,7 +10455,11 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          notification_attempts: number
+          notification_last_error: string | null
           notified_at: string | null
+          requester_token: string
+          scan_job_id: string | null
           status: string
         }
         Insert: {
@@ -10389,7 +10468,11 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          notification_attempts?: number
+          notification_last_error?: string | null
           notified_at?: string | null
+          requester_token?: string
+          scan_job_id?: string | null
           status?: string
         }
         Update: {
@@ -10398,7 +10481,11 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          notification_attempts?: number
+          notification_last_error?: string | null
           notified_at?: string | null
+          requester_token?: string
+          scan_job_id?: string | null
           status?: string
         }
         Relationships: [
@@ -10407,6 +10494,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scan_notify_requests_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "scan_jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -12936,10 +13030,33 @@ export type Database = {
       }
     }
     Functions: {
+      claim_dossier_job: {
+        Args: {
+          p_job_id: string
+          p_lease_owner: string
+          p_lease_seconds?: number
+        }
+        Returns: Json
+      }
       compute_all_career_intelligence_scores: { Args: never; Returns: number }
       compute_career_intelligence_score: {
         Args: { _company_id: string }
         Returns: number
+      }
+      create_or_join_dossier_request: {
+        Args: {
+          p_concerns?: string
+          p_email: string
+          p_employer_name: string
+          p_job_posting_url?: string
+          p_location?: string
+          p_role_title: string
+        }
+        Returns: Json
+      }
+      create_or_join_scan_notify_request: {
+        Args: { p_company_id?: string; p_company_name: string; p_email: string }
+        Returns: Json
       }
       deactivate_expired_jobs: { Args: never; Returns: number }
       decrypt_linkedin_token: {
@@ -12953,6 +13070,16 @@ export type Database = {
       encrypt_linkedin_token: {
         Args: { p_token: string; p_user_id: string }
         Returns: undefined
+      }
+      finish_dossier_job: {
+        Args: {
+          p_error_message?: string
+          p_error_type?: string
+          p_job_id: string
+          p_lease_owner: string
+          p_status: string
+        }
+        Returns: boolean
       }
       fuzzy_person_search: {
         Args: { _limit?: number; _search_term: string }
@@ -12989,6 +13116,10 @@ export type Database = {
           signal_category: string
           total_responses: number
         }[]
+      }
+      get_dossier_request_status: {
+        Args: { p_requester_token: string }
+        Returns: Json
       }
       get_early_access_count: { Args: never; Returns: number }
       get_family_tag_counts: {
@@ -13033,6 +13164,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      heartbeat_dossier_job: {
+        Args: {
+          p_job_id: string
+          p_lease_owner: string
+          p_lease_seconds?: number
+        }
+        Returns: boolean
+      }
       invoke_edge_function: {
         Args: { body?: Json; fn_name: string }
         Returns: number
@@ -13057,6 +13196,7 @@ export type Database = {
           target_type: string
         }[]
       }
+      wdiwf_slugify: { Args: { input: string }; Returns: string }
     }
     Enums: {
       app_role:
