@@ -1,34 +1,8 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export function SiteFooter() {
   return (
     <footer className="bg-card border-t border-border mt-auto">
-      {/* Jackye CTA Band */}
-      <div className="border-b border-border px-6 lg:px-16 py-10">
-        <div className="max-w-[1100px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <p className="font-sans text-lg font-semibold text-foreground">
-              You deserve to know exactly who you work for.
-            </p>
-            <p className="font-sans text-sm text-muted-foreground mt-1">
-              Built by Jackye Clayton. Facts over feelings.
-            </p>
-          </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <Button asChild className="rounded-full gap-2">
-              <Link to="/intelligence-check">
-                Run My Free Scan <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="rounded-full">
-              <Link to="/ask-jackye">Ask Jackye</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-
       {/* Footer columns */}
       <div className="px-6 lg:px-16 py-12">
         <div className="max-w-[1100px] mx-auto">
