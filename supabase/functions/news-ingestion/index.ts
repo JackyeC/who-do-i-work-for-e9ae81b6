@@ -114,7 +114,32 @@ const NON_US_DOMAINS_SET = new Set([
   "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
 ]);
 
-function passesContentGates(title: string, source?: string | null): boolean {
+/** TLDs that are definitively non-US */
+const NON_US_TLDS = [
+  ".co.uk",".org.uk",".ac.uk",".gov.uk",
+  ".com.au",".net.au",".org.au",
+  ".ca",".co.nz",".co.jp",".co.kr",".co.in",
+  ".cn",".jp",".kr",".in",".ru",".br",".mx",
+  ".de",".fr",".it",".es",".nl",".se",".fi",".no",".dk",".pt",
+  ".pl",".cz",".hu",".ro",".bg",".hr",".rs",".ua",
+  ".ph",".sg",".my",".th",".vn",".id",".pk",".bd",".lk",
+  ".gr",".tr",".il",".za",".ng",".ke",".eg",".ar",".cl",".co",".pe",
+];
+
+/** Check if a source_url domain is non-US */
+function isNonUSSourceUrl(sourceUrl: string | null | undefined): boolean {
+  if (!sourceUrl) return false;
+  try {
+    const domain = new URL(sourceUrl).hostname.replace(/^www\./, "").toLowerCase();
+    if (NON_US_DOMAINS_SET.has(domain)) return true;
+    for (const tld of NON_US_TLDS) {
+      if (domain.endsWith(tld)) return true;
+    }
+  } catch { /* invalid URL — ignore */ }
+  return false;
+}
+
+function passesContentGates(title: string, source?: string | null, sourceUrl?: string | null): boolean {
   if (!title || title.length < 3) return false;
   if (NON_LATIN_RE.test(title)) return false;
   const slavic = title.match(/[łąęśźżćńřůțșđ]/gi);
@@ -130,12 +155,14 @@ function passesContentGates(title: string, source?: string | null): boolean {
   }
   if (romanceHits >= 3) return false;
   if (FOREIGN_LIFESTYLE_RE.test(title)) return false;
+  // Check source_url domain first (more reliable), then fall back to source_name
+  if (isNonUSSourceUrl(sourceUrl)) return false;
   if (source && NON_US_DOMAINS_SET.has(source.toLowerCase())) return false;
   return true;
 }
 
 function toValidatedWorkNewsRow(n: any) {
-  if (!passesContentGates(n.title, n.source)) return null;
+  if (!passesContentGates(n.title, n.source, n.source_domain || n.source_url)) return null;
 
   return {
     headline: n.title,
@@ -181,7 +208,7 @@ Deno.serve(async (req: Request) => {
     newsItems.push(...tickerNews);
 
     // Deduplicate by title similarity + content quality gates
-    const uniqueNews = deduplicateNews(newsItems).filter((n: any) => passesContentGates(n.title, n.source));
+    const uniqueNews = deduplicateNews(newsItems).filter((n: any) => passesContentGates(n.title, n.source, n.source_domain || n.source_url));
 
     // Upsert into personalized_news (update existing rows to refresh published_at)
     if (uniqueNews.length > 0) {
@@ -258,13 +285,24 @@ async function fetchExternalNews() {
         const data = await res.json();
         console.log(`[newsdata] query="${query}" status=${res.status} results_type=${typeof data.results} count=${Array.isArray(data.results) ? data.results.length : 'n/a'}`);
         const results = Array.isArray(data.results) ? data.results : [];
-        articles = results.map((a: any) => ({
-          title: a.title,
-          summary: a.description || a.content?.slice(0, 300) || "",
-          source: a.source_name || a.source_id || "External",
-          source_url: a.link,
-          published_at: a.pubDate || new Date().toISOString(),
-        }));
+        articles = results
+          .filter((a: any) => {
+            // Use NewsData.io's country field to pre-filter non-US articles when available
+            const countries: string[] = Array.isArray(a.country) ? a.country : [];
+            if (countries.length > 0 && !countries.some((c: string) => c.toLowerCase() === "united states of america")) {
+              return false;
+            }
+            return true;
+          })
+          .map((a: any) => ({
+            title: a.title,
+            summary: a.description || a.content?.slice(0, 300) || "",
+            source: a.source_name || a.source_id || "External",
+            // Prefer the source's root domain (source_url) for US detection; keep article link as the link
+            source_url: a.link,
+            source_domain: a.source_url || null,
+            published_at: a.pubDate || new Date().toISOString(),
+          }));
       } else if (NEWS_API_PROVIDER === "newsmesh") {
         // NewsMesh ($29/mo)
         const url = `https://api.newsmesh.co/v1/search?q=${encodeURIComponent(query)}&language=en&limit=5`;
@@ -313,6 +351,8 @@ async function fetchExternalNews() {
           summary: article.summary.slice(0, 500),
           source: article.source,
           source_url: article.source_url,
+          // source_domain is the outlet's root URL (e.g. https://apnews.com) from NewsData.io's source_url field
+          source_domain: article.source_domain || null,
           category: categorizeText(textLower),
           tags: extractTags(textLower),
           value_tags: extractValueTags(textLower),
