@@ -99,8 +99,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             className="text-muted-foreground max-w-[52ch] mx-auto leading-relaxed mt-6"
             style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", animation: "heroFadeIn 0.6s ease 0.8s" }}
           >
-            Every company runs a background check on you. WDIWF flips it. Pull the receipts on politics, enforcement,
-            layoffs, and values from the public record — so you&apos;re not guessing about your next move.
+            Every company runs a background check on you. WDIWF flips it. We track the money your employer spends, the
+            votes their politicians cast, and the filings they hope you never read — so you&apos;re not guessing about
+            your next move.
           </p>
 
           <div
@@ -133,8 +134,148 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             className="font-mono text-xs text-muted-foreground/60 mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed"
             style={{ animation: "heroFadeIn 0.4s ease 1.0s" }}
           >
-            Built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
+            Built on FEC, SEC, OSHA, NLRB, BLS, congressional vote records, and more — the public record, not the press release.
           </p>
+        </div>
+      </section>
+
+      {/* 1.5 - WHY WDIWF EXISTS */}
+      <section className="relative px-6 lg:px-16 py-20 lg:py-28 bg-background border-y border-border">
+        <div className="relative z-[1] max-w-[780px] mx-auto">
+          <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-4 text-center">
+            Why WDIWF exists
+          </p>
+          <h2 className="text-h1 text-foreground text-center mb-8">
+            The system that made your employer a political actor.
+          </h2>
+
+          <div className="space-y-6 text-muted-foreground text-base leading-relaxed max-w-[62ch] mx-auto">
+            <p>
+              A 40-year experiment in campaign finance built the world you&apos;re job-hunting in. The{" "}
+              <a
+                href="https://en.wikipedia.org/wiki/Tillman_Act_of_1907"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Tillman Act (1907)
+              </a>{" "}
+              banned corporations from giving to federal candidates.{" "}
+              <a
+                href="https://www.fec.gov/legal-resources/court-cases/buckley-v-valeo/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Buckley v. Valeo (1976)
+              </a>{" "}
+              let campaigns spend unlimited money.{" "}
+              <a
+                href="https://www.fec.gov/legal-resources/court-cases/citizens-united-v-fec/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Citizens United (2010)
+              </a>{" "}
+              freed corporations to spend independently. Two months later,{" "}
+              <a
+                href="https://www.fec.gov/legal-resources/court-cases/speechnoworg-v-fec/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                SpeechNow.org v. FEC
+              </a>{" "}
+              invented the super PAC.
+            </p>
+
+            <p>
+              The result in 2024: one CEO spent{" "}
+              <a
+                href="https://www.opensecrets.org/elections-overview/biggest-donors?cycle=2024&view=sp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                roughly $290 million
+              </a>{" "}
+              to elect one candidate.{" "}
+              <a
+                href="https://www.opensecrets.org/outside-spending/donor-stats"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                About 98%
+              </a>{" "}
+              of super PAC money now comes from the top 1% of donors. Those same donors sit on the boards and own the
+              equity of the companies hiring you.
+            </p>
+
+            <p>
+              Maine voters said no by nearly{" "}
+              <a
+                href="https://ballotpedia.org/Maine_Question_1,_Limit_Contributions_to_Super_PACs_Initiative_(2024)"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                3-to-1
+              </a>{" "}
+              in November 2024, capping super PAC donations at $5,000. A federal judge{" "}
+              <a
+                href="https://www.opensecrets.org/news/2025/07/federal-judge-blocks-voter-approved-maine-law-capping-super-pac-contributions/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                overturned their vote
+              </a>{" "}
+              in July 2025. The{" "}
+              <a
+                href="https://news.bloomberglaw.com/us-law-week/judges-appear-open-to-reinstating-maines-super-pac-donation-cap"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                First Circuit is deciding right now
+              </a>{" "}
+              whether workers get transparency.
+            </p>
+
+            <p className="text-foreground font-medium">
+              WDIWF doesn&apos;t wait for the courts. We track the money, the votes, and the filings on your employer —
+              today.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 max-w-[62ch] mx-auto">
+            <div className="border border-border bg-card p-5 rounded-md">
+              <p className="font-mono text-[10px] tracking-wider uppercase text-primary mb-2">The money</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Corporate PAC giving, executive super PAC checks, and lobbying spend from FEC and Senate LDA filings.
+              </p>
+            </div>
+            <div className="border border-border bg-card p-5 rounded-md">
+              <p className="font-mono text-[10px] tracking-wider uppercase text-primary mb-2">The votes</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                How the politicians your employer funds actually voted on labor, healthcare, and worker-protection bills.
+              </p>
+            </div>
+            <div className="border border-border bg-card p-5 rounded-md">
+              <p className="font-mono text-[10px] tracking-wider uppercase text-primary mb-2">The paper trail</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                SEC filings, WARN Act layoff notices, OSHA violations, NLRB actions, and labor lawsuits.
+              </p>
+            </div>
+            <div className="border border-border bg-card p-5 rounded-md">
+              <p className="font-mono text-[10px] tracking-wider uppercase text-primary mb-2">The people</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Board members, executives, governance roles, and the influence networks behind them.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -218,7 +359,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 {
                   icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />,
                   title: "Employer Dossiers",
-                  desc: "The full picture on any company. Political spending, enforcement actions, lobbying, leadership moves. Sourced, traceable, no editorializing.",
+                  desc: "The full picture on any company. Political spending, congressional votes, enforcement actions, lobbying, leadership moves. Sourced, traceable, no editorializing.",
                   link: "/browse",
                   comingSoon: false,
                 },
