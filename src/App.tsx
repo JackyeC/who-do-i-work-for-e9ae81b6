@@ -164,6 +164,7 @@ const CookieNotice = lazy(() => import("./components/CookieNotice").then(m => ({
 const PreviewTierToolbar = lazy(() => import("./components/PreviewTierToolbar").then(m => ({ default: m.PreviewTierToolbar })));
 const Receipts = lazy(() => import("./pages/Receipts"));
 const Newsletter = lazy(() => import("./pages/Newsletter"));
+const NewsletterEdition = lazy(() => import("./pages/NewsletterEdition"));
 const ReceiptsReport = lazy(() => import("./pages/ReceiptsReport"));
 const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 
@@ -258,6 +259,7 @@ const App = () => (
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/submit-tip" element={<SubmitTip />} />
                   <Route path="/newsletter" element={<Newsletter />} />
+                  <Route path="/newsletter/:editionDate" element={<NewsletterEdition />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
                   <Route path="/palette" element={<PaletteStudio />} />
                   <Route path="/company/:id" element={<CompanySlugRedirect />} />
